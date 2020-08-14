@@ -2,4 +2,5 @@
 
 // export const API = 'http://rap2api.taobao.org/app/mock/234047'
 export const API = 'http://192.168.1.113:7001'
+// export const API = 'http://localhost:7001'
 export const URLAPI = ''

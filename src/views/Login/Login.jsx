@@ -40,7 +40,7 @@ class Login extends Component {
                         // } else {
                         //     // 这里处理一些错误信息
                         // }
-                        console.log(res.data)
+                        console.log(res)
                     })
                     .catch(err => {})
 
