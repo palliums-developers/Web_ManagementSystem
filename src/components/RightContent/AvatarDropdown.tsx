@@ -19,9 +19,9 @@ const loginOut = async () => {
   await outLogin();
   const { redirect } = getPageQuery();
   // Note: There may be security issues, please note
-  if (window.location.pathname !== '/user/login' && !redirect) {
+  if (window.location.pathname !== '/login' && !redirect) {
     history.replace({
-      pathname: '/user/login',
+      pathname: '/login',
       search: stringify({
         redirect: window.location.href,
       }),
@@ -31,7 +31,6 @@ const loginOut = async () => {
 
 const AvatarDropdown: React.FC<GlobalHeaderRightProps> = ({ menu }) => {
   const { initialState, setInitialState } = useModel('@@initialState');
-
   const onMenuClick = useCallback(
     (event: {
       key: React.Key;
@@ -67,7 +66,7 @@ const AvatarDropdown: React.FC<GlobalHeaderRightProps> = ({ menu }) => {
   }
 
   const { currentUser } = initialState;
-
+  console.log(currentUser)
   if (!currentUser || !currentUser.name) {
     return loading;
   }

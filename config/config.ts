@@ -1,5 +1,6 @@
+import { layout } from '../src/app';
 // https://umijs.org/config/
-import { defineConfig } from 'umi';
+import { defineConfig, useModel } from 'umi';
 import defaultSettings from './defaultSettings';
 import proxy from './proxy';
 const { REACT_APP_ENV } = process.env;
@@ -10,7 +11,7 @@ export default defineConfig({
     hmr: true,
   },
   layout: {
-    name: 'Ant Design Pro',
+    // name: 'Ant Design Pro',
     locale: true,
     siderWidth: 208,
   },
@@ -30,25 +31,26 @@ export default defineConfig({
   },
   // umi routes: https://umijs.org/docs/routing
   routes: [
-    {
-      path: '/user',
-      layout: false,
-      routes: [
-        {
-          name: 'login',
-          path: '/user/login',
-          component: './user/login',
-        },
-      ],
-    },
     // {
-    //   name:'login',
-    //   path:'/login',
-    //   component:'./login'
+    //   path: '/user',
+    //   layout: false,
+    //   routes: [
+    //     {
+    //       name: 'login',
+    //       path: '/user/login',
+    //       component: './user/login',
+    //     },
+    //   ],
     // },
     {
+      // name: 'login',
+      layout: false,
+      path: '/login',
+      component: './login'
+    },
+    {
       path: '/welcome',
-      name: 'welcome',
+      // name: currentUser.name,
       icon: 'smile',
       component: './Welcome',
     },

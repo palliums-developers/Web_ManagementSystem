@@ -92,12 +92,11 @@ const Login: React.FC<{}> = () => {
           <div className={styles.header}>
             <Link to="/">
               <img alt="logo" className={styles.logo} src={logo} />
-              <span className={styles.title}>Violas </span>
+              <span className={styles.title}>{intl('login.title')}</span>
             </Link>
           </div>
-          <div className={styles.desc}>Backend Management System</div>
+          {/* <div className={styles.desc}>Backend Management System</div> */}
         </div>
-
         <div className={styles.main}>
           <LoginFrom activeKey={type} onTabChange={setType} onSubmit={handleSubmit}>
             <Tab key="account" tab="">

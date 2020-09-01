@@ -1,10 +1,10 @@
 import { Settings as LayoutSettings } from '@ant-design/pro-layout';
 
 export default {
-  navTheme: 'light',
+  navTheme: 'dark',
   // 拂晓蓝
   primaryColor: '#1890ff',
-  layout: 'mix',
+  layout: 'side',
   contentWidth: 'Fluid',
   fixedHeader: false,
   fixSiderbar: true,
@@ -12,9 +12,11 @@ export default {
   menu: {
     locale: true,
   },
-  title: 'Violas Management',
+  title: 'Violas',
   pwa: false,
   iconfontUrl: '',
+  // "headerRender": false,
+  "footerRender": false,
 } as LayoutSettings & {
   pwa: boolean;
 };

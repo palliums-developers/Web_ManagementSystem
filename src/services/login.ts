@@ -9,6 +9,7 @@ export interface LoginParamsType {
 }
 
 export async function fakeAccountLogin(params: LoginParamsType) {
+  params.password='ant.design';
   return request<API.LoginStateType>('/api/login/account', {
     method: 'POST',
     data: params,

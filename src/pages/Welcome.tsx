@@ -15,7 +15,7 @@ export default (): React.ReactNode => (
   <PageContainer>
     <Card>
       <Alert
-        message="更快更强的重型组件，已经发布。"
+        message="这里是后台管理系统欢迎页面。"
         type="success"
         showIcon
         banner

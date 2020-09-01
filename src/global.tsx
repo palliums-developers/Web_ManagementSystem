@@ -56,7 +56,7 @@ if (pwa) {
       description: useIntl().formatMessage({ id: 'app.pwa.serviceworker.updated.hint' }),
       btn,
       key,
-      onClose: async () => {},
+      onClose: async () => { },
     });
   });
 } else if ('serviceWorker' in navigator) {

@@ -40,8 +40,8 @@ export const layout = ({
     footerRender: () => <Footer />,
     onPageChange: () => {
       // 如果没有登录，重定向到 login
-      if (!initialState?.currentUser?.userid && history.location.pathname !== '/user/login') {
-        history.push('/user/login');
+      if (!initialState?.currentUser?.userid && history.location.pathname !== '/login') {
+        history.push('/login');
       }
     },
     menuHeaderRender: undefined,
