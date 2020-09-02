@@ -9,7 +9,8 @@ export interface LoginParamsType {
 }
 
 export async function fakeAccountLogin(params: LoginParamsType) {
-  params.password='ant.design';
+  params.password = 'ant.design';
+  sessionStorage.setItem('user', params.username)
   return request<API.LoginStateType>('/api/login/account', {
     method: 'POST',
     data: params,

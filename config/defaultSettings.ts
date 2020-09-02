@@ -15,7 +15,7 @@ export default {
   title: 'Violas',
   pwa: false,
   iconfontUrl: '',
-  // "headerRender": false,
+  "headerRender": false,
   "footerRender": false,
 } as LayoutSettings & {
   pwa: boolean;

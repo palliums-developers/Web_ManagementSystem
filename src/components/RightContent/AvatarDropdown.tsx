@@ -7,6 +7,7 @@ import { outLogin } from '@/services/login';
 import { stringify } from 'querystring';
 import HeaderDropdown from '../HeaderDropdown';
 import styles from './index.less';
+import useModal from 'antd/lib/modal/useModal';
 
 export interface GlobalHeaderRightProps {
   menu?: boolean;
@@ -28,8 +29,8 @@ const loginOut = async () => {
     });
   }
 };
-
 const AvatarDropdown: React.FC<GlobalHeaderRightProps> = ({ menu }) => {
+  // console.log(useModel('@@initialState').initialState);
   const { initialState, setInitialState } = useModel('@@initialState');
   const onMenuClick = useCallback(
     (event: {
@@ -66,7 +67,6 @@ const AvatarDropdown: React.FC<GlobalHeaderRightProps> = ({ menu }) => {
   }
 
   const { currentUser } = initialState;
-  console.log(currentUser)
   if (!currentUser || !currentUser.name) {
     return loading;
   }

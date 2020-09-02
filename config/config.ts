@@ -1,9 +1,10 @@
 import { layout } from '../src/app';
 // https://umijs.org/config/
-import { defineConfig, useModel } from 'umi';
+import { defineConfig } from 'umi';
 import defaultSettings from './defaultSettings';
 import proxy from './proxy';
 const { REACT_APP_ENV } = process.env;
+// console.log(sessionStorage.getItem('user'));
 export default defineConfig({
   hash: true,
   antd: {},
@@ -46,7 +47,13 @@ export default defineConfig({
       // name: 'login',
       layout: false,
       path: '/login',
-      component: './login'
+      component: './Login'
+    },
+    {
+      path: 'account',
+      name: 'Account',
+      icon: '',
+      component: './Account'
     },
     {
       path: '/welcome',
