@@ -4,7 +4,7 @@ import React, { useState } from 'react';
 import { Link, SelectLang, useModel, useIntl } from 'umi';
 import { getPageQuery } from '@/utils/utils';
 import logo from '@/assets/logo.svg';
-import { LoginParamsType, fakeAccountLogin } from '@/services/login';
+import { LoginParamsType, accountLogin } from '@/services/login';
 import Footer from '@/components/Footer';
 import LoginFrom from './components/Login';
 import styles from './style.less';
@@ -32,6 +32,7 @@ const replaceGoto = () => {
   const urlParams = new URL(window.location.href);
   const params = getPageQuery();
   let { redirect } = params as { redirect: string };
+  console.log(redirect)
   if (redirect) {
     const redirectUrlParams = new URL(redirect);
     if (redirectUrlParams.origin === urlParams.origin) {
@@ -59,7 +60,7 @@ const Login: React.FC<{}> = () => {
     setSubmitting(true);
     try {
       // 登录
-      const msg = await fakeAccountLogin({ ...values, type });
+      const msg = await accountLogin({ ...values, type });
       if (msg.status === 'ok') {
         // let temp = intl('login.success')
         message.success('Login Success!');

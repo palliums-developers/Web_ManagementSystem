@@ -141,7 +141,14 @@ export default defineConfig({
   // @ts-ignore
   title: false,
   ignoreMomentLocale: true,
-  proxy: proxy[REACT_APP_ENV || 'dev'],
+  // proxy: proxy[REACT_APP_ENV || 'dev'],
+  proxy: {
+    '/api/login': {
+      'target': 'http://localhost:5000/',
+      'changeOrigin': true,
+      'pathRewrite':{'^/localhost':''}
+    }
+  },
   manifest: {
     basePath: '/',
   },
