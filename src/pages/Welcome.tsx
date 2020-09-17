@@ -14,7 +14,7 @@ const CodePreview: React.FC<{}> = ({ children }) => (
 export default (): React.ReactNode => (
   <PageContainer>
     <Card>
-      <Alert
+      {/* <Alert
         message="这里是后台管理系统欢迎页面。"
         type="success"
         showIcon
@@ -42,7 +42,8 @@ export default (): React.ReactNode => (
           欢迎使用
         </a>
       </Typography.Text>
-      <CodePreview>yarn add @ant-design/pro-layout</CodePreview>
+      <CodePreview>yarn add @ant-design/pro-layout</CodePreview> */}
+      <img src='/img/welcome.png'/>
     </Card>
   </PageContainer>
 );

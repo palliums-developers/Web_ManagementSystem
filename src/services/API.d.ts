@@ -10,7 +10,8 @@ declare namespace API {
       label: string;
     }[];
     userid?: string;
-    access?: 'user' | 'guest' | 'admin'| 'huangw';
+    access?: 'product' | 'technology' | 'admin' | 'operation' | 'design' | 'customer';
+    // access?: 'user' | 'guest' | 'admin';
     unreadCount?: number;
   }
 
