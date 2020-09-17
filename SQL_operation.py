@@ -26,17 +26,28 @@ def login_function(username, password):
     data = postgresql_handle(vls_back_url).list(User_data)
     name_boolen = False
     password_boolen = False
+    result = {
+        'state': 0,
+        'status': "error",
+        'type': "account",
+        'currentAuthority': "None"
+    }
     for i in data:
         if username == i.name:
             name_boolen = True
             if password == i.password:
                 password_boolen = True
+                result['status'] = "ok"
+                result['currentAuthority'] = i.role
     if name_boolen and password_boolen:
-        return 1
+        result['state'] = 1
+        return result
     elif name_boolen or password_boolen:
-        return -1
+        result['state'] = 0
+        return result  # name and password have one error
     else:
-        return 0
+        result['state'] = -1
+        return result  # both name and password are error
 
 
 def login_log_addone(name, ip, time, address, browser):
@@ -67,6 +78,7 @@ def operation_log_addone(name, role, operation, time):
     add_data = Operation(name=name, role=role, operation=operation, time=time)
     postgresql_handle(vls_back_url).add(add_data)
     return 1
+
 
 def operation_log_list(page, per_page, name=None):
     data_raw = postgresql_handle(vls_back_url).paginate(

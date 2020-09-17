@@ -12,13 +12,12 @@ class Login(Resource):
     def post(self):
         __args__ = parser.parse_args()
         __temp__ = login_function(__args__.username, __args__.password)
-        if __temp__ > 0:
-            # return {'message': 'welcome '+__args__.username}, 201
-            return {'status': 'ok'}, 201
+        if __temp__['state'] > 0:
+            return __temp__, 201
         # elif __temp__ < 0:
         #     return {'message':'Wrong Username or Password'},202
         else:
-            return {'status': 'error'}, 501
+            return __temp__, 501
 
 
 # class List(Resource):
