@@ -78,7 +78,7 @@ export default () => {
     {
       title: intl('user.operation'),
       dataIndex: 'operation',
-      render: (text: string) => <p onClick={() => { console.log('edit') }}>{text}</p>
+      render: () => <p onClick={() => { console.log('edit') }}>{intl('operation.edit')}</p>
     }
   ];
   return (

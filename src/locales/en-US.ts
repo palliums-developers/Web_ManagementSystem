@@ -7,6 +7,9 @@ import settings from './en-US/settings';
 import login from './en-US/login';
 import account from './en-US/account';
 import user from './en-US/userManagement';
+import role from './en-US/roleManagement';
+import operation from './en-US/operation';
+import systemLog from './en-US/systemLog';
 
 export default {
   'navBar.lang': 'Languages',
@@ -25,4 +28,7 @@ export default {
   ...login,
   ...account,
   ...user,
+  ...role,
+  ...operation,
+  ...systemLog,
 };

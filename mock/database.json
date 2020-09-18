@@ -1,0 +1,38 @@
+{
+    "user_data": {
+        "id": "integer",
+        "name": "character varying(50)",
+        "role": "character varying(20)",
+        "phone": "character varying(20)",
+        "email": "character varying(50)",
+        "password": "character varying(20)"
+    },
+    "loginLog": {
+        "id": "bigint",
+        "name": "character varying(50)",
+        "ip": "character varying(20)",
+        "time": "character varying(20)",
+        "address": "character varying(50)",
+        "browser": "character varying(50)"
+    },
+    "operationLog": {
+        "id": "integer",
+        "name": "character varying(50)",
+        "role": "character varying(20)",
+        "operation": "character varying(50)",
+        "time": "character varying(20)"
+    },
+    "permission": {
+        "role": "character varying(20)",
+        "menu": "character varying(100)",
+        "operation": "character varying(20)"
+    },
+    "permission_number": {
+        "-1": "disable",
+        "0": "none",
+        "1": "view",
+        "2": "edit",
+        "4": "new",
+        "8": "delete"
+    }
+}

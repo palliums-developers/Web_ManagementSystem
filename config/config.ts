@@ -1,10 +1,13 @@
 import { layout } from '../src/app';
 // https://umijs.org/config/
-import { defineConfig } from 'umi';
+import { defineConfig ,useIntl} from 'umi';
 import defaultSettings from './defaultSettings';
 import proxy from './proxy';
 const { REACT_APP_ENV } = process.env;
 // console.log(sessionStorage.getItem('user'));
+// const intl = (_temp: string) => {
+//   return useIntl().formatMessage({ id: _temp });
+// }
 export default defineConfig({
   hash: true,
   antd: {},
