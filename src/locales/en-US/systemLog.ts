@@ -5,5 +5,5 @@ export default {
     'systemLog.location': 'Location',
     'systemLog.browser': 'Browser',
     'systemLog.role':'Role',
-    'systemLog.operation':''
+    'systemLog.operation':'Operation'
 };

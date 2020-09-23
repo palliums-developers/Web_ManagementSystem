@@ -150,6 +150,17 @@ export default defineConfig({
       'target': 'http://localhost:5000/',
       'changeOrigin': true,
       'pathRewrite':{'^/localhost':''}
+    },
+    '/api/loginLog': {
+      'target': 'http://localhost:5000/',
+      'changeOrigin': true,
+      'pathRewrite':{'^/localhost':''}
+    }
+    ,
+    '/api/operationLog': {
+      'target': 'http://localhost:5000/',
+      'changeOrigin': true,
+      'pathRewrite':{'^/localhost':''}
     }
   },
   manifest: {
