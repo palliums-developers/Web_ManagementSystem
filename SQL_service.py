@@ -41,12 +41,26 @@ class postgresql_handle:
         self.session().close()
         return temp
 
-    def paginate(self, object, limit, offset, name=None):
+    def paginate(self, object, limit, offset, name=None, more_than=None, less_than=None):
         Query.paginate = paginate
+        temp = {}
         if name:
-            temp = self.session().query(object).filter(
-                object.name == name).paginate(limit, offset)
+            if more_than and less_than:
+                # temp = self.session().query(object).filter(object.name == name, int(chr(object.time)) > int(more_than), int(chr(object.time)) < int(less_than)).paginate(limit, offset)
+                temp = self.session().query(object).filter(object.name == name,
+                                                           object.time > int(more_than)-1, object.time < int(less_than)+1).order_by(object.id.desc()).paginate(limit, offset)
+            else:
+                temp = self.session().query(object).filter(
+                    object.name == name).order_by(object.id.desc()).paginate(limit, offset)
         else:
-            temp = self.session().query(object).paginate(limit, offset)
+            if more_than and less_than:
+                # temp = self.session().query(object).filter(int(object.time) > int(more_than), int(object.time) < int(less_than)).paginate(limit, offset)
+                temp = self.session().query(object).filter(object.time > int(more_than)-1, object.time <
+                                                           int(less_than)+1).order_by(object.id.desc()).paginate(limit, offset)
+            else:
+                temp = self.session().query(object).order_by(object.id.desc()).paginate(limit, offset)
+        # if more_than and less_than:
+        #     temp = self.session().query(object).filter((object.time) > (more_than)
+        #                                                ).order_by(object.id.desc()).paginate(limit, offset)
         # temp.close()
         return temp

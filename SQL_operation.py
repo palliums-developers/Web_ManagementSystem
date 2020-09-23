@@ -54,18 +54,19 @@ def login_log_addone(name, ip, time, address, browser):
     add_data = Login(name=name,
                      ip=ip,
                      time=time,
-                     address=address,
+                     location=address,
                      browser=browser)
     postgresql_handle(vls_back_url).add(add_data)
     return 1
 
 
-def login_log_list(page, per_page, name=None):
+def login_log_list(page, per_page, name=None, date_start=None, date_end=None):
     data_raw = postgresql_handle(vls_back_url).paginate(
-        Login, page, per_page, name)
+        Login, page, per_page, name, date_start, date_end)
     result = {
         'page': data_raw.page,
         'pages': data_raw.pages,
+        'pageSize': per_page,
         'total': data_raw.total,
         'has_prev': data_raw.has_prev,
         'has_next': data_raw.has_next,
@@ -80,12 +81,13 @@ def operation_log_addone(name, role, operation, time):
     return 1
 
 
-def operation_log_list(page, per_page, name=None):
+def operation_log_list(page, per_page, name=None, date_start=None, date_end=None):
     data_raw = postgresql_handle(vls_back_url).paginate(
-        Operation, page, per_page, name)
+        Operation, page, per_page, name, date_start, date_end)
     result = {
         'page': data_raw.page,
         'pages': data_raw.pages,
+        'pageSize': per_page,
         'total': data_raw.total,
         'has_prev': data_raw.has_prev,
         'has_next': data_raw.has_next,

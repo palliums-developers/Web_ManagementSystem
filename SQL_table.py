@@ -18,7 +18,7 @@ class Login(Base):
     name=Column(String(50))
     ip=Column(String(20))
     time=Column(String(20))
-    address=Column(String(50))
+    location=Column(String(50))
     browser=Column(String(50))
 
 class Operation(Base):

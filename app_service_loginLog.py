@@ -24,5 +24,7 @@ class LoginLog(Resource):
         page = int(request.args.get('page'))
         per_page = int(request.args.get('per_page'))
         name = request.args.get('name')
-        __temp__ = login_log_list(page, per_page, name)
+        date_start = request.args.get('date_start')
+        date_end = request.args.get('date_end')
+        __temp__ = login_log_list(page, per_page, name, date_start, date_end)
         return __temp__
