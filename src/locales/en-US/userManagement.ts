@@ -4,7 +4,11 @@ export default {
     'user.role': 'Role',
     'user.email': 'Email',
     'user.phone': 'Phone',
-    'user.time': 'Adding Time',
+    'user.add_time': 'Adding Time',
     'user.status': 'Status',
-    'user.operation': 'Operation'
+    'user.operation': 'Operation',
+    'user.able_status': 'Are you sure to ABLE this account?',
+    'user.disable_status': 'Are you sure to DISABLE this account?',
+    'user.edit_user': 'Edit User',
+    'user.add_user': 'Add User',
 }

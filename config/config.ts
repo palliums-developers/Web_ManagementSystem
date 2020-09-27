@@ -1,6 +1,6 @@
 import { layout } from '../src/app';
 // https://umijs.org/config/
-import { defineConfig ,useIntl} from 'umi';
+import { defineConfig, useIntl } from 'umi';
 import defaultSettings from './defaultSettings';
 import proxy from './proxy';
 const { REACT_APP_ENV } = process.env;
@@ -149,19 +149,24 @@ export default defineConfig({
     '/api/login': {
       'target': 'http://localhost:5000/',
       'changeOrigin': true,
-      'pathRewrite':{'^/localhost':''}
+      'pathRewrite': { '^/localhost': '' }
     },
     '/api/loginLog': {
       'target': 'http://localhost:5000/',
       'changeOrigin': true,
-      'pathRewrite':{'^/localhost':''}
+      'pathRewrite': { '^/localhost': '' }
     }
     ,
     '/api/operationLog': {
       'target': 'http://localhost:5000/',
       'changeOrigin': true,
-      'pathRewrite':{'^/localhost':''}
-    }
+      'pathRewrite': { '^/localhost': '' }
+    },
+    '/api/user': {
+      'target': 'http://localhost:5000/',
+      'changeOrigin': true,
+      'pathRewrite': { '^/localhost': '' }
+    },
   },
   manifest: {
     basePath: '/',
