@@ -3,6 +3,7 @@ from flask_restful import Resource, Api
 from app_service_login import Login
 from app_service_loginLog import LoginLog
 from app_service_operationLog import OperationLog
+from app_service_user import User
 from flask_cors import CORS
 
 app = Flask(__name__)
@@ -17,6 +18,7 @@ cors = CORS(app, resources={r"/api/*": {"origins": "*"}})
 
 # api.add_resource(index, '/')
 api.add_resource(Login, '/api/login')
+api.add_resource(User,'/api/user')
 api.add_resource(LoginLog, '/api/loginLog')
 api.add_resource(OperationLog, '/api/operationLog')
 

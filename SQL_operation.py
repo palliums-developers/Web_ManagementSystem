@@ -33,7 +33,7 @@ def login_function(username, password):
         'currentAuthority': "None"
     }
     for i in data:
-        if username == i.name:
+        if username == i.name and i.status == True:
             name_boolen = True
             if password == i.password:
                 password_boolen = True
@@ -41,13 +41,57 @@ def login_function(username, password):
                 result['currentAuthority'] = i.role
     if name_boolen and password_boolen:
         result['state'] = 1
-        return result
     elif name_boolen or password_boolen:
         result['state'] = 0
-        return result  # name and password have one error
     else:
         result['state'] = -1
-        return result  # both name and password are error
+    return result  # both name and password are error
+
+
+def getUserWithoutPasswd(user):
+    return {
+        'id': user.id,
+        'name': user.name,
+        'role': user.role,
+        'phone': user.phone,
+        'email': user.email,
+        'status': user.status,
+        'add_time': user.add_time,
+    }
+
+# get user data and update user status
+
+
+def get_user_data(__status__):
+    if __status__ == None:
+        data = postgresql_handle(vls_back_url).list(User_data)
+        result = []
+        for i in data:
+            result.append(getUserWithoutPasswd(i))
+    elif __status__ == '0':
+        postgresql_handle(vls_back_url).update(
+            User_data, (User_data.id == 5), {User_data.status: False})
+        result = [{'message': 'status change to False'}]
+    elif __status__ == '1':
+        postgresql_handle(vls_back_url).update(
+            User_data, (User_data.id == 5), {User_data.status: True})
+        result = [{'message': 'status change to True'}]
+    return result
+
+# add new user and update user date
+
+
+def add_user_data(username, role, email, password, add_time):
+    add_data = User_data(
+        name=username,
+        role=role,
+        email=email,
+        password=password,
+        status=True,
+        add_time=add_time,
+    )
+    postgresql_handle(vls_back_url).add(add_data)
+    return 1
 
 
 def login_log_addone(name, ip, time, address, browser):

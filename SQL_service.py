@@ -37,7 +37,7 @@ class postgresql_handle:
         temp.commit()
 
     def list(self, object):
-        temp = self.session().query(object).all()
+        temp = self.session().query(object).order_by(object.id).all()
         self.session().close()
         return temp
 
@@ -58,7 +58,8 @@ class postgresql_handle:
                 temp = self.session().query(object).filter(object.time > int(more_than)-1, object.time <
                                                            int(less_than)+1).order_by(object.id.desc()).paginate(limit, offset)
             else:
-                temp = self.session().query(object).order_by(object.id.desc()).paginate(limit, offset)
+                temp = self.session().query(object).order_by(
+                    object.id.desc()).paginate(limit, offset)
         # if more_than and less_than:
         #     temp = self.session().query(object).filter((object.time) > (more_than)
         #                                                ).order_by(object.id.desc()).paginate(limit, offset)
