@@ -59,10 +59,8 @@ def getUserWithoutPasswd(user):
         'add_time': user.add_time,
     }
 
-# get user data and update user status
 
-
-def get_user_data(__status__):
+def user_data_get(__status__):
     if __status__ == None:
         data = postgresql_handle(vls_back_url).list(User_data)
         result = []
@@ -78,10 +76,19 @@ def get_user_data(__status__):
         result = [{'message': 'status change to True'}]
     return result
 
-# add new user and update user date
+
+def user_data_exist(name):
+    data = postgresql_handle(vls_back_url).list(User_data)
+    user_exist = False
+    for i in data:
+        if name == i.name:
+            user_exist = True
+    return user_exist
 
 
-def add_user_data(username, role, email, password, add_time):
+def user_data_new(username, role, email, password, add_time):
+    if user_data_exist(username):
+        return 0
     add_data = User_data(
         name=username,
         role=role,
@@ -91,6 +98,26 @@ def add_user_data(username, role, email, password, add_time):
         add_time=add_time,
     )
     postgresql_handle(vls_back_url).add(add_data)
+    return 1
+
+
+def user_data_edit(id, name, email, role):
+    if user_data_exist(name):
+        return 0
+    postgresql_handle(vls_back_url).update(
+        User_data, (User_data.id == id), {User_data.name: name, User_data.email: email, User_data.role: role})
+    return 1
+
+
+def user_data_password(name, password):
+    postgresql_handle(vls_back_url).update(
+        User_data, (User_data.name == name), {User_data.password: password})
+    return 1
+
+
+def user_data_status(name, status):
+    postgresql_handle(vls_back_url).update(
+        User_data, (User_data.name == name), {User_data.status: status})
     return 1
 
 

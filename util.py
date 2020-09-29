@@ -23,6 +23,10 @@ def alchemy2json_many(model_list):
     return json_list
 
 
+def str2bool(v):
+    return v.lower() in ("yes", "true", "t", "1")
+
+
 class Pagination(object):
     """
     分页对象
