@@ -7,5 +7,6 @@ export default {
     'operation.edit': 'Edit',
     'operation.setting': 'Setting',
     'operation.change': 'Change',
-    'operation.search':'Search'
+    'operation.search': 'Search',
+    'operation.keyword': 'Keyword'
 }

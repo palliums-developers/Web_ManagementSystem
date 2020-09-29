@@ -20,7 +20,6 @@ if (userAgent.indexOf("Firefox") > -1) {
 } else {
   browser = 'Other';
 }
-console.log(browser)
 // export async function fakeAccountLogin(params: LoginParamsType) {
 //   params.password = 'ant.design';
 //   sessionStorage.setItem('user', params.username)

@@ -6,6 +6,8 @@ export default {
     'user.phone': 'Phone',
     'user.add_time': 'Adding Time',
     'user.status': 'Status',
+    'user.status_t': 'Available',
+    'user.status_f': 'Unavailable',
     'user.operation': 'Operation',
     'user.able_status': 'Are you sure to ABLE this account?',
     'user.disable_status': 'Are you sure to DISABLE this account?',

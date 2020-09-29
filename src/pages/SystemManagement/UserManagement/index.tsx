@@ -1,10 +1,12 @@
 import { PageContainer } from '@ant-design/pro-layout';
 import React, { useState, useEffect } from 'react';
-import { Input, Card, Table, Switch, Modal, Checkbox } from 'antd';
+import { Input, Card, Table, Switch, Modal, Checkbox, Button, Select } from 'antd';
 import styles from './index.less';
 import { Link, SelectLang, useModel, useIntl } from 'umi';
 import moment from 'moment';
-import { getUserList } from '@/services/userList';
+import { getUserList, postUserList, user_data } from '@/services/userList';
+import { OmitProps } from 'antd/es/transfer/ListBody';
+import { user_data_interface, status_interface } from './index'
 
 const intl = (_temp: string) => {
   return useIntl().formatMessage({ id: _temp });
@@ -15,27 +17,33 @@ export default () => {
   const [loading, setLoading] = useState<boolean>(true);
   const [userList, setUserList] = useState([]);
   const [keyword, setKeyword] = useState('');
-  const [status, setStatus] = useState(false);
+  const [status, setStatus] = useState({ status: false, name: 'none' });
+  const [operation, setOperation] = useState({ name: 'None', email: 'None', role: 'None' });
   const [status_modal, setStatus_Modal] = useState(false);
   const [operation_modal, setOperation_Modal] = useState(false);
 
-  const statusChange = (checked: boolean, id: Number) => {
-    console.log(`switch to ${checked} ${id}`);
-    setStatus(checked)
+  const statusChange = async (checked: Boolean, name: String) => {
+    let temp: status_interface = { status: !checked, name: name }
+    await setStatus(temp)
     showModal('status')
   }
 
-  const showModal = (target: string) => {
+  const showModal = (target: string, data?: user_data) => {
     if (target == 'status') {
       setStatus_Modal(true);
     } else if (target == 'operation') {
+      console.log(data)
       setOperation_Modal(true);
     }
   }
 
-  const handleModalOk = (target: string) => {
+  const handleModalOk = async (target: string) => {
     if (target == 'status') {
+      let result = await postUserList({ type: 'status', name: status.name, status: status.status })
       setStatus_Modal(false);
+      if (result && result.status === 'ok') {
+        getUserData();
+      }
     } else if (target == 'operation') {
       setOperation_Modal(false);
     }
@@ -49,16 +57,22 @@ export default () => {
     }
   }
 
-  const role_checkbox = (checkedValues) => {
+  const role_checkbox = (checkedValues: Array<String>) => {
     console.log(checkedValues)
   }
 
+  const getUserData = async () => {
+    const temp = await getUserList();
+    setUserList(temp);
+  }
+
   useEffect(() => {
-    (async () => {
-      const temp = await getUserList();
-      setUserList(temp);
-    }
-    )()
+    // (async () => {
+    //   const temp = await getUserList();
+    //   setUserList(temp);
+    // }
+    // )()
+    getUserData();
     setTimeout(() => {
       setLoading(false);
     }, 3000);
@@ -111,12 +125,13 @@ export default () => {
       title: intl('user.status'),
       dataIndex: 'status',
       key: 'status',
-      render: (status: boolean, record: any) => <Switch checked={status} onClick={() => { statusChange(status, record.id) }} />
+      render: (status: boolean, record: user_data) => <Switch checked={status} onClick={() => { statusChange(status, record.name) }} />
     },
     {
       title: intl('user.operation'),
       dataIndex: 'operation',
-      render: (record: Object) => <p style={{color:'Blue',cursor:'pointer',marginBottom:0}}onClick={() => { showModal('operation') }}>{intl('operation.edit')}</p>
+      // TODO:get edit data
+      render: (record: user_data) => <p style={{ color: 'Blue', cursor: 'pointer', marginBottom: 0 }} onClick={() => { showModal('operation', record); console.log(record) }}>{intl('operation.edit')}</p>
     }
   ];
   return (
@@ -139,7 +154,13 @@ export default () => {
           {intl('user.email')}<Input></Input>
           <Checkbox.Group options={role_option} onChange={role_checkbox} />
         </Modal>
-        <Input></Input>
+        <Input placeholder={intl('operation.keyword')} style={{ width: 200 }} />
+        <Select placeholder={intl('user.status')} style={{ width: 200 }} allowClear onClear={() => setStatus({ status: false, name: 'none' })}>
+          <Option value="True">{intl('user.status_t')}</Option>
+          <Option value="False">{intl('user.status_f')}</Option>
+        </Select>
+        <Button type='primary'>{intl('operation.search')}</Button>
+        <Button>{intl('operation.new')}</Button>
         <Table dataSource={userList} columns={columns} />
       </Card>
     </PageContainer>
