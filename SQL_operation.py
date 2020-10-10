@@ -102,7 +102,7 @@ def user_data_new(username, role, email, password, add_time):
 
 
 def user_data_edit(id, name, email, role):
-    if user_data_exist(name):
+    if not user_data_exist(name):
         return 0
     postgresql_handle(vls_back_url).update(
         User_data, (User_data.id == id), {User_data.name: name, User_data.email: email, User_data.role: role})
