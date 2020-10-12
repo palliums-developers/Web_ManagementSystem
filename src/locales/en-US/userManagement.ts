@@ -13,4 +13,6 @@ export default {
     'user.disable_status': 'Are you sure to DISABLE this account?',
     'user.edit_user': 'Edit User',
     'user.add_user': 'Add User',
+    'user.add_user_name':'Please enter Username',
+    'user.add_user_email':'Please enter User Email',
 }

@@ -6,6 +6,7 @@ import { Link, SelectLang, useModel, useIntl } from 'umi';
 import moment from 'moment';
 import { getUserList, postUserList, user_data, operation, status } from '@/services/userList';
 import { str2auth, auth2str } from '@/utils/utils'
+import { lowerCase } from 'lodash';
 // import { user_data_interface, status_interface } from './index'
 
 const intl = (_temp: string) => {
@@ -16,11 +17,12 @@ const intl = (_temp: string) => {
 export default () => {
   const [loading, setLoading] = useState<boolean>(true);
   const [userList, setUserList] = useState([]);
-  const [filter, setFilter] = useState({ keyword: '', status: undefined, userList: [] });
+  const [filter, setFilter] = useState({ keyword: '', status: undefined, userList: [], intlRole: [] });
   const [status, setStatus] = useState<status>({ status: false, name: 'none' });
   const [operation, setOperation] = useState<operation>({ id: 0, name: 'None', email: '', role: '' });
   const [status_modal, setStatus_Modal] = useState(false);
   const [operation_modal, setOperation_Modal] = useState(false);
+  const [add_modal, setAdd_Modal] = useState({ visibility: false, name: '', email: '', role: '' });
 
   const statusChange = async (checked: Boolean, name: string) => {
     let temp: status = { status: !checked, name: name }
@@ -34,35 +36,48 @@ export default () => {
   }
 
   const showModal = (target: string) => {
-    if (target == 'status') {
+    if (target === 'status') {
       setStatus_Modal(true);
-    } else if (target == 'operation') {
+    } else if (target === 'operation') {
       setOperation_Modal(true);
+    } else if (target === 'add') {
+      setAdd_Modal({ visibility: true, name: add_modal.name, email: add_modal.email, role: add_modal.role });
     }
   }
 
   const handleModalOk = async (target: string) => {
-    if (target == 'status') {
+    if (target === 'status') {
       let result = await postUserList({ type: 'status', name: status.name, status: status.status })
       setStatus_Modal(false);
       if (result && result.status === 'ok') {
         getUserData();
       }
-    } else if (target == 'operation') {
+    } else if (target === 'operation') {
       let { id, name, email, role } = operation;
-      let result = await postUserList({ type: 'edit', id: id, name: name, email: email, role: role })
+      let result = await postUserList({ type: 'edit', id: id, name: name, email: email, role: role });
       setOperation_Modal(false);
       if (result && result.status === 'ok') {
+        getUserData();
+        //todo: update table to refresh filter.intlRole
+      }
+    } else if (target === 'add') {
+      let { name, email, role } = add_modal;
+      let result = await postUserList({ type: 'add', name: name, email: email, role: role });
+      setAdd_Modal({ visibility: false, name: add_modal.name, email: add_modal.email, role: add_modal.role });
+      if (result && result.status === 'ok') {
+        //todo: update table to refresh filter.intlRole
         getUserData();
       }
     }
   }
 
   const handleModalCancel = (target: string) => {
-    if (target == 'status') {
+    if (target === 'status') {
       setStatus_Modal(false);
-    } else if (target == 'operation') {
+    } else if (target === 'operation') {
       setOperation_Modal(false);
+    } else if (target === 'add') {
+      setAdd_Modal({ visibility: false, name: add_modal.name, email: add_modal.email, role: add_modal.role });
     }
   }
   const edit_onChange_input_name = async (e: any) => {
@@ -74,12 +89,21 @@ export default () => {
   const edit_onChange_checkbox = async (e: any) => {
     await setOperation({ id: operation.id, name: operation.name, email: operation.email, role: auth2str(e) })
   }
+  const add_onChange_input_name = async (e: any) => {
+    await setAdd_Modal({ visibility: add_modal.visibility, name: e.target.value, email: add_modal.email, role: add_modal.role })
+  }
+  const add_onChange_input_email = async (e: any) => {
+    await setAdd_Modal({ visibility: add_modal.visibility, name: add_modal.name, email: e.target.value, role: add_modal.role })
+  }
+  const add_onChange_checkbox = async (e: any) => {
+    await setAdd_Modal({ visibility: add_modal.visibility, name: add_modal.name, email: add_modal.email, role: auth2str(e) })
+  }
 
   const filter_onChange_keyword = async (e: any) => {
-    await setFilter({ keyword: e.target.value, status: filter.status, userList: filter.userList })
+    await setFilter({ keyword: e.target.value, status: filter.status, userList: filter.userList, intlRole: filter.intlRole })
   }
   const filter_onChange_status = async (e: any) => {
-    await setFilter({ keyword: filter.keyword, status: e, userList: filter.userList })
+    await setFilter({ keyword: filter.keyword, status: e, userList: filter.userList, intlRole: filter.intlRole })
   }
   const filter_onClick_search = () => {
     let filter_list: any = [];
@@ -93,7 +117,7 @@ export default () => {
       filter_list = userList;
     }
     if (filter.keyword) {
-      let keyword_filter_list :any[]= [];
+      let keyword_filter_list: any[] = [];
       for (let item1 in filter_list) {
         for (let item2 in filter_list[item1]) {
           if (item2 === 'role') {
@@ -107,37 +131,46 @@ export default () => {
             //   //  roles.push(intl(`role.${item3}`))
             //   console.log(item3)
             // });
-            // console.log(intl('role.admin'))
-          } else if (item2 === 'add_time') {
-
-          } else if (item2 !== 'status') {
-            console.log((''+filter_list[item1][item2]).search(filter.keyword)>-1,filter_list[item1])
-            if((''+filter_list[item1][item2]).search(/filter.keyword/!)>-1){
-              //todo cannot enter this function
-              console.log(filter_list[item1])
+            console.log(item1, filter_list[item1][item2], filter.intlRole[item1])
+            if (lowerCase(filter.intlRole[item1]).search(lowerCase(filter.keyword)) > -1) {
               keyword_filter_list.push(filter_list[item1]);
-              continue;
+              break;
+            }
+          } else if (item2 === 'add_time') {
+            if (moment(filter_list[item1][item2] * 1000).format('YYYY-MM-DD HH:mm:ss').search(filter.keyword) > -1) {
+              keyword_filter_list.push(filter_list[item1]);
+              break;
+            }
+          } else if (item2 !== 'status') {
+            if (lowerCase(('' + filter_list[item1][item2])).search(lowerCase(filter.keyword)) > -1) {
+              keyword_filter_list.push(filter_list[item1]);
+              break;
             }
           }
           // if (!('' + filter_list[item1][item2]).search(filter.keyword)) {
           //   console.log(item2, filter_list[item1][item2])
-            // filter_list.splice(item1, 1);
-            // break;
+          // filter_list.splice(item1, 1);
+          // break;
           // }
         }
       }
-      console.log(keyword_filter_list)
       filter_list = keyword_filter_list;
     }
-    console.log(filter_list)
-    setFilter({ keyword: filter.keyword, status: filter.status, userList: filter_list });
+    setFilter({ keyword: filter.keyword, status: filter.status, userList: filter_list, intlRole: filter.intlRole });
   }
 
+  const getIntlRole = async (roles: string[]) => {
+    if (filter.intlRole.length < filter.userList.length) {
+      const temp = filter.intlRole;
+      temp.push(roles.toString());
+      await setFilter({ keyword: filter.keyword, status: filter.status, userList: filter.userList, intlRole: temp })
+    }
+  }
 
   const getUserData = async () => {
-    const temp = await getUserList();
-    setUserList(temp);
-    setFilter({ keyword: filter.keyword, status: filter.status, userList: temp });
+    const temp1 = await getUserList();
+    setUserList(temp1);
+    setFilter({ keyword: filter.keyword, status: filter.status, userList: temp1, intlRole: filter.intlRole });
   }
 
   useEffect(() => {
@@ -178,7 +211,8 @@ export default () => {
       render: (role: string) => {
         let roles: string[] = [];
         str2auth(role).forEach(function (item) { roles.push(intl(`role.${item}`)) });
-        return roles.join(', ')
+        getIntlRole(roles);
+        return roles.join(', ');
       }
     },
     {
@@ -238,13 +272,30 @@ export default () => {
             onChange={edit_onChange_checkbox}
           />
         </Modal>
+        <Modal
+          title={intl('user.add_user')}
+          visible={add_modal.visibility}
+          onOk={() => handleModalOk('add')}
+          onCancel={() => handleModalCancel('add')}
+          keyboard={true}
+          forceRender={true}
+          destroyOnClose={true}
+        >
+          {intl('user.name')}<Input placeholder={intl('user.add_user_name')} onChange={add_onChange_input_name}></Input>
+          {intl('user.email')}<Input placeholder={intl('user.add_user_email')} onChange={add_onChange_input_email}></Input>
+          <Checkbox.Group
+            options={role_option}
+            // defaultValue={str2auth(operation.role)}
+            onChange={add_onChange_checkbox}
+          />
+        </Modal>
         <Input allowClear={true} placeholder={intl('operation.keyword')} style={{ width: 200 }} onChange={filter_onChange_keyword} />
         <Select onChange={filter_onChange_status} placeholder={intl('user.status')} style={{ width: 200 }} allowClear onClear={() => setStatus({ status: false, name: 'none' })}>
           <Option value="true">{intl('user.status_t')}</Option>
           <Option value="false">{intl('user.status_f')}</Option>
         </Select>
         <Button type='primary' onClick={filter_onClick_search}>{intl('operation.search')}</Button>
-        <Button>{intl('operation.new')}</Button>
+        <Button onClick={() => showModal('add')}>{intl('operation.new')}</Button>
         <Table dataSource={filter.userList} columns={columns} />
       </Card>
     </PageContainer>
