@@ -8,6 +8,8 @@ const { REACT_APP_ENV } = process.env;
 // const intl = (_temp: string) => {
 //   return useIntl().formatMessage({ id: _temp });
 // }
+let vls_back_management_url='http://localhost:5000/';
+
 export default defineConfig({
   hash: true,
   antd: {},
@@ -105,7 +107,21 @@ export default defineConfig({
       path: 'coin',
       name: 'coin',
       icon: 'dollar',
-      component: './CoinManagement'
+      // component: './CoinManagement'
+      routes:[
+        {
+          path:'deposit',
+          name:'Deposit',
+          icon:'facebook',
+          component:'./CoinManagement/Deposit',
+        },
+        {
+          path:'borrow',
+          name:'Borrow',
+          icon:'facebook',
+          component:'./CoinManagement/Borrow',
+        }
+      ],
     },
     // {
     //   path: '/admin',
@@ -147,23 +163,28 @@ export default defineConfig({
   // proxy: proxy[REACT_APP_ENV || 'dev'],
   proxy: {
     '/api/login': {
-      'target': 'http://localhost:5000/',
+      'target': vls_back_management_url,
       'changeOrigin': true,
       'pathRewrite': { '^/localhost': '' }
     },
     '/api/loginLog': {
-      'target': 'http://localhost:5000/',
+      'target': vls_back_management_url,
       'changeOrigin': true,
       'pathRewrite': { '^/localhost': '' }
     }
     ,
     '/api/operationLog': {
-      'target': 'http://localhost:5000/',
+      'target': vls_back_management_url,
       'changeOrigin': true,
       'pathRewrite': { '^/localhost': '' }
     },
     '/api/user': {
-      'target': 'http://localhost:5000/',
+      'target': vls_back_management_url,
+      'changeOrigin': true,
+      'pathRewrite': { '^/localhost': '' }
+    },
+    '/api/bank': {
+      'target': vls_back_management_url,
       'changeOrigin': true,
       'pathRewrite': { '^/localhost': '' }
     },

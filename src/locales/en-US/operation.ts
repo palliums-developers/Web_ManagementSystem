@@ -1,4 +1,5 @@
 export default {
+    'operation':'Operation',
     'operation.new': 'New',
     'operation.del': 'Delete',
     'operation.save': 'Save',

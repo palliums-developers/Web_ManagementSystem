@@ -4,7 +4,7 @@ import { Input, Card, Table, Switch, Modal, Checkbox, Button, Select } from 'ant
 import styles from './index.less';
 import { Link, SelectLang, useModel, useIntl } from 'umi';
 import moment from 'moment';
-import { getUserList, postUserList, user_data, operation, status } from '@/services/userList';
+import { getUserList, postUserList, user_data, operation, status, filter, userList } from '@/services/userList';
 import { str2auth, auth2str } from '@/utils/utils'
 import { lowerCase } from 'lodash';
 // import { user_data_interface, status_interface } from './index'
@@ -13,11 +13,12 @@ const intl = (_temp: string) => {
   return useIntl().formatMessage({ id: _temp });
 }
 
+const { Option } = Select;
 
 export default () => {
   const [loading, setLoading] = useState<boolean>(true);
-  const [userList, setUserList] = useState([]);
-  const [filter, setFilter] = useState({ keyword: '', status: undefined, userList: [], intlRole: [] });
+  const [userList, setUserList] = useState<userList>();
+  const [filter, setFilter] = useState<filter>({ keyword: '', status: undefined, userList: [], intlRole: [] });
   const [status, setStatus] = useState<status>({ status: false, name: 'none' });
   const [operation, setOperation] = useState<operation>({ id: 0, name: 'None', email: '', role: '' });
   const [status_modal, setStatus_Modal] = useState(false);
