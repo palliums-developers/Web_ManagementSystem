@@ -67,3 +67,9 @@ class ViolasBankDepositProduct(Base):
     currency = Column(String(16), nullable=False)
     rate = Column(Numeric, nullable=True)
     rate_desc = Column(Text, nullable=True)
+    status=Column(Boolean,nullable=False)
+
+#  1 | 1000001    | USD存款01    | violas.png |        1000000 | 1000000000 |         0.5 | USD存款测试产品 | [{"title": "①", "text": "对利息的计算规则进行说"}, {"title": "②", "text": "平台保证用户资金的安全"}] | [{"title": "怎么买？", "text": "使用Violas Wallet钱包直接购买。"}, {"title": "安全么？", "text":"很安全"}] | USD      | 0.04 | 年化收益率 |      1000000
+# 2 | 1000002    | EUR存款01    | violas.png |        1000000 | 1000000000 |         0.5 | EUR存款测试产品 | [{"title": "①", "text": "对利息的计算规则进行说"}, {"title": "②", "text": "平台保证用户资金的安全"}] | [{"title": "怎么买？", "text": "使用Violas Wallet钱包直接购买。"}, {"title": "安全么？", "text":"很安全"}] | EUR      | 0.02 | 年化收益率 |      1000000
+
+#insert into deposit_product (product_id,product_name,logo,minimum_amount,max_limit,pledge_rate,description,intor,question,currency,rate,rate_desc,minimum_step,status) values ('1000001','USD存款01','violas.png',1000000,1000000000,0.5,'USD存款测试产品','[{"title": "①", "text": "对利息的计算规则进行说"}, {"title": "②", "text": "平台保证 户资金的安全"}]',' [{"title": "怎么买？", "text": "使用Violas Wallet钱包直接购买。"}, {"title": "安全么？", "text":"很安全"}]','USD',0.04,'年化收益率',1000000,true);

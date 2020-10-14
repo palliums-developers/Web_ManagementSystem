@@ -65,3 +65,7 @@ class postgresql_handle:
         #                                                ).order_by(object.id.desc()).paginate(limit, offset)
         # temp.close()
         return temp
+
+    def paginate2(self, object, limit, offset, filter):
+        Query.paginate = paginate
+        return self.session().query(object).filter(filter).paginate(limit, offset)

@@ -1,7 +1,7 @@
 import configparser
 from sqlalchemy import create_engine
 from SQL_service import postgresql_handle
-from SQL_table import Login, User_data, Operation
+from SQL_table import Login, User_data, Operation, ViolasBankBorrowProduct, ViolasBankDepositProduct
 from util import alchemy2json_many
 
 config_path = './config.ini'
@@ -10,17 +10,11 @@ config.read(config_path)
 
 vls_back = config['violas_backend_management']
 vls_back_url = f"{vls_back['dbtype']}+{vls_back['driver']}://{vls_back['user']}:{vls_back['password']}@{vls_back['host']}:{vls_back['port']}/{vls_back['database']}"
+
+vls_bank = config['digital_bank']
+vls_bank_url = f"{vls_bank['dbtype']}+{vls_bank['driver']}://{vls_bank['user']}:{vls_bank['PASSWORD']}@{vls_bank['host']}:{vls_bank['PORT']}/{vls_bank['DATABASE']}"
+
 # vls_back_url = f"postgresql://{vls_back['user']}:{vls_back['password']}@{vls_back['host']}:{vls_back['port']}/{vls_back['database']}"
-
-# print(vls_back_url)
-
-# print(postgresql_handle(vls_back_url).filterall(Login, Login.name == 'violas'))
-# print(postgresql_handle(vls_back_url).list(Login))
-# list1=postgresql_handle(vls_back_url).list(Login)
-# print(list1)
-# for i in list1:
-#     print(i.time)
-
 
 def login_function(username, password):
     data = postgresql_handle(vls_back_url).list(User_data)
@@ -166,3 +160,33 @@ def operation_log_list(page, per_page, name=None, date_start=None, date_end=None
     }
     return result
 # login_function('xingezhe', 'gezhexinlian')
+
+# use violas bank database
+def depositOrBorrowData(data):
+    return {
+    'id':data.id,
+    'product_id':data.product_id,
+    'product_name':data.product_name,
+    'logo':data.logo,
+    'minimum_amount':data.minimum_amount,
+    'max_limit':data.max_limit,
+    'pledge_rate':float(data.pledge_rate),
+    'description':data.description,
+    'intor':data.intor,
+    'question':data.question,
+    'currency':data.currency,
+    'rate':float(data.rate),
+    'rate_desc':data.rate_desc,
+    'status':data.status
+    }
+
+def get_bank_data(type):
+    bank_table = ViolasBankBorrowProduct
+    if type == 'deposit':
+        bank_table = ViolasBankDepositProduct
+    data = postgresql_handle(vls_back_url).list(bank_table)
+    result=[]
+    for i in data:
+        result.append(depositOrBorrowData(i))
+    return result
+
