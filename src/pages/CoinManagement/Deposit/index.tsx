@@ -17,6 +17,7 @@ export default () => {
   const [showData, setShowData] = useState<show_data[]>([{ id: 999, name: 'Loading', description: 'Loading', min: 0, max: 0, increase: 0, status: false }]);
   const [status, setStatus] = useState({ status: false, id: 0 });
   const [modal, setModal] = useState({ status: false, add: false, edit: false, view: false });
+  const [postData,setPostData]=useState();
   const [temp_status, setTemp_status] = useState(false);
   const filter_onClick_search = () => {
     console.log('search')
