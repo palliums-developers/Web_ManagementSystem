@@ -1,6 +1,6 @@
 import { request } from 'umi';
 
-export interface bank_product {
+export interface raw_bank_product {
     id: number,
     product_id: string,
     product_name: string,
@@ -15,6 +15,23 @@ export interface bank_product {
     rate: number,
     rate_desc: string,
     status:boolean
+}
+
+export interface bank_product {
+    id?: number,
+    product_id?: string,
+    product_name?: string,
+    logo?: string,
+    minimum_amount?: number,
+    max_limit?: number,
+    pledge_rate?: number,
+    description?: string,
+    intor?: string,
+    question?: string,
+    currency?: string,
+    rate?: number,
+    rate_desc?: string,
+    status?:boolean
 }
 
 export interface show_data {
@@ -33,4 +50,17 @@ export async function getBankProduct(type: string | undefined) {
         url += `?type=${type}`
     }
     return request(url);
+}
+
+export async function postBankProduct(type:string,database:string,data:bank_product){
+    let url = '/api/bank';
+    let params={
+        "type":type,
+        "database":database,
+        "data":data
+    }
+    return request(url,{
+        method: 'POST',
+        data: params,
+    })
 }
