@@ -120,6 +120,11 @@ export default defineConfig({
           name:'Borrow',
           icon:'facebook',
           component:'./CoinManagement/Borrow',
+        },
+        {
+          path:'modify',
+          // name:'modify',
+          component:'./CoinManagement/BankEdit'
         }
       ],
     },
