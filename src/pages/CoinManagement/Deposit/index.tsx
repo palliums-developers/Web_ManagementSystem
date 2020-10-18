@@ -4,6 +4,8 @@ import { Card, Input, Select, Table, Button, Switch, Modal } from 'antd';
 import styles from './index.less';
 import { useIntl } from 'umi';
 import { getBankProduct, postBankProduct, bank_product, show_data, raw_bank_product, modal } from '@/services/bank';
+import { lowerCase } from 'lodash';
+import { raw } from 'express';
 
 const intl = (_temp: string) => {
   return useIntl().formatMessage({ id: _temp });
@@ -15,11 +17,35 @@ export default () => {
   const [loading, setLoading] = useState<boolean>(true);
   const [rawData, setRawData] = useState<bank_product[]>();
   const [showData, setShowData] = useState<show_data[]>([{ id: 999, name: 'Loading', description: 'Loading', min: 0, max: 0, increase: 0, status: false }]);
-  const [status, setStatus] = useState({ status: false, id: 0 });
+  const [search, setSearch] = useState({ keyword: '', status: undefined });
   const [modal, setModal] = useState<modal>({ status: false, view: false, data: {} });
   const [postData, setPostData] = useState();
   const filter_onClick_search = () => {
-    console.log('search')
+    let temp:any=[];
+    if(search.status!==undefined){
+      for(let item in rawData){
+        if(rawData[item].status===(search.status==='true')){
+          temp.push(rawData[item]);
+        }
+      }
+    }else{
+      temp=rawData;
+    }
+    if(search.keyword!==''){
+      let keyword_filter_list: any[] = [];
+      for(let item1 in temp){
+        for(let item2 in temp[item1]){
+          if(item2==='product_name' || item2==='description' || item2==='minimum_amount' || item2==='max_limit' || item2==='pledge_rate'){
+            if(lowerCase((''+temp[item1][item2])).search(lowerCase(search.keyword))>-1){
+              keyword_filter_list.push(temp[item1]);
+              break;
+            }
+          }
+        }
+      }
+      temp=keyword_filter_list;
+    }
+    setShowData(getShowDataFromRawData(temp));
   }
   const showModal = (type: string, data?: any) => {
     switch (type) {
@@ -27,17 +53,17 @@ export default () => {
         setModal({ status: true, view: false, data: data });
         break;
       case 'add':
-        localStorage.setItem('edit',JSON.stringify('add'));
+        localStorage.setItem('edit', JSON.stringify('add'));
         break;
       case 'edit':
-        let edit_data=''
-        for(let i in rawData){
-          if(rawData[i].id===data.id){
-            edit_data=JSON.stringify(rawData[i]);
+        let edit_data = ''
+        for (let i in rawData) {
+          if (rawData[i].id === data.id) {
+            edit_data = JSON.stringify(rawData[i]);
             break;
           }
         }
-        localStorage.setItem('edit',JSON.stringify(edit_data))
+        localStorage.setItem('edit', JSON.stringify(edit_data))
         break;
       case 'view':
         console.log(data)
@@ -92,9 +118,11 @@ export default () => {
     }
     return result;
   }
-
-  const filter_onChange_status = () => {
-    console.log(11)
+  const keyword_input = async (e: any) => {
+    setSearch({ keyword: e.target.value, status: search.status })
+  }
+  const filter_onChange_status = async (e: any) => {
+    setSearch({ keyword: search.keyword, status: e })
   }
   useEffect(() => {
     initial()
@@ -181,8 +209,8 @@ export default () => {
           <h1>view</h1>
         </Modal>
         <div>
-          <Input allowClear={true} placeholder={intl('operation.keyword')} style={{ width: 200 }} />
-          <Select onChange={filter_onChange_status} placeholder={intl('user.status')} style={{ width: 200 }} allowClear onClear={() => setStatus({ status: false, id: 0 })}>
+          <Input allowClear={true} placeholder={intl('operation.keyword')} style={{ width: 200 }} onChange={keyword_input} />
+          <Select onChange={filter_onChange_status} placeholder={intl('user.status')} style={{ width: 200 }} allowClear onClear={() => setSearch({ keyword: search.keyword, status: undefined })}>
             <Option value="true">{intl('user.status_t')}</Option>
             <Option value="false">{intl('user.status_f')}</Option>
           </Select>

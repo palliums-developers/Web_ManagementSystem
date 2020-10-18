@@ -9,5 +9,6 @@ export default {
     'operation.setting': 'Setting',
     'operation.change': 'Change',
     'operation.search': 'Search',
-    'operation.keyword': 'Keyword'
+    'operation.keyword': 'Keyword',
+    'operation.confirm':'Confirm',
 }

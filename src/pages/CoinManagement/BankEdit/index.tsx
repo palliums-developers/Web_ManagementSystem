@@ -58,33 +58,33 @@ export default () => {
       <Card>
         <p>{intl('bank.currency')}:<Input style={{ width: 200 }}></Input></p>
         <p>
-          {intl('bank.currency')}:<Input style={{ width: 200 }}></Input>
-          {intl('bank.currency')}:<Input style={{ width: 200 }}></Input>
+          {intl('bank.min_deposit')}:<Input style={{ width: 200 }}></Input>
+          {intl('bank.step_deposit')}:<Input style={{ width: 200 }}></Input>
         </p>
-        <p>{intl('bank.currency')}:<Input style={{ width: 200 }}></Input></p>
+        <p>{intl('bank.daily_deposit')}:<Input style={{ width: 200 }}></Input></p>
         <Checkbox.Group
           options={options}
           onChange={selectLanguage}
         />
         <h1>中文</h1>
-        <p>{intl('bank.introduction')}:<Input style={{ width: 200 }}></Input></p>
+        <p>简介:<Input style={{ width: 200 }} placeholder='请输入简介'></Input></p>
         <p>
-          {intl('bank.description')}
-          <TextArea className='inputArea' rows={4} allowClear showCount maxLength={100} />
+          产品说明:
+          <TextArea className='inputArea' rows={4} allowClear showCount maxLength={100} placeholder='请输入产品说明'/>
         </p>
         <p>
-          {intl('bank.questions')}
-          <TextArea className='inputArea' rows={4} allowClear showCount maxLength={100} />
+          常见问题:
+          <TextArea className='inputArea' rows={4} allowClear showCount maxLength={100} placeholder='请输入常见问题'/>
         </p>
         <h1>English</h1>
-        <p>{intl('bank.introduction')}:<Input style={{ width: 200 }}></Input></p>
+        <p>{intl('bank.introduction')}:<Input style={{ width: 200 }} placeholder='Please Enter Introduction'></Input></p>
         <p>
           {intl('bank.description')}
-          <TextArea className='inputArea' rows={4} allowClear showCount maxLength={100} />
+          <TextArea className='inputArea' rows={4} allowClear showCount maxLength={100} placeholder='Please enter description'/>
         </p>
         <p>
           {intl('bank.questions')}
-          <TextArea className='inputArea' rows={4} allowClear showCount maxLength={100} />
+          <TextArea className='inputArea' rows={4} allowClear showCount maxLength={100} placeholder='Please enter question'/>
         </p>
         <Button type='primary'>{intl('operation.confirm')}</Button>
         <h1>{intl('bank.operation_log')}</h1>
