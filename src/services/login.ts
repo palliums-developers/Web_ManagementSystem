@@ -6,6 +6,7 @@ export interface LoginParamsType {
   browser?: string;
   CAPTCHA: string;
   type: string;
+  token?:string
 }
 let userAgent = navigator.userAgent;
 let browser = '';

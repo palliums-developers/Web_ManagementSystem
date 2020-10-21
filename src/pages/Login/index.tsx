@@ -64,6 +64,7 @@ const Login: React.FC<{}> = () => {
       if (msg.status === 'ok') {
         // let temp = intl('login.success')
         message.success('Login Success!');
+        sessionStorage.setItem('JWT', msg.token);
         replaceGoto();
         setTimeout(() => {
           refresh();

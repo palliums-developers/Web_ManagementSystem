@@ -3,7 +3,7 @@ import React, { useState, useEffect } from 'react';
 import { Card, Input, Select, Table, Button, Switch, Modal } from 'antd';
 import styles from './index.less';
 import { useIntl } from 'umi';
-import { getBankProduct, postBankProduct, bank_product, show_data, raw_bank_product, modal } from '@/services/bank';
+import { getBankProduct, postBankProduct, bank_product, show_data, raw_bank_product, modal, local_data } from '@/services/bank';
 import { lowerCase } from 'lodash';
 import { raw } from 'express';
 
@@ -21,49 +21,55 @@ export default () => {
   const [modal, setModal] = useState<modal>({ status: false, view: false, data: {} });
   const [postData, setPostData] = useState();
   const filter_onClick_search = () => {
-    let temp:any=[];
-    if(search.status!==undefined){
-      for(let item in rawData){
-        if(rawData[item].status===(search.status==='true')){
+    let temp: any = [];
+    if (search.status !== undefined) {
+      for (let item in rawData) {
+        if (rawData[item].status === (search.status === 'true')) {
           temp.push(rawData[item]);
         }
       }
-    }else{
-      temp=rawData;
+    } else {
+      temp = rawData;
     }
-    if(search.keyword!==''){
+    if (search.keyword !== '') {
       let keyword_filter_list: any[] = [];
-      for(let item1 in temp){
-        for(let item2 in temp[item1]){
-          if(item2==='product_name' || item2==='description' || item2==='minimum_amount' || item2==='max_limit' || item2==='pledge_rate'){
-            if(lowerCase((''+temp[item1][item2])).search(lowerCase(search.keyword))>-1){
+      for (let item1 in temp) {
+        for (let item2 in temp[item1]) {
+          if (item2 === 'product_name' || item2 === 'description' || item2 === 'minimum_amount' || item2 === 'max_limit' || item2 === 'pledge_rate') {
+            if (lowerCase(('' + temp[item1][item2])).search(lowerCase(search.keyword)) > -1) {
               keyword_filter_list.push(temp[item1]);
               break;
             }
           }
         }
       }
-      temp=keyword_filter_list;
+      temp = keyword_filter_list;
     }
     setShowData(getShowDataFromRawData(temp));
   }
   const showModal = (type: string, data?: any) => {
+    let localEdit: local_data = {
+      operation: '',
+      database: 'deposit',
+      data: {}
+    }
     switch (type) {
       case 'status':
         setModal({ status: true, view: false, data: data });
         break;
       case 'add':
-        localStorage.setItem('edit', JSON.stringify('add'));
+        localEdit.operation = 'add',
+          localStorage.setItem('edit', JSON.stringify(localEdit));
         break;
       case 'edit':
-        let edit_data = ''
         for (let i in rawData) {
           if (rawData[i].id === data.id) {
-            edit_data = JSON.stringify(rawData[i]);
+            localEdit.data = (rawData[i]);
             break;
           }
         }
-        localStorage.setItem('edit', JSON.stringify(edit_data))
+        localEdit.operation = 'edit';
+        localStorage.setItem('edit', JSON.stringify(localEdit))
         break;
       case 'view':
         console.log(data)
@@ -168,7 +174,7 @@ export default () => {
       title: intl('operation'),
       // dataIndex: 'operation',
       // key: 'operation'
-      render: (index: number, record: show_data) => <div className={styles.raw_operation}><p onClick={() => showModal('edit', record)}>{intl('operation.edit')}  </p>|<p onClick={() => showModal('view', record)}>{intl('operation.view')}</p></div>
+      render: (index: number, record: show_data) => <div className={styles.raw_operation}><a onClick={() => showModal('edit', record)} href='/coin/modify'>{intl('operation.edit')}</a>|<p onClick={() => showModal('view', record)}>{intl('operation.view')}</p></div>
     },
   ]
 
@@ -215,7 +221,7 @@ export default () => {
             <Option value="false">{intl('user.status_f')}</Option>
           </Select>
           <Button type='primary' onClick={filter_onClick_search}>{intl('operation.search')}</Button>
-          <Button onClick={() => showModal('add')}>{intl('operation.new')}</Button>
+          <Button onClick={() => showModal('add')} href='/coin/modify'>{intl('operation.new')}</Button>
         </div>
         <Table dataSource={showData} columns={columns} />
       </Card>

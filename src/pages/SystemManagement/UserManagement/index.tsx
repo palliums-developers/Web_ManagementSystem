@@ -132,7 +132,6 @@ export default () => {
             //   //  roles.push(intl(`role.${item3}`))
             //   console.log(item3)
             // });
-            console.log(item1, filter_list[item1][item2], filter.intlRole[item1])
             if (lowerCase(filter.intlRole[item1]).search(lowerCase(filter.keyword)) > -1) {
               keyword_filter_list.push(filter_list[item1]);
               break;

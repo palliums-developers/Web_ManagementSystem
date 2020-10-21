@@ -109,7 +109,7 @@ export default () => {
   return (
     <PageContainer>
       <Card>
-        <Input placeholder={intl('systemLog.name')} onChange={getName} />
+        <Input placeholder={intl('systemLog.name')} onChange={getName} allowClear={true}/>
         <RangePicker
           showTime={{ format: 'HH:mm' }}
           format="YYYY-MM-DD HH:mm"

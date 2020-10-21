@@ -1,4 +1,4 @@
-import { status } from '@/services/userList';
+import { status, operation } from '@/services/userList';
 import { request } from 'umi';
 
 export interface raw_bank_product {
@@ -48,6 +48,12 @@ export interface show_data {
     max: number,
     increase: number,
     status: boolean
+}
+
+export interface local_data {
+    operation: string,
+    database: string,
+    data: bank_product
 }
 
 export async function getBankProduct(type: string | undefined) {
