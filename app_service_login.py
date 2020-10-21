@@ -3,6 +3,7 @@ from SQL_operation import login_function, login_log_addone
 import requests
 import time
 import hashlib
+from util import redis_operation, jwt_operation
 # from SQL_table import Login as Login_table, User_data, Operation
 
 parser = reqparse.RequestParser()
@@ -33,7 +34,11 @@ class Login(Resource):
         location = self.getLocation(ip)
         # print(__args__.browser, ip, location_url, location, now)
         if __temp__['state'] > 0:
-            login_log_addone(__args__.username, ip, now, location, __args__.browser)
+            login_log_addone(__args__.username, ip, now,
+                             location, __args__.browser)
+            token=jwt_operation('encode',{'name':__args__.username,'time':now,'ip':ip})
+            redis_operation('set',__args__.username,token)
+            __temp__['token']=token
             return __temp__, 201
             # elif __temp__ < 0:
             #     return {'message':'Wrong Username or Password'},202

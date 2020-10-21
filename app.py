@@ -7,7 +7,9 @@ from app_service_user import User
 from app_service_bank import Bank
 from flask_cors import CORS
 
+
 app = Flask(__name__)
+
 api = Api(app)
 cors = CORS(app, resources={r"/api/*": {"origins": "*"}})
 

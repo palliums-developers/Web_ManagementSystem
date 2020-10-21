@@ -215,9 +215,41 @@ def depositOrBorrowData2Dict(data):
     }
 
 
-def dict2Table(table, data):
-    for i in data:
-        print(i, data[i])
+def dict2Table_add(table, data):
+    return table(
+        currency=data['currency'],
+        description=data['description'],
+        # id=data[id],
+        intor=data['intor'],
+        logo=data['logo'],
+        max_limit=data['max_limit'],
+        minimum_amount=data['minimum_amount'],
+        pledge_rate=data['pledge_rate'],
+        product_id=data['product_id'],
+        product_name=data['product_name'],
+        question=data['question'],
+        rate=data['rate'],
+        rate_desc=data['rate_desc'],
+        status=data['status'],
+    )
+
+
+def dict2Table_edit(table, data):
+    return {
+        table.currency: data['currency'],
+        table.description: data['description'],
+        table.intor: data['intor'],
+        table.logo: data['logo'],
+        table.max_limit: data['max_limit'],
+        table.minimum_amount: data['minimum_amount'],
+        table.pledge_rate: data['pledge_rate'],
+        table.product_id: data['product_id'],
+        table.product_name: data['product_name'],
+        table.question: data['question'],
+        table.rate: data['rate'],
+        table.rate_desc: data['rate_desc'],
+        table.status: data['status'],
+    }
 
 
 def get_bank_data(type):
@@ -232,15 +264,17 @@ def get_bank_data(type):
     return result
 
 
-def bank_data_exit(type, product_name, product_id):
+def bank_data_exit(database_type, product_name, product_id=None):
     bank_table = ViolasBankBorrowProduct
-    if type == 'deposit':
+    if database_type == 'deposit':
         bank_table = ViolasBankDepositProduct
     data = postgresql_handle(vls_back_url).list(bank_table)
     result = 0
     for i in data:
-        if i.product_name == product_name or i.product_id == product_id:
-            result = 1
+        if i.product_name == product_name:
+            result += 1
+        if i.product_id == product_id:
+            result += 1
     return result
 
 
@@ -248,19 +282,22 @@ def edit_bank_data(type, database, data):
     bank_table = ViolasBankBorrowProduct
     if database == 'deposit':
         bank_table = ViolasBankDepositProduct
-    result = 0
+    result = {'message': ''}
     if type == 'add':
-        # todo
-        dict2Table(bank_table, data)
-        # add_data=ViolasBankDepositProduct()
-        # result=postgresql_handle(bank_table).add()
+        if bank_data_exit(database, data['product_name']) > 0:
+            result['message'] = 'please use different name or id'
+            return result
+        add_data = dict2Table_add(bank_table, data)
+        postgresql_handle(vls_back_url).add(add_data)
     elif type == 'status':
-        print(data)
         postgresql_handle(vls_back_url).update(
             bank_table, (bank_table.id == data['id']), {bank_table.status: data['status']})
-        #     postgresql_handle(vls_back_url).update(
-        # User_data, (User_data.name == name), {User_data.status: status})
-        result = 1
-    elif type=='edit':
-        print(data)
+        result['message'] = 'ok'
+    elif type == 'edit':
+        if bank_data_exit(database, data['product_name'], data['product_id']) == 0:
+            result['message'] = 'this product not exist'
+            return result
+        postgresql_handle(vls_back_url).update(
+            bank_table, (bank_table.id == data['id']), dict2Table_edit(bank_table, data))
+        result['message'] = 'ok'
     return result
