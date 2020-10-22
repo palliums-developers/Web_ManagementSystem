@@ -31,7 +31,8 @@ class Operation(Base):
     id = Column(Integer, primary_key=True)
     name = Column(String(50))
     role = Column(String(20))
-    operation = Column(String(50))
+    operation = Column(Text)
+    operation_type = Column(String(50))
     time = Column(String(20))
 
 

@@ -147,7 +147,7 @@ def operation_log_addone(name, role, operation, time):
     return 1
 
 
-def operation_log_list(page, per_page, name=None, date_start=None, date_end=None):
+def operation_log_list(type,page, per_page, name=None, date_start=None, date_end=None):
     data_raw = postgresql_handle(vls_back_url).paginate(
         Operation, page, per_page, name, date_start, date_end)
     result = {
@@ -160,9 +160,51 @@ def operation_log_list(page, per_page, name=None, date_start=None, date_end=None
         'items': alchemy2json_many(data_raw.items)
     }
     return result
-# login_function('xingezhe', 'gezhexinlian')
 
-# use violas bank database
+
+def operation_log_list2(type, page, per_page, name=None, date_start=None, date_end=None):
+    if date_end and date_start:
+        time1 = int(date_start)-1
+        time2 = int(date_end)+1
+        if not type == 'all':
+            if name:
+                data_raw = postgresql_handle(vls_back_url).paginate2(Operation, page, per_page, (
+                    Operation.name == name, Operation.operation_type == type, Operation.time > time1, Operation.time < time2))
+            else:
+                data_raw = postgresql_handle(vls_back_url).paginate2(Operation, page, per_page, (
+                    Operation.operation_type == type, Operation.time > time1, Operation.time < time2))
+        else:
+            if name:
+                data_raw = postgresql_handle(vls_back_url).paginate2(Operation, page, per_page, (
+                    Operation.name == name, Operation.time > time1, Operation.time < time2))
+            else:
+                data_raw = postgresql_handle(vls_back_url).paginate2(
+                    Operation, page, per_page, (Operation.time > time1, Operation.time < time2))
+    else:
+        if not type == 'all':
+            if name:
+                data_raw = postgresql_handle(vls_back_url).paginate2(
+                    Operation, page, per_page, (Operation.name == name, Operation.operation_type == type))
+            else:
+                data_raw = postgresql_handle(vls_back_url).paginate2(
+                    Operation, page, per_page, (Operation.operation_type == type))
+        else:
+            if name:
+                data_raw = postgresql_handle(vls_back_url).paginate2(
+                    Operation, page, per_page, (Operation.name == name))
+            else:
+                data_raw = postgresql_handle(vls_back_url).paginate2(
+                    Operation, page, per_page, None)
+    result = {
+        'page': data_raw.page,
+        'pages': data_raw.pages,
+        'pageSize': per_page,
+        'total': data_raw.total,
+        'has_prev': data_raw.has_prev,
+        'has_next': data_raw.has_next,
+        'items': alchemy2json_many(data_raw.items)
+    }
+    return result
 
 
 def depositOrBorrowData2Dict(data):

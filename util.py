@@ -103,7 +103,6 @@ def paginate(self, page=None, per_page=None, error_out=True):
     :param error_out:
     :return:
     """
-    print(request)
     if request:
         if page is None:
             try:
