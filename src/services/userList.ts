@@ -40,13 +40,29 @@ export interface filter {
 }
 
 export async function postUserList(params: user_data) {
+  let token: string | null = 'token';
+  if (sessionStorage.getItem('JWT')) {
+    token = sessionStorage.getItem('JWT')
+  }
   return request('/api/user', {
     method: 'POST',
     data: params,
+    headers: {
+      token: token
+    }
   });
 }
 
 export async function getUserList() {
   let url = `/api/user`
-  return request(url);
+  let token: string | null = 'token';
+  if (sessionStorage.getItem('JWT')) {
+    token = sessionStorage.getItem('JWT')
+  }
+  return request(url, {
+    method: 'GET',
+    headers: {
+      token: token
+    }
+  });
 }

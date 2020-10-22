@@ -8,7 +8,16 @@ export async function getLoginList(page: string | Number, per_page: string | Num
     if ((start_date && start_date !== 0) && (end_date && end_date !== 0)) {
         url += `&date_start=${start_date}&date_end=${end_date}`
     }
-    return request(url);
+    let token: string | null = 'token';
+    if (sessionStorage.getItem('JWT')) {
+        token = sessionStorage.getItem('JWT')
+    }
+    return request(url, {
+        method: 'GET',
+        headers: {
+            token: token
+        }
+    });
     // if (name) {
     //     return request(`/api/loginLog?page=${page}&per_page=${per_page}&name=${name}`);
     // } else {

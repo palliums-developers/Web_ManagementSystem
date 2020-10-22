@@ -20,7 +20,7 @@ export default () => {
   const { RangePicker } = DatePicker;
   useEffect(() => {
     (async () => {
-      const temp = await getOperationList(1, pageSize);
+      const temp = await getOperationList(1, pageSize,'all');
       setOperationList(temp)
     })();
     setTimeout(() => {
@@ -29,7 +29,7 @@ export default () => {
   }, []);
   const getPage = (page: object): void => {
     (async () => {
-      const temp = await getOperationList(page.current, pageSize, userName, start_date, end_date);
+      const temp = await getOperationList(page.current, pageSize,'all', userName, start_date, end_date);
       setOperationList(temp)
     })();
   }
@@ -54,7 +54,7 @@ export default () => {
   }
 
   const searchOperationinLog = async () => {
-    const temp = await getOperationList(1, pageSize, userName, start_date, end_date);
+    const temp = await getOperationList(1, pageSize, 'all', userName, start_date, end_date);
     setOperationList(temp)
   }
   const columns: any = [
@@ -85,7 +85,7 @@ export default () => {
   return (
     <PageContainer>
       <Card>
-        <Input placeholder={intl('systemLog.name')} onChange={getName} allowClear={true}/>
+        <Input placeholder={intl('systemLog.name')} onChange={getName} allowClear={true} />
         <RangePicker
           showTime={{ format: 'HH:mm' }}
           format="YYYY-MM-DD HH:mm"
