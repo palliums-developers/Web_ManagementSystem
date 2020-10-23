@@ -1,5 +1,5 @@
 from flask_restful import reqparse, abort, Resource, request
-from SQL_operation import user_data_get, user_data_new, user_data_edit, user_data_password, user_data_status
+from SQL_operation import user_data_get, user_data_new, user_data_edit, user_data_password, user_data_status, operation_log_addone
 import time
 from util import str2bool, redis_operation, jwt_operation
 # from SQL_table import Login as Login_table, User_data, Operation
@@ -26,6 +26,7 @@ class User(Resource):
         }
         web_token = jwt_operation('decode', __args__.token)
         redis_token = redis_operation('get', web_token['name'])
+        now = int(time.time())
         if not __args__.token == redis_token:
             result['message'] = 'Unauthenticated'
             return result, 501
@@ -35,13 +36,16 @@ class User(Resource):
                 __args__.id, __args__.name, __args__.email, __args__.role)
             if(__temp__ > 0):
                 result['message'] = 'edit data successfully'
-                # todo operation log
+                operation_log_addone(web_token['name'], web_token['role'], 'edit_user', (
+                    'id: '+__args__.id+', name: '+__args__.name+', email: '+__args__.email+', role: '+__args__.role), now)
             else:
                 result['message'] = 'edit data failed'
         elif __args__.type == 'password':
             __temp__ = user_data_password(__args__.name, __args__.password)
             if(__temp__ > 0):
                 result['message'] = 'change password successfully'
+                operation_log_addone(web_token['name'], web_token['role'],
+                                     'password_user', 'Change '+__args__.name+' password', now)
             else:
                 result['message'] = 'change password failed'
         elif __args__.type == "status":
@@ -49,15 +53,18 @@ class User(Resource):
                 __args__.name, str2bool(__args__.status))
             if(__temp__ > 0):
                 result['message'] = 'change status successfully'
+                operation_log_addone(web_token['name'], web_token['role'], 'status_user',
+                                     'Change '+__args__.name+' status to '+__args__.status, now)
             else:
                 result['message'] = 'change status failed'
         elif __args__.type == 'add':
             # default password palliums
-            now = int(time.time())
             __temp__ = user_data_new(
                 __args__.name, __args__.role, __args__.email, '6e8168918225cd7efd3ea6e26e9a0ba8', now)
             if(__temp__ > 0):
                 result['message'] = 'add user successfully'
+                operation_log_addone(web_token['name'], web_token['role'], 'add_user',
+                                     'name: '+__args__.name+', role: '+__args__.role+', email: '+__args__.email, now)
             else:
                 result['message'] = 'add user failed'
 

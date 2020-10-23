@@ -140,14 +140,21 @@ def login_log_list(page, per_page, name=None, date_start=None, date_end=None):
     }
     return result
 
-
-def operation_log_addone(name, role, operation, time):
-    add_data = Operation(name=name, role=role, operation=operation, time=time)
+# add_user
+# edit_user
+# password_user
+# status_user
+# add_deposit
+# edit_deposit
+# add_borrow
+# edit_borrow
+def operation_log_addone(name, role, operation_type, operation, time):
+    add_data = Operation(name=name, role=role, operation_type=operation_type, operation=operation, time=time)
     postgresql_handle(vls_back_url).add(add_data)
     return 1
 
 
-def operation_log_list(type,page, per_page, name=None, date_start=None, date_end=None):
+def operation_log_list(type, page, per_page, name=None, date_start=None, date_end=None):
     data_raw = postgresql_handle(vls_back_url).paginate(
         Operation, page, per_page, name, date_start, date_end)
     result = {

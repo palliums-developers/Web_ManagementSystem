@@ -38,8 +38,7 @@ class OperationLog(Resource):
         name = request.args.get('name')
         date_start = request.args.get('date_start')
         date_end = request.args.get('date_end')
-        # __temp__ = operation_log_list2(
+        __temp__ = operation_log_list2(type, page, per_page, name, date_start, date_end)
+        # __temp__ = operation_log_list(
         #     type, page, per_page, name, date_start, date_end)
-        __temp__ = operation_log_list(
-            type, page, per_page, name, date_start, date_end)
         return __temp__

@@ -23,3 +23,4 @@ token=jwt.encode({'name':'violas','ip':'127.0.0.0'},vls_back_redis['secret'],alg
 print(token)
 print(jwt.decode('eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJuYW1lIjoidmlvbGFzIiwidGltZSI6MTYwMzI3MjcyOSwiaXAiOiIxMjcuMC4wLjEifQ.MD_iewhaUCJYILpffROQyjepVtiEHb_Y7RlE1yqpc-o',vls_back_redis['secret']))
 print(jwt.decode('eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJuYW1lIjoidmlvbGFzIiwidGltZSI6MTYwMzI3Mjg2OCwiaXAiOiIxMjcuMC4wLjEifQ.XlmGoNfyOCUr-poFY65-WO5rzFnHUFzMoi3OQk6m9wo',vls_back_redis['secret']))
+print(jwt.decode('eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJuYW1lIjoiaHVhbmd3IiwidGltZSI6MTYwMzQzOTkzMywiaXAiOiIxMjcuMC4wLjEiLCJyb2xlIjoiYWRtaW4ifQ.-oHFwx4Rhh-9UpNHaTRsR-g5xDHfJfmqGeo5faOhbDY',vls_back_redis['secret']))

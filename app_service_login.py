@@ -36,7 +36,7 @@ class Login(Resource):
         if __temp__['state'] > 0:
             login_log_addone(__args__.username, ip, now,
                              location, __args__.browser)
-            token=jwt_operation('encode',{'name':__args__.username,'time':now,'ip':ip})
+            token=jwt_operation('encode',{'name':__args__.username,'time':now,'ip':ip,'role':__temp__['currentAuthority']})
             redis_operation('set',__args__.username,token)
             __temp__['token']=token
             return __temp__, 201
