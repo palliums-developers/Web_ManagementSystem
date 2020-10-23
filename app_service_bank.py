@@ -1,5 +1,5 @@
 from flask_restful import reqparse, abort, Resource, request
-from SQL_operation import get_bank_data, edit_bank_data, operation_log_addone
+from SQL_operation import get_bank_data, edit_bank_data, operation_log_addone,get_bank_operation
 from util import jwt_operation, redis_operation
 import json
 import time
@@ -45,6 +45,10 @@ class Bank(Resource):
                 'message': 'Unauthenticated'
             }
             return result, 501
-        type = request.args.get('type')
-        __temp__ = get_bank_data(type)
+        type = request.args.get('type') #operation data
+        database=request.args.get('database') #deposit borrow
+        if type=='operation':
+            __temp__=get_bank_operation(database)
+        elif type=='data':
+            __temp__ = get_bank_data(database)
         return __temp__

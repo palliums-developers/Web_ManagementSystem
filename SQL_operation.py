@@ -145,8 +145,10 @@ def login_log_list(page, per_page, name=None, date_start=None, date_end=None):
 # password_user
 # status_user
 # add_deposit
+# status_deposit
 # edit_deposit
 # add_borrow
+# status_borrow
 # edit_borrow
 def operation_log_addone(name, role, operation_type, operation, time):
     add_data = Operation(name=name, role=role, operation_type=operation_type, operation=operation, time=time)
@@ -301,9 +303,9 @@ def dict2Table_edit(table, data):
     }
 
 
-def get_bank_data(type):
+def get_bank_data(database):
     bank_table = ViolasBankBorrowProduct
-    if type == 'deposit':
+    if database == 'deposit':
         bank_table = ViolasBankDepositProduct
     data = postgresql_handle(vls_back_url).list(bank_table)
     result = []
@@ -312,6 +314,15 @@ def get_bank_data(type):
     # result=alchemy2json_many(data)
     return result
 
+def get_bank_operation(database):
+    if database=='deposit':
+        data = postgresql_handle(vls_back_url).filterall(Operation,(Operation.operation_type=='add_deposit',Operation.operation_type=='status_deposit',Operation.operation_type=='edit_deposit'))
+    elif database=='borrow':
+        data = postgresql_handle(vls_back_url).filterall(Operation,(Operation.operation_type=='add_borrow',Operation.operation_type=='status_borrow',Operation.operation_type=='edit_borrow'))
+    result=[]
+    for i in data:
+        result.append(depositOrBorrowData2Dict(i))
+    return result
 
 def bank_data_exit(database_type, product_name, product_id=None):
     bank_table = ViolasBankBorrowProduct
