@@ -34,6 +34,7 @@ export default () => {
     { label: '中文', value: 'CN' },
     { label: 'English', value: 'EN' }
   ];
+  // todo datasource
   const columns = [
     {
       title: intl('bank.operator'),

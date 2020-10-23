@@ -20,7 +20,7 @@ export default () => {
   const { RangePicker } = DatePicker;
   useEffect(() => {
     (async () => {
-      const temp = await getOperationList(1, pageSize,'all');
+      const temp = await getOperationList(1, pageSize, 'all');
       setOperationList(temp)
     })();
     setTimeout(() => {
@@ -29,7 +29,7 @@ export default () => {
   }, []);
   const getPage = (page: object): void => {
     (async () => {
-      const temp = await getOperationList(page.current, pageSize,'all', userName, start_date, end_date);
+      const temp = await getOperationList(page.current, pageSize, 'all', userName, start_date, end_date);
       setOperationList(temp)
     })();
   }
@@ -41,7 +41,7 @@ export default () => {
   const changeDate = (value: Array<any>, dateString: Array<String>) => {
     // console.log('Selected Time: ', value);
     // console.log('Formatted Selected Time: ', dateString);
-    if (value[0] && value[1]) {
+    if (value && value.length > 1 && value[0] && value[1]) {
       setStart_date(value[0].format('X'));
       setEnd_date(value[1].format('X'));
     }

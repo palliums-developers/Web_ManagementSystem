@@ -6,6 +6,7 @@ import { useIntl } from 'umi';
 import { getBankProduct, postBankProduct, bank_product, show_data, raw_bank_product, modal, local_data } from '@/services/bank';
 import { lowerCase } from 'lodash';
 import { raw } from 'express';
+import { ReconciliationFilled } from '@ant-design/icons';
 
 const intl = (_temp: string) => {
   return useIntl().formatMessage({ id: _temp });
@@ -83,7 +84,8 @@ export default () => {
       case 'status':
         let postData = {
           "id": modal.data.id,
-          "status": !modal.data.status
+          "status": !modal.data.status,
+          "product_name": modal.data.product_name
         }
         result = await postBankProduct(type, 'deposit', postData)
         break;
@@ -103,7 +105,7 @@ export default () => {
     setModal({ status: false, view: false, data: {} });
   }
   const initial = async () => {
-    const temp = await getBankProduct('deposit');
+    const temp = await getBankProduct('data','deposit');
     setRawData(temp);
     setShowData(getShowDataFromRawData(temp));
   }
@@ -167,7 +169,7 @@ export default () => {
       dataIndex: 'status',
       key: 'status',
       render: (status: boolean, record: bank_product) => <Switch checked={status} onChange={() => {
-        showModal('status', { status: status, id: record.id })
+        showModal('status', { status: status, id: record.id, product_name: record.name });
       }} />
     },
     {
