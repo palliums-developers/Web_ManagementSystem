@@ -17,6 +17,8 @@ parser.add_argument('password')
 
 
 class User(Resource):
+    # first check the token,
+    # then post data to edit user data, change password, change user status and add new user
     def post(self):
         __args__ = parser.parse_args()
         __temp__ = 0
@@ -75,10 +77,8 @@ class User(Resource):
         else:
             return result, 501
 
+    # get user list with parameter status
     def get(self):
-        # change status: 0 false 1 true
-        # get status: None
-        # print(request.args.get('token'))
         __args__ = parser.parse_args()
         web_token = jwt_operation('decode', __args__.token)
         redis_token = redis_operation('get', web_token['name'])

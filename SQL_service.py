@@ -29,7 +29,7 @@ class postgresql_handle:
 
     def filterall(self, object, filter):
         temp = self.session()
-        return temp.query(object).filter(filter).all()
+        return temp.query(object).order_by(object.id.desc()).filter(filter).all()
 
     def update(self, object, filter, updic):
         temp = self.session()

@@ -51,6 +51,7 @@ class ViolasBankBorrowProduct(Base):
     currency = Column(String(16), nullable=False)
     rate = Column(Numeric, nullable=True)
     rate_desc = Column(Text, nullable=True)
+    status=Column(Boolean,nullable=False)
 
 
 class ViolasBankDepositProduct(Base):

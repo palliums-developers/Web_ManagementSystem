@@ -50,5 +50,6 @@ class Bank(Resource):
         if type=='operation':
             __temp__=get_bank_operation(database)
         elif type=='data':
+            print(database,'================================')
             __temp__ = get_bank_data(database)
         return __temp__

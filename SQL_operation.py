@@ -42,6 +42,9 @@ def login_function(username, password):
         result['state'] = -1
     return result  # both name and password are error
 
+def get_user_information(username):
+    data=postgresql_handle(vls_back_url).filterone(User_data,User_data.name==username)
+    return getUserWithoutPasswd(data)
 
 def getUserWithoutPasswd(user):
     return {
@@ -150,8 +153,11 @@ def login_log_list(page, per_page, name=None, date_start=None, date_end=None):
 # add_borrow
 # status_borrow
 # edit_borrow
+
+
 def operation_log_addone(name, role, operation_type, operation, time):
-    add_data = Operation(name=name, role=role, operation_type=operation_type, operation=operation, time=time)
+    add_data = Operation(
+        name=name, role=role, operation_type=operation_type, operation=operation, time=time)
     postgresql_handle(vls_back_url).add(add_data)
     return 1
 
@@ -266,6 +272,17 @@ def depositOrBorrowData2Dict(data):
     }
 
 
+def operationData2Dict(data):
+    return{
+        'id': data.id,
+        'name': data.name,
+        'role': data.role,
+        'operation': data.operation,
+        'time': data.time,
+        'operation_type': data.operation_type
+    }
+
+
 def dict2Table_add(table, data):
     return table(
         currency=data['currency'],
@@ -314,15 +331,22 @@ def get_bank_data(database):
     # result=alchemy2json_many(data)
     return result
 
+# User.name.like('%{0}%'.format("a"))
+
+
 def get_bank_operation(database):
-    if database=='deposit':
-        data = postgresql_handle(vls_back_url).filterall(Operation,(Operation.operation_type=='add_deposit',Operation.operation_type=='status_deposit',Operation.operation_type=='edit_deposit'))
-    elif database=='borrow':
-        data = postgresql_handle(vls_back_url).filterall(Operation,(Operation.operation_type=='add_borrow',Operation.operation_type=='status_borrow',Operation.operation_type=='edit_borrow'))
-    result=[]
+    if database == 'deposit':
+        # data = postgresql_handle(vls_back_url).filterall(Operation, Operation.operation_type.like('%{0}%'.format('deposit')))
+        data = postgresql_handle(vls_back_url).filterall(Operation, (Operation.operation_type == 'add_deposit') | (
+            Operation.operation_type == 'status_deposit') | (Operation.operation_type == 'edit_deposit'))
+    elif database == 'borrow':
+        data = postgresql_handle(vls_back_url).filterall(Operation, (Operation.operation_type == 'add_borrow') | (
+            Operation.operation_type == 'status_borrow') | (Operation.operation_type == 'edit_borrow'))
+    result = []
     for i in data:
-        result.append(depositOrBorrowData2Dict(i))
+        result.append(operationData2Dict(i))
     return result
+
 
 def bank_data_exit(database_type, product_name, product_id=None):
     bank_table = ViolasBankBorrowProduct
