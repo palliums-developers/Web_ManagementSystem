@@ -21,4 +21,10 @@ export default {
     'bank.operator':'Operator',
     'bank.operation_time':'Operation Time',
     'bank.operation_detail':'Operation Detail',
+    'bank.annualized':'Annualized rate of return',
+    'bank.rate':'Rate',
+    'bank.rate_desc':'Rate Description',
+    'bank.product_name':'Product Name',
+    'bank.product_id':'Product Id',
+    'bank.product_logo':'Product Logo'
 };

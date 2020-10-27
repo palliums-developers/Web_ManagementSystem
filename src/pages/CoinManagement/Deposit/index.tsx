@@ -73,7 +73,6 @@ export default () => {
         localStorage.setItem('edit', JSON.stringify(localEdit))
         break;
       case 'view':
-        console.log(data)
         setModal({ status: false, view: true, data: data });
         break;
     }

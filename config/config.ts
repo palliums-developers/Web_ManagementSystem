@@ -1,15 +1,14 @@
-import { layout } from '../src/app';
-// https://umijs.org/config/
+import { layout } from '../src/app'; // https://umijs.org/config/
+
 import { defineConfig, useIntl } from 'umi';
 import defaultSettings from './defaultSettings';
 import proxy from './proxy';
-const { REACT_APP_ENV } = process.env;
-// console.log(sessionStorage.getItem('user'));
+const { REACT_APP_ENV } = process.env; // console.log(sessionStorage.getItem('user'));
 // const intl = (_temp: string) => {
 //   return useIntl().formatMessage({ id: _temp });
 // }
-let vls_back_management_url='http://localhost:5000/';
 
+let vls_back_management_url = 'http://localhost:5000/';
 export default defineConfig({
   hash: true,
   antd: {},
@@ -52,13 +51,19 @@ export default defineConfig({
       // name: 'login',
       layout: false,
       path: '/login',
-      component: './Login'
+      component: './Login',
     },
+    // {
+    //   name: '个人设置',
+    //   icon: 'smile',
+    //   path: '/account/accountsettings',
+    //   component: './Account/AccountSettings',
+    // },
     {
       path: 'account',
       name: 'Account',
       icon: '',
-      component: './Account'
+      component: './Account',
     },
     {
       path: '/welcome',
@@ -94,41 +99,40 @@ export default defineConfig({
           name: 'operation_log',
           icon: 'facebook',
           component: './SystemManagement/OperationLog',
-        }
+        },
       ],
     },
     {
       path: 'config',
       name: 'config',
       icon: 'setting',
-      component: './ConfigManagement'
+      component: './ConfigManagement',
     },
     {
       path: 'coin',
       name: 'coin',
       icon: 'dollar',
       // component: './CoinManagement'
-      routes:[
+      routes: [
         {
-          path:'deposit',
-          name:'Deposit',
-          icon:'facebook',
-          component:'./CoinManagement/Deposit',
+          path: 'deposit',
+          name: 'Deposit',
+          icon: 'facebook',
+          component: './CoinManagement/Deposit',
         },
         {
-          path:'borrow',
-          name:'Borrow',
-          icon:'facebook',
-          component:'./CoinManagement/Borrow',
+          path: 'borrow',
+          name: 'Borrow',
+          icon: 'facebook',
+          component: './CoinManagement/Borrow',
         },
         {
-          path:'modify',
+          path: 'modify',
           // name:'modify',
-          component:'./CoinManagement/BankEdit'
-        }
+          component: './CoinManagement/BankEdit',
+        },
       ],
-    },
-    // {
+    }, // {
     //   path: '/admin',
     //   name: 'admin',
     //   icon: 'crown',
@@ -168,30 +172,39 @@ export default defineConfig({
   // proxy: proxy[REACT_APP_ENV || 'dev'],
   proxy: {
     '/api/login': {
-      'target': vls_back_management_url,
-      'changeOrigin': true,
-      'pathRewrite': { '^/localhost': '' }
+      target: vls_back_management_url,
+      changeOrigin: true,
+      pathRewrite: {
+        '^/localhost': '',
+      },
     },
     '/api/loginLog': {
-      'target': vls_back_management_url,
-      'changeOrigin': true,
-      'pathRewrite': { '^/localhost': '' }
-    }
-    ,
+      target: vls_back_management_url,
+      changeOrigin: true,
+      pathRewrite: {
+        '^/localhost': '',
+      },
+    },
     '/api/operationLog': {
-      'target': vls_back_management_url,
-      'changeOrigin': true,
-      'pathRewrite': { '^/localhost': '' }
+      target: vls_back_management_url,
+      changeOrigin: true,
+      pathRewrite: {
+        '^/localhost': '',
+      },
     },
     '/api/user': {
-      'target': vls_back_management_url,
-      'changeOrigin': true,
-      'pathRewrite': { '^/localhost': '' }
+      target: vls_back_management_url,
+      changeOrigin: true,
+      pathRewrite: {
+        '^/localhost': '',
+      },
     },
     '/api/bank': {
-      'target': vls_back_management_url,
-      'changeOrigin': true,
-      'pathRewrite': { '^/localhost': '' }
+      target: vls_back_management_url,
+      changeOrigin: true,
+      pathRewrite: {
+        '^/localhost': '',
+      },
     },
   },
   manifest: {

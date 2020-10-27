@@ -8,6 +8,17 @@ export interface LoginParamsType {
   type: string;
   token?:string
 }
+
+export interface userInformation{
+  id: number,
+  name: string,
+  role: string,
+  phone?: string,
+  email: string,
+  status: boolean,
+  add_time: number
+}
+
 let userAgent = navigator.userAgent;
 let browser = '';
 if (userAgent.indexOf("Firefox") > -1) {
@@ -36,6 +47,20 @@ export async function accountLogin(params: LoginParamsType) {
     method: 'POST',
     data: params,
   });
+}
+
+export async function accountInformation(){
+  let url = '/api/login';
+  let token: string = 'token';
+  if (sessionStorage.getItem('JWT')) {
+      token = sessionStorage.getItem('JWT')
+  }
+  return request(url,{
+    method: 'GET',
+    headers: {
+        token: token
+    }
+  })
 }
 
 export async function getFakeCaptcha(mobile: string) {

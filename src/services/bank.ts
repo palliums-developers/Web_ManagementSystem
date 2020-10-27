@@ -20,7 +20,7 @@ export interface raw_bank_product {
 
 export interface bank_product {
     id?: number,
-    name?:string,
+    name?: string,
     product_id?: string,
     product_name?: string,
     logo?: string,
@@ -51,23 +51,29 @@ export interface show_data {
     status: boolean
 }
 
+export interface operation_data {
+    id?: number,
+    operator: string,
+    operation_time: string,
+    operation: string
+}
 export interface local_data {
     operation: string,
     database: string,
     data: bank_product
 }
 
-export async function getBankProduct(type: string | undefined,database:string|undefined) {
+export async function getBankProduct(type: string | undefined, database: string | undefined) {
     let url = '/api/bank';
-    let token: string | null = 'token';
+    let token: string = 'token';
     if (sessionStorage.getItem('JWT')) {
         token = sessionStorage.getItem('JWT')
     }
     if (type) {
         url += `?type=${type}`
     }
-    if(database){
-        url+=`&database=${database}`
+    if (database) {
+        url += `&database=${database}`
     }
     return request(url, {
         method: 'GET',
@@ -79,7 +85,7 @@ export async function getBankProduct(type: string | undefined,database:string|un
 
 export async function postBankProduct(type: string, database: string, data: bank_product) {
     let url = '/api/bank';
-    let token: string | null = 'token';
+    let token: string = 'token';
     if (sessionStorage.getItem('JWT')) {
         token = sessionStorage.getItem('JWT')
     }

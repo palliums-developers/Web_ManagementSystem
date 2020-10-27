@@ -3,7 +3,8 @@ import React, { useState, useEffect } from 'react';
 import { Card, Input, Table, Button, Collapse, Checkbox } from 'antd';
 import styles from './index.less';
 import { useIntl } from 'umi';
-import { postBankProduct, bank_product, show_data, raw_bank_product, modal, local_data } from '@/services/bank';
+import { postBankProduct, bank_product, operation_data, local_data, getBankProduct } from '@/services/bank';
+import moment from 'moment'
 
 const intl = (_temp: string) => {
   return useIntl().formatMessage({ id: _temp });
@@ -14,12 +15,16 @@ const { Panel } = Collapse;
 export default () => {
   const [loading, setLoading] = useState<boolean>(true);
   const [edit_data, setEdit_data] = useState<local_data>({ operation: '', database: '111', data: {} });
-  const [operationLog, setOperationLog] = useState();
+  const [operationLog, setOperationLog] = useState<operation_data[]>();
   const initial = async () => {
     const edit_data_string = await localStorage.getItem('edit');
+    let edit_data_json: local_data = { data: {}, database: 'deposit', operation: 'add' };
     if (edit_data_string) {
-      await setEdit_data(JSON.parse(edit_data_string));
+      edit_data_json = JSON.parse(edit_data_string);
     }
+    await setEdit_data(edit_data_json);
+    const temp = await getBankProduct('operation', edit_data_json.database);
+    await setOperationLog(temp);
   }
   const selectLanguage = (e: any) => {
     console.log(e)
@@ -44,11 +49,14 @@ export default () => {
     {
       title: intl('bank.operation_time'),
       dataIndex: 'time',
-      key: 'time'
+      key: 'time',
+      render: (time: number) => {
+        return moment(time * 1000).format('YYYY-MM-DD HH:mm:ss');
+      }
     },
     {
       title: intl('bank.operation_detail'),
-      dataIndex: 'detail',
+      dataIndex: 'operation',
       key: 'detail'
     }
   ];
@@ -66,11 +74,11 @@ export default () => {
             {intl('bank.product_name')}:<Input style={{ width: 200 }} defaultValue={edit_data.data.product_name}></Input>
           </p>
           <p>
-            {intl('bank.min_deposit')}:<Input style={{ width: 200 }} defaultValue={edit_data.data.minimum_amount}></Input>
-            {intl('bank.step_deposit')}:<Input style={{ width: 200 }} defaultValue={edit_data.data.pledge_rate}></Input>
+            {edit_data.database == 'deposit' ? intl('bank.min_deposit') : intl('bank.min_borrow')}:<Input style={{ width: 200 }} defaultValue={edit_data.data.minimum_amount}></Input>
+            {edit_data.database == 'deposit' ? intl('bank.step_deposit') : intl('bank.step_borrow')}:<Input style={{ width: 200 }} defaultValue={edit_data.data.pledge_rate}></Input>
           </p>
           <p>
-            {intl('bank.daily_deposit')}:<Input style={{ width: 200 }} defaultValue={edit_data.data.max_limit}></Input>
+            {edit_data.database == 'deposit' ? intl('bank.daily_deposit') : intl('bank.daily_borrow')}:<Input style={{ width: 200 }} defaultValue={edit_data.data.max_limit}></Input>
             {edit_data.data.rate_desc}:<Input style={{ width: 200 }} defaultValue={edit_data.data.rate}></Input>
           </p>
           <Checkbox.Group
