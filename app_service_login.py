@@ -44,8 +44,6 @@ class Login(Resource):
             redis_operation('set', __args__.username, token)
             __temp__['token'] = token
             return __temp__, 201
-            # elif __temp__ < 0:
-            #     return {'message':'Wrong Username or Password'},202
         else:
             return __temp__, 501
 
