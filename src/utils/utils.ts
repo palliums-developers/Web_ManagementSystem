@@ -146,3 +146,23 @@ export const auth2str = (data: string[]): string => {
 //     return () => clearInterval(id);
 //   }, [delay]);
 // }
+
+export const useInterval = (callback: any, delay: number) => {
+  const savedCallback = useRef();
+
+  // 保存新回调
+  useEffect(() => {
+    savedCallback.current = callback;
+  });
+
+  // 建立 interval
+  useEffect(() => {
+    function tick() {
+      savedCallback.current();
+    }
+    if (delay !== null) {
+      let id = setInterval(tick, delay);
+      return () => clearInterval(id);
+    }
+  }, [delay]);
+}

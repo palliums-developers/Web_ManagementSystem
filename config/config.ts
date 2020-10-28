@@ -9,6 +9,7 @@ const { REACT_APP_ENV } = process.env; // console.log(sessionStorage.getItem('us
 // }
 
 let vls_back_management_url = 'http://localhost:5000/';
+let vls_webserver = 'https://api4.violas.io';
 export default defineConfig({
   hash: true,
   antd: {},
@@ -36,33 +37,15 @@ export default defineConfig({
   },
   // umi routes: https://umijs.org/docs/routing
   routes: [
-    // {
-    //   path: '/user',
-    //   layout: false,
-    //   routes: [
-    //     {
-    //       name: 'login',
-    //       path: '/user/login',
-    //       component: './user/login',
-    //     },
-    //   ],
-    // },
     {
-      // name: 'login',
       layout: false,
       path: '/login',
       component: './Login',
     },
-    // {
-    //   name: '个人设置',
-    //   icon: 'smile',
-    //   path: '/account/accountsettings',
-    //   component: './Account/AccountSettings',
-    // },
     {
       path: 'account',
-      name: 'Account',
-      icon: '',
+      name: 'account',
+      icon: 'facebook',
       component: './Account',
     },
     {
@@ -106,23 +89,39 @@ export default defineConfig({
       path: 'config',
       name: 'config',
       icon: 'setting',
-      component: './ConfigManagement',
+      routes: [
+        {
+          path: 'system_notification',
+          name: 'system_notification',
+          icon: 'facebook',
+          component: './ConfigManagement/SystemNotification',
+        },
+        {
+          path: 'modify',
+          component: './ConfigManagement/ModifyNotification'
+        }
+      ]
     },
     {
       path: 'coin',
       name: 'coin',
       icon: 'dollar',
-      // component: './CoinManagement'
       routes: [
         {
+          path: 'coin_management',
+          name: 'coin_management',
+          icon: 'facebook',
+          component: './CoinManagement/CoinManagement'
+        },
+        {
           path: 'deposit',
-          name: 'Deposit',
+          name: 'deposit',
           icon: 'facebook',
           component: './CoinManagement/Deposit',
         },
         {
           path: 'borrow',
-          name: 'Borrow',
+          name: 'borrow',
           icon: 'facebook',
           component: './CoinManagement/Borrow',
         },
@@ -206,6 +205,13 @@ export default defineConfig({
         '^/localhost': '',
       },
     },
+    '/1.0/violas/currency': {
+      target: vls_webserver,
+      changeOrigin: true,
+      pathRewrite: {
+        '^/localhost': '',
+      }
+    }
   },
   manifest: {
     basePath: '/',

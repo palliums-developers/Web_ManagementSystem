@@ -1,4 +1,5 @@
 export default {
+    'account':'Account',
     'account.information': 'Basic Information',
     'account.safe': 'Safely Verification',
     'account.name': 'Name',

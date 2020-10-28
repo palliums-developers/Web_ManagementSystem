@@ -5,12 +5,14 @@ import { Link, SelectLang, useModel, useIntl } from 'umi';
 import styles from './index.less';
 import Information from './Information';
 import { accountInformation, userInformation } from '@/services/login';
-
+import { useInterval } from '@/utils/utils'
+const intl = (_temp: string) => {
+  return useIntl().formatMessage({ id: _temp });
+}
 export default () => {
   const [loading, setLoading] = useState<boolean>(true);
   const [userInformation, setUserInformation] = useState<userInformation>();
   const [modal, setModal] = useState({ password: false, phone: false, google: false });
-  const [captchaStatus, setCaptchaStatus] = useState({ clickable: true, time: 0 });
   const [captchaTime, setCaptchaTime] = useState(0);
   const getInformation = async () => {
     let temp = await accountInformation();
@@ -37,49 +39,26 @@ export default () => {
   }
   const handleModalCancel = () => {
     setModal({ password: false, phone: false, google: false });
+    setCaptchaTime(0);
   }
   const getCAPTCHA = () => {
     if (captchaTime === 0) {
-      setCaptchaTime(10)
+      setCaptchaTime(60)
     }
   }
-
-  // const useInterval = (callback, delay) => {
-  //   const savedCallback = useRef();
-  //   useEffect(() => {
-  //     savedCallback.current = callback;
-  //   });
-  //   useEffect(() => {
-  //     const tick = () => {
-  //       savedCallback.current();
-  //     }
-  //     if (delay !== null) {
-  //       let id = setInterval(tick, delay);
-  //       return () => clearInterval(id);
-  //     }
-  //   }, [delay])
-  // }
   useEffect(() => {
     getInformation()
     setTimeout(() => {
       setLoading(false);
     }, 3000);
   }, []);
-  useEffect(() => {
-    const timeCAPTCHA = () => {
-      setCaptchaTime(captchaTime - 1)
-      setTimeout(() => timeCAPTCHA(), 2000)
+  useInterval(()=>{
+    if(captchaTime===0){
+      return
     }
-    if (captchaTime > 0) {
-      timeCAPTCHA()
-    }else{
-      clearTimeout(timeCAPTCHA())
-    }
+    setCaptchaTime(captchaTime-1)
     console.log(captchaTime)
-  }, [captchaTime])
-  const intl = (_temp: string) => {
-    return useIntl().formatMessage({ id: _temp });
-  }
+  },1000);
   return (
     <PageContainer>
       {
@@ -101,7 +80,7 @@ export default () => {
             onCancel={() => handleModalCancel()}
             title={userInformation.phone ? intl('account.modifyPhone') : intl('account.settingPhone')}
           >
-            <p>{intl('account.phone')}<Input.Password placeholder={userInformation.phone} /></p>
+            <p>{intl('account.phone')}<Input placeholder={userInformation.phone} /></p>
             <p>{intl('account.CAPTCHA')}<Input placeholder={intl('account.enterCAPTCHA')} addonAfter={
               <Button onClick={getCAPTCHA}>{captchaTime === 0 ? intl('account.getCAPTCHA') : captchaTime + 'S'}</Button>
               // <Button onClick={getCAPTCHA}>{captchaStatus.clickable ? intl('account.getCAPTCHA') : captchaStatus.time + 'S'}</Button>

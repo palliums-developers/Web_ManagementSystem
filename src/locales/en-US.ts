@@ -10,7 +10,8 @@ import user from './en-US/userManagement';
 import role from './en-US/roleManagement';
 import operation from './en-US/operation';
 import systemLog from './en-US/systemLog';
-import bank from './en-US/bank'
+import bank from './en-US/bank';
+import config from './en-US/config';
 
 export default {
   'navBar.lang': 'Languages',
@@ -32,5 +33,6 @@ export default {
   ...role,
   ...operation,
   ...systemLog,
-  ...bank
+  ...bank,
+  ...config
 };

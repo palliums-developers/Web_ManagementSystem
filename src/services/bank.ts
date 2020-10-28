@@ -63,6 +63,15 @@ export interface local_data {
     data: bank_product
 }
 
+export interface coin_data{
+    id?:number,
+    name:string,
+    precision:number,
+    min_quantity:number,
+    max_quantity:number,
+    status:boolean
+}
+
 export async function getBankProduct(type: string | undefined, database: string | undefined) {
     let url = '/api/bank';
     let token: string = 'token';
@@ -101,4 +110,9 @@ export async function postBankProduct(type: string, database: string, data: bank
             token: token
         }
     })
+}
+
+export async function getViolasCurrency(){
+    let url='/1.0/violas/currency';
+    return request(url);
 }

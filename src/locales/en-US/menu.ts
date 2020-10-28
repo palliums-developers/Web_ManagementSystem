@@ -40,7 +40,7 @@ export default {
   'menu.exception.not-find': '404',
   'menu.exception.server-error': '500',
   'menu.exception.trigger': 'Trigger',
-  'menu.Account': 'Account',
+  'menu.account': 'Account',
   'menu.account.center': 'Account Center',
   'menu.account.settings': 'Account Settings',
   'menu.account.trigger': 'Trigger Error',
@@ -51,9 +51,13 @@ export default {
   'menu.editor.koni': 'Koni Editor',
   'menu.system':'System management',
   'menu.config':'Config management',
+  'menu.config.system_notification':'System Notification',
   'menu.coin':'Coin management',
+  'menu.coin.coin_management':'Coin Management',
+  'menu.coin.deposit':'Deposit',
+  'menu.coin.borrow':'Borrow',
   'menu.system.user':'User Management',
   'menu.system.role':'Role members Management',
-  'menu.system.login_log':'Log in Log',
+  'menu.system.login_log':'Login Log',
   'menu.system.operation_log':'Operation Log'
 }
