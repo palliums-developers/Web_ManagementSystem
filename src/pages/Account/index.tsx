@@ -3,7 +3,6 @@ import React, { useState, useEffect, useRef } from 'react';
 import { Spin, Card, Modal, Input, Button } from 'antd';
 import { Link, SelectLang, useModel, useIntl } from 'umi';
 import styles from './index.less';
-import Information from './Information';
 import { accountInformation, userInformation } from '@/services/login';
 import { useInterval } from '@/utils/utils'
 const intl = (_temp: string) => {
@@ -52,15 +51,15 @@ export default () => {
       setLoading(false);
     }, 3000);
   }, []);
-  useInterval(()=>{
-    if(captchaTime===0){
+  useInterval(() => {
+    if (captchaTime === 0) {
       return
     }
-    setCaptchaTime(captchaTime-1)
+    setCaptchaTime(captchaTime - 1)
     console.log(captchaTime)
-  },1000);
+  }, 1000);
   return (
-    <PageContainer>
+    <PageContainer className={styles.main}>
       {
         userInformation &&
         <div>
@@ -96,11 +95,11 @@ export default () => {
           </Modal>
           <Card>
             <h2>{intl('account.information')}</h2>
-            <div className='information'>
+            <div className={styles.information}>
               <p>{intl('account.name')}</p>
-              <p>{userInformation.name}</p>
+              <p> {userInformation.name}</p>
             </div>
-            <div className='information'>
+            <div className={styles.information}>
               <p>{intl('account.email')}</p>
               <p>{userInformation.email}</p>
             </div>
@@ -108,17 +107,17 @@ export default () => {
           <br />
           <Card>
             <h2>{intl('account.safe')}</h2>
-            <div className='information'>
+            <div className={styles.information}>
               <p>{intl('account.password')}</p>
-              <p onClick={() => showModal('password')}>{intl('account.modify')}</p>
+              <span onClick={() => showModal('password')}>{intl('account.modify')}</span>
             </div>
-            <div className='information'>
+            <div className={styles.information}>
               <p>{intl('account.phone')}</p>
-              <p onClick={() => showModal('phone')}>{userInformation.phone ? intl('account.modify') : intl('account.set')}</p>
+              <span onClick={() => showModal('phone')}>{userInformation.phone ? intl('account.modify') : intl('account.set')}</span>
             </div>
-            <div className='information'>
+            <div className={styles.information}>
               <p>{intl('account.google')}</p>
-              <p onClick={() => showModal('google')}>{intl('account.modify')}</p>
+              <span onClick={() => showModal('google')}>{intl('account.modify')}</span>
             </div>
           </Card>
         </div>

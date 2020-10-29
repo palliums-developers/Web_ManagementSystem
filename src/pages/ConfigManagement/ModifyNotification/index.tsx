@@ -1,7 +1,11 @@
 import { PageContainer } from '@ant-design/pro-layout';
 import React, { useState, useEffect } from 'react';
-import { Spin } from 'antd';
+import { Card } from 'antd';
 import styles from './index.less';
+import {useIntl}from 'umi';
+const intl = (_temp: string) => {
+  return useIntl().formatMessage({ id: _temp });
+}
 
 export default () => {
   const [loading, setLoading] = useState<boolean>(true);
@@ -11,10 +15,21 @@ export default () => {
     }, 3000);
   }, []);
   return (
-    <PageContainer content="这是一个新页面，从这里进行开发！" className={styles.main}>
-      <div style={{ paddingTop: 100, textAlign: 'center' }}>
-        <Spin spinning={loading} size="large" />
-      </div>
+    <PageContainer className={styles.main}>
+      <Card>
+    <div className={styles.row}>
+      <p>{intl('config.platform')}</p>
+
+    </div>
+    <div className={styles.row}>
+      <p>{intl('config.platform')}</p>
+      
+    </div>
+    <div className={styles.row}>
+      <p>{intl('config.platform')}</p>
+      
+    </div>
+      </Card>
     </PageContainer>
   );
 };

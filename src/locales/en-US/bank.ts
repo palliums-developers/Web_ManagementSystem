@@ -34,5 +34,8 @@ export default {
     'bank.new_coin':'New Coin',
     'bank.coin_precision':'Min Precision',
     'bank.coin_min_quantity':'Min Quantity',
-    'bank.coin_max_quantity':'Max Quantity'
+    'bank.coin_max_quantity':'Max Quantity',
+    'bank.coin_precision_please':'Please Enter Min Precision',
+    'bank.coin_min_quantity_please':'Please Enter Min Quantity',
+    'bank.coin_max_quantity_please':'Please Enter Max Quantity',
 };

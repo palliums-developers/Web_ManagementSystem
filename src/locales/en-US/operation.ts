@@ -11,4 +11,5 @@ export default {
     'operation.search': 'Search',
     'operation.keyword': 'Keyword',
     'operation.confirm':'Confirm',
+    'operation.cancel':'Cancel',
 }

@@ -63,13 +63,13 @@ export interface local_data {
     data: bank_product
 }
 
-export interface coin_data{
-    id?:number,
-    name:string,
-    precision:number,
-    min_quantity:number,
-    max_quantity:number,
-    status:boolean
+export interface coin_data {
+    id?: number,
+    name: string,
+    precision: number,
+    min_quantity: number,
+    max_quantity: number,
+    status: boolean
 }
 
 export async function getBankProduct(type: string | undefined, database: string | undefined) {
@@ -112,7 +112,42 @@ export async function postBankProduct(type: string, database: string, data: bank
     })
 }
 
-export async function getViolasCurrency(){
-    let url='/1.0/violas/currency';
+export async function getViolasCurrency() {
+    let url = '/1.0/violas/currency';
     return request(url);
+}
+
+export async function getCoinData(type: string) {
+    let url = '/api/coin';
+    let token: string = 'token';
+    if (sessionStorage.getItem('JWT')) {
+        token = sessionStorage.getItem('JWT')
+    }
+    // type=data operation
+    url += '?type=' + type;
+    return request(url, {
+        method: 'GET',
+        headers: {
+            token: token
+        }
+    })
+}
+
+export async function postCoinData(type: string, data: any) {
+    let url = '/api/coin';
+    let token: string = 'token';
+    if (sessionStorage.getItem('JWT')) {
+        token = sessionStorage.getItem('JWT')
+    }
+    // type=status edit add
+    return request(url, {
+        method: 'POST',
+        data: {
+            type: type,
+            data: data
+        },
+        headers: {
+            token: token
+        }
+    })
 }
