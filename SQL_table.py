@@ -35,6 +35,15 @@ class Operation(Base):
     operation_type = Column(String(50))
     time = Column(String(20))
 
+# create table coin_management (id serial primary key, name character(20), precision decimal, min_quantity decimal, max_quantity decimal, status boolean);
+class Coin_management(Base):
+    __tablename__="coin_management"
+    id = Column(Integer, primary_key=True)
+    name=Column(String(20))
+    precision=Column(Numeric)
+    min_quantity=Column(Numeric)
+    max_quantity=Column(Numeric)
+    status=Column(Boolean)
 
 class ViolasBankBorrowProduct(Base):
     __tablename__ = "borrow_product"

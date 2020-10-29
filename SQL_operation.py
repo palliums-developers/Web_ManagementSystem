@@ -1,7 +1,7 @@
 import configparser
 from sqlalchemy import create_engine
 from SQL_service import postgresql_handle
-from SQL_table import Login, User_data, Operation, ViolasBankBorrowProduct, ViolasBankDepositProduct
+from SQL_table import Login, User_data, Operation, ViolasBankBorrowProduct, ViolasBankDepositProduct, Coin_management
 from util import alchemy2json_many
 
 config_path = './config.ini'
@@ -42,9 +42,14 @@ def login_function(username, password):
         result['state'] = -1
     return result  # both name and password are error
 
+
 def get_user_information(username):
-    data=postgresql_handle(vls_back_url).filterone(User_data,User_data.name==username)
+    data = postgresql_handle(vls_back_url).filterone(
+        User_data,
+        User_data.name == username
+    )
     return getUserWithoutPasswd(data)
+
 
 def getUserWithoutPasswd(user):
     return {
@@ -66,11 +71,15 @@ def user_data_get(__status__):
             result.append(getUserWithoutPasswd(i))
     elif __status__ == '0':
         postgresql_handle(vls_back_url).update(
-            User_data, (User_data.id == 5), {User_data.status: False})
+            User_data,
+            (User_data.id == 5),
+            {User_data.status: False})
         result = [{'message': 'status change to False'}]
     elif __status__ == '1':
         postgresql_handle(vls_back_url).update(
-            User_data, (User_data.id == 5), {User_data.status: True})
+            User_data,
+            (User_data.id == 5),
+            {User_data.status: True})
         result = [{'message': 'status change to True'}]
     return result
 
@@ -103,19 +112,25 @@ def user_data_edit(id, name, email, role):
     if not user_data_exist(name):
         return 0
     postgresql_handle(vls_back_url).update(
-        User_data, (User_data.id == id), {User_data.name: name, User_data.email: email, User_data.role: role})
+        User_data,
+        (User_data.id == id),
+        {User_data.name: name, User_data.email: email, User_data.role: role})
     return 1
 
 
 def user_data_password(name, password):
     postgresql_handle(vls_back_url).update(
-        User_data, (User_data.name == name), {User_data.password: password})
+        User_data,
+        (User_data.name == name),
+        {User_data.password: password})
     return 1
 
 
 def user_data_status(name, status):
     postgresql_handle(vls_back_url).update(
-        User_data, (User_data.name == name), {User_data.status: status})
+        User_data,
+        (User_data.name == name),
+        {User_data.status: status})
     return 1
 
 
@@ -131,7 +146,12 @@ def login_log_addone(name, ip, time, address, browser):
 
 def login_log_list(page, per_page, name=None, date_start=None, date_end=None):
     data_raw = postgresql_handle(vls_back_url).paginate(
-        Login, page, per_page, name, date_start, date_end)
+        Login,
+        page,
+        per_page,
+        name,
+        date_start,
+        date_end)
     result = {
         'page': data_raw.page,
         'pages': data_raw.pages,
@@ -153,18 +173,30 @@ def login_log_list(page, per_page, name=None, date_start=None, date_end=None):
 # add_borrow
 # status_borrow
 # edit_borrow
+# add_coin_management
+# edit_coin_management
+# status_coin_management
 
 
 def operation_log_addone(name, role, operation_type, operation, time):
     add_data = Operation(
-        name=name, role=role, operation_type=operation_type, operation=operation, time=time)
+        name=name,
+        role=role,
+        operation_type=operation_type,
+        operation=operation,
+        time=time)
     postgresql_handle(vls_back_url).add(add_data)
     return 1
 
 
 def operation_log_list(type, page, per_page, name=None, date_start=None, date_end=None):
     data_raw = postgresql_handle(vls_back_url).paginate(
-        Operation, page, per_page, name, date_start, date_end)
+        Operation,
+        page,
+        per_page,
+        name,
+        date_start,
+        date_end)
     result = {
         'page': data_raw.page,
         'pages': data_raw.pages,
@@ -183,30 +215,60 @@ def operation_log_list2(type, page, per_page, name=None, date_start=None, date_e
         time2 = int(date_end)+1
         if not type == 'all':
             if name:
-                data_raw = postgresql_handle(vls_back_url).paginate2(Operation, page, per_page, (
-                    Operation.name == name, Operation.operation_type == type, Operation.time > time1, Operation.time < time2))
-            else:
-                data_raw = postgresql_handle(vls_back_url).paginate2(Operation, page, per_page, (
-                    Operation.operation_type == type, Operation.time > time1, Operation.time < time2))
-        else:
-            if name:
-                data_raw = postgresql_handle(vls_back_url).paginate2(Operation, page, per_page, (
-                    Operation.name == name, Operation.time > time1, Operation.time < time2))
+                data_raw = postgresql_handle(vls_back_url).paginate2(
+                    Operation,
+                    page,
+                    per_page,
+                    (Operation.name == name,
+                     Operation.operation_type == type,
+                     Operation.time > time1,
+                     Operation.time < time2))
             else:
                 data_raw = postgresql_handle(vls_back_url).paginate2(
-                    Operation, page, per_page, (Operation.time > time1, Operation.time < time2))
+                    Operation,
+                    page,
+                    per_page,
+                    (Operation.operation_type == type,
+                     Operation.time > time1,
+                     Operation.time < time2))
+        else:
+            if name:
+                data_raw = postgresql_handle(vls_back_url).paginate2(
+                    Operation,
+                    page,
+                    per_page,
+                    (Operation.name == name,
+                     Operation.time > time1,
+                     Operation.time < time2))
+            else:
+                data_raw = postgresql_handle(vls_back_url).paginate2(
+                    Operation,
+                    page,
+                    per_page,
+                    (Operation.time > time1,
+                     Operation.time < time2))
     else:
         if not type == 'all':
             if name:
                 data_raw = postgresql_handle(vls_back_url).paginate2(
-                    Operation, page, per_page, (Operation.name == name, Operation.operation_type == type))
+                    Operation,
+                    page,
+                    per_page,
+                    (Operation.name == name,
+                     Operation.operation_type == type))
             else:
                 data_raw = postgresql_handle(vls_back_url).paginate2(
-                    Operation, page, per_page, (Operation.operation_type == type))
+                    Operation,
+                    page,
+                    per_page,
+                    (Operation.operation_type == type))
         else:
             if name:
                 data_raw = postgresql_handle(vls_back_url).paginate2(
-                    Operation, page, per_page, (Operation.name == name))
+                    Operation,
+                    page,
+                    per_page,
+                    (Operation.name == name))
             else:
                 data_raw = postgresql_handle(vls_back_url).paginate2(
                     Operation, page, per_page, None)
@@ -337,11 +399,17 @@ def get_bank_data(database):
 def get_bank_operation(database):
     if database == 'deposit':
         # data = postgresql_handle(vls_back_url).filterall(Operation, Operation.operation_type.like('%{0}%'.format('deposit')))
-        data = postgresql_handle(vls_back_url).filterall(Operation, (Operation.operation_type == 'add_deposit') | (
-            Operation.operation_type == 'status_deposit') | (Operation.operation_type == 'edit_deposit'))
+        data = postgresql_handle(vls_back_url).filterall(
+            Operation,
+            (Operation.operation_type == 'add_deposit') |
+            (Operation.operation_type == 'status_deposit') |
+            (Operation.operation_type == 'edit_deposit'))
     elif database == 'borrow':
-        data = postgresql_handle(vls_back_url).filterall(Operation, (Operation.operation_type == 'add_borrow') | (
-            Operation.operation_type == 'status_borrow') | (Operation.operation_type == 'edit_borrow'))
+        data = postgresql_handle(vls_back_url).filterall(
+            Operation,
+            (Operation.operation_type == 'add_borrow') |
+            (Operation.operation_type == 'status_borrow') |
+            (Operation.operation_type == 'edit_borrow'))
     result = []
     for i in data:
         result.append(operationData2Dict(i))
@@ -375,13 +443,111 @@ def edit_bank_data(type, database, data):
         postgresql_handle(vls_back_url).add(add_data)
     elif type == 'status':
         postgresql_handle(vls_back_url).update(
-            bank_table, (bank_table.id == data['id']), {bank_table.status: data['status']})
+            bank_table,
+            (bank_table.id == data['id']),
+            {bank_table.status: data['status']})
         result['message'] = 'ok'
     elif type == 'edit':
         if bank_data_exit(database, data['product_name'], data['product_id']) == 0:
             result['message'] = 'this product not exist'
             return result
         postgresql_handle(vls_back_url).update(
-            bank_table, (bank_table.id == data['id']), dict2Table_edit(bank_table, data))
+            bank_table,
+            (bank_table.id == data['id']),
+            dict2Table_edit(bank_table, data))
         result['message'] = 'ok'
+    return result
+
+
+def get_coin_data():
+    data = postgresql_handle(vls_back_url).list(Coin_management)
+    result = []
+    for i in data:
+        temp = {
+            'id': i.id,
+            'name': i.name,
+            'precision': float(i.precision),
+            'min_quantity': float(i.min_quantity),
+            'max_quantity': float(i.max_quantity),
+            'status': i.status
+        }
+        result.append(temp)
+    return result
+
+
+def get_coin_log():
+    data = postgresql_handle(vls_back_url).filterall(
+        Coin_management,
+        (Coin_management.type == 'add_coin_management') |
+        (Coin_management.type == 'edit_coin_management') |
+        (Coin_management.type == 'status_coin_management')
+    )
+    result = []
+    for i in data:
+        result.append(operationData2Dict(i))
+    return result
+
+
+def exist_coin_data(name):
+    data = postgresql_handle(vls_back_url).list(Coin_management)
+    for i in data:
+        if i.name == name:
+            return 1
+    return 0
+
+
+def add_coin_data(data):
+    result = {
+        'status': 'error',
+        'message': 'This coin name already exist'
+    }
+    if exist_coin_data(data['name']):
+        return result
+    add_data = Coin_management(
+        name=data['name'],
+        precision=data['precision'],
+        min_quantity=data['min_quantity'],
+        max_quantity=data['max_quantity'],
+        status=data['status']
+    )
+    postgresql_handle(vls_back_url).add(add_data)
+    result = {
+        'status': 'ok',
+        'message': 'Add new coin'
+    }
+    return result
+
+
+def edit_coin_data(data):
+    result = {
+        'status': 'error',
+        'message': 'This coin name does not exist'
+    }
+    if exist_coin_data(data['name']) == 0:
+        return result
+    edit_data = {
+        Coin_management.name: data['name'],
+        Coin_management.precision: data['precision'],
+        Coin_management.min_quantity: data['min_quantity'],
+        Coin_management.max_quantity: data['max_quantity'],
+        Coin_management.status: data['status']
+    }
+    postgresql_handle(vls_back_url).update(
+        Coin_management, Coin_management.id == data['id'], edit_data)
+    result = {
+        'status': 'ok',
+        'message': 'Edit coin'
+    }
+    return result
+
+
+def status_coin_data(id, status):
+    result = {
+        'status': 'error',
+        'message': 'Change Update'
+    }
+    print(id, status, '======================')
+    postgresql_handle(vls_back_url).update(
+        Coin_management, (Coin_management.id == id), {Coin_management.status:status})
+    result['status'] = 'ok'
     return result

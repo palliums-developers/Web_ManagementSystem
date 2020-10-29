@@ -1,5 +1,5 @@
 from flask_restful import reqparse, abort, Resource, request
-from SQL_operation import get_bank_data, edit_bank_data, operation_log_addone,get_bank_operation
+from SQL_operation import get_coin_data, get_coin_log, add_coin_data, edit_coin_data, status_coin_data, operation_log_addone
 from util import jwt_operation, redis_operation
 import json
 import time
@@ -9,11 +9,10 @@ parser.add_argument('token', required=True,
                     location='headers', help='token cannot be blank')
 parser.add_argument('type', required=False,
                     help='Operation type cannot be blank')
-parser.add_argument('database', required=False, help='Database cannot be blank')
 parser.add_argument('data', required=False, help='Data cannot be blank')
 
 
-class Bank(Resource):
+class CoinManagement(Resource):
     def post(self):
         __args__ = parser.parse_args()
         result = {
@@ -26,14 +25,28 @@ class Bank(Resource):
             result['message'] = 'Unauthenticated'
             return result, 501
         now = int(time.time())
-        __temp__ = edit_bank_data(
-            __args__.type, __args__.database, eval(__args__.data))
-        if __temp__['message'] == 'ok':
-            operation_log_addone(web_token['name'], web_token['role'],
-                                 __args__.type+'_'+__args__.database, str(__args__.data), now)
-            return {'status': 'ok', 'message': __temp__['message']}, 201
+# type:status,edit,add
+        data = eval(__args__.data)
+        __temp__ = {'status': 'error'}
+        if __args__.type == 'status':
+            __temp__ = status_coin_data(
+                data['id'],
+                data['status'])
+        elif __args__.type == 'add':
+            __temp__ = add_coin_data(data)
+        elif __args__.type == 'edit':
+            __temp__ = edit_coin_data(data)
+        print(__temp__)
+        if __temp__['status'] == 'ok':
+            operation_log_addone(
+                web_token['name'],
+                web_token['role'],
+                __args__.type+'_coin_management',
+                str(__args__.data),
+                now)
+            return __temp__, 201
         else:
-            return {'status': 'error', 'message': __temp__['message']}, 501
+            return __temp__, 501
 
     def get(self):
         __args__ = parser.parse_args()
@@ -45,10 +58,10 @@ class Bank(Resource):
                 'message': 'Unauthenticated'
             }
             return result, 501
-        type = request.args.get('type') #operation data
-        database=request.args.get('database') #deposit borrow
-        if type=='operation':
-            __temp__=get_bank_operation(database)
-        elif type=='data':
-            __temp__ = get_bank_data(database)
+# operation data
+        type = request.args.get('type')
+        if type == 'operation':
+            __temp__ = get_coin_log()
+        elif type == 'data':
+            __temp__ = get_coin_data()
         return __temp__

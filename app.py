@@ -5,6 +5,7 @@ from app_service_loginLog import LoginLog
 from app_service_operationLog import OperationLog
 from app_service_user import User
 from app_service_bank import Bank
+from app_service_coin_management import CoinManagement
 from flask_cors import CORS
 
 
@@ -25,6 +26,7 @@ api.add_resource(User,'/api/user')
 api.add_resource(LoginLog, '/api/loginLog')
 api.add_resource(OperationLog, '/api/operationLog')
 api.add_resource(Bank,'/api/bank')
+api.add_resource(CoinManagement,'/api/coin')
 
 
 if __name__ == '__main__':
