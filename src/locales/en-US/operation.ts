@@ -12,4 +12,7 @@ export default {
     'operation.keyword': 'Keyword',
     'operation.confirm':'Confirm',
     'operation.cancel':'Cancel',
+    'operation.operator':'Operator',
+    'operation.time':'Operation Time',
+    'operation.log':'Operation Log',
 }

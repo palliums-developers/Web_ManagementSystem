@@ -28,6 +28,9 @@ export default () => {
   const handleDateOk = (values: any[]) => {
     console.log(values[0].format('X'), values[1].format('X'))
   }
+  const handleModalCancel=()=>{
+    setModal({status:false,data:{}})
+  }
   const clickEdit = (record: notification) => {
     console.log(record)
     localStorage.setItem('notification',JSON.stringify(record))
@@ -43,12 +46,14 @@ export default () => {
       platform: 'android',
       time: { time: '1603818800', type: 'immediately' },
       title: 'hahaha',
+      detail:'aaaaa'
     },
     {
       id: '2',
       platform: 'ios',
       time: { time: '1603820800', type: 'delay' },
       title: 'xixixi',
+      detail:'bbbbb'
     },
   ];
   const columns = [
@@ -86,6 +91,14 @@ export default () => {
   ];
   return (
     <PageContainer className={styles.main}>
+      <Modal
+        visible={modal.status}
+        title={intl('operation.view')}
+        onCancel={handleModalCancel}
+        footer={null}
+      >
+        <p>{modal.data?.detail}</p>
+      </Modal>
       <Card>
         <div className={styles.row}>
           <Input placeholder={intl('config.keyword')} />

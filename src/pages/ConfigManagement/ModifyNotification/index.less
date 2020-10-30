@@ -3,4 +3,43 @@
 .main {
   width: 100%;
   background: @component-background;
+
+  .row {
+    display: flex;
+    flex-direction: row;
+    // height:50px;
+    margin-bottom: 30px;
+    p{
+      // margin: 10px;
+      width: 100px;
+    }
+  }
+  .inputNotification {
+    .title{
+      display: flex;
+      // flex-direction: row;
+      align-items: center;
+      height: 80px;
+      span{
+        width: 45%;
+        height: 1px;
+        background-color: black;
+      }
+    }
+    // display: flex;
+    // flex-direction: row;
+    h2 {
+      margin: 0 auto;
+    }
+    p{
+      margin: 10px;
+      width: 100px;
+    }
+    Input{
+      width: 400px;
+    }
+    TextArea{
+      width: 400px;
+    }
+  }
 }

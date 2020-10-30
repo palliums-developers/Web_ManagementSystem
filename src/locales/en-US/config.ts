@@ -11,4 +11,8 @@ export default {
     'config.table_time': 'Notification time',
     'config.immediately': 'Immediately',
     'config.delay': 'Delay',
-};
+    'config.release':'Release Time',
+    'config.language':'Language',
+    'config.title':'Notification Title',
+    'config.detail':'Notification Detail',
+}

@@ -3,7 +3,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import { Spin, Card, Modal, Input, Button } from 'antd';
 import { Link, SelectLang, useModel, useIntl } from 'umi';
 import styles from './index.less';
-import { accountInformation, userInformation } from '@/services/login';
+import { accountInformation, userInformation, changePassword } from '@/services/login';
 import { useInterval } from '@/utils/utils'
 const intl = (_temp: string) => {
   return useIntl().formatMessage({ id: _temp });
@@ -13,6 +13,7 @@ export default () => {
   const [userInformation, setUserInformation] = useState<userInformation>();
   const [modal, setModal] = useState({ password: false, phone: false, google: false });
   const [captchaTime, setCaptchaTime] = useState(0);
+  const [password, setPassword] = useState({ old_password: '', new_password: '', confirm_password: '' })
   const getInformation = async () => {
     let temp = await accountInformation();
     await setUserInformation(temp);
@@ -26,9 +27,44 @@ export default () => {
       setModal({ password: false, phone: false, google: true });
     }
   }
+  const handleChange = (type: string, data: any) => {
+    switch (type) {
+      case 'old_password':
+        setPassword({
+          old_password: data,
+          new_password: password.new_password,
+          confirm_password: password.confirm_password
+        });
+        break;
+      case 'new_password':
+        setPassword({
+          old_password: password.old_password,
+          new_password: data,
+          confirm_password: password.confirm_password
+        });
+        sameString(data, password.confirm_password);
+        break;
+      case 'confirm_password':
+        setPassword({
+          old_password: password.old_password,
+          new_password: password.new_password,
+          confirm_password: data
+        });
+        sameString(password.new_password, data);
+        break;
+    }
+  }
+  const sameString = (string1: string, string2: string) => {
+    if (string1 === string2) {
+      console.log('same string');
+    } else {
+      console.log('not the same');
+    }
+  }
   const handleModalOk = async (target: string) => {
     if (target === 'password') {
-
+      let result = await changePassword(userInformation?.name, password.old_password, password.new_password);
+      console.log(result);
     } else if (target === 'phone') {
 
     } else if (target === 'google') {
@@ -39,9 +75,15 @@ export default () => {
   const handleModalCancel = () => {
     setModal({ password: false, phone: false, google: false });
     setCaptchaTime(0);
+    setPassword({
+      old_password: '',
+      new_password: '',
+      confirm_password: ''
+    })
   }
   const getCAPTCHA = () => {
     if (captchaTime === 0) {
+      // todo get captcha code
       setCaptchaTime(60)
     }
   }
@@ -69,9 +111,9 @@ export default () => {
             onCancel={() => handleModalCancel()}
             title={intl('account.modifyPassword')}
           >
-            <p>{intl('account.originalPassword')}<Input.Password placeholder={intl('account.enterPassword')} /></p>
-            <p>{intl('account.newPassword')}<Input.Password placeholder={intl('account.passwordLimit')} /></p>
-            <p>{intl('account.confirmPassword')}<Input.Password placeholder={intl('account.passwordConfirm')} /></p>
+            <p>{intl('account.originalPassword')}<Input.Password placeholder={intl('account.enterPassword')} onChange={e => handleChange('old_password', e.target.value)} /></p>
+            <p>{intl('account.newPassword')}<Input.Password placeholder={intl('account.passwordLimit')} onChange={e => handleChange('new_password', e.target.value)} /></p>
+            <p>{intl('account.confirmPassword')}<Input.Password placeholder={intl('account.passwordConfirm')} onChange={e => handleChange('confirm_password', e.target.value)} /></p>
           </Modal>
           <Modal
             visible={modal.phone}
@@ -91,7 +133,7 @@ export default () => {
             onCancel={() => handleModalCancel()}
             title={intl('account.modifyGoogle')}
           >
-
+            <p>this is google</p>
           </Modal>
           <Card>
             <h2>{intl('account.information')}</h2>

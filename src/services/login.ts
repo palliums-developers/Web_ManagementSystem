@@ -63,6 +63,26 @@ export async function accountInformation(){
   })
 }
 
+export async function changePassword(name:string,old_password:string,new_password:string){
+  let url = '/api/user';
+  let token: string = 'token';
+  if (sessionStorage.getItem('JWT')) {
+      token = sessionStorage.getItem('JWT')
+  }
+  return request(url,{
+    method: 'POST',
+    data:{
+      type:'password',
+      name:name,
+      old_password:old_password,
+      new_password:new_password
+    },
+    headers: {
+        token: token
+    }
+  })
+}
+
 export async function getFakeCaptcha(mobile: string) {
   return request(`/api/login/captcha?mobile=${mobile}`);
 }
