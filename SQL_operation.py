@@ -118,12 +118,19 @@ def user_data_edit(id, name, email, role):
     return 1
 
 
-def user_data_password(name, password):
-    postgresql_handle(vls_back_url).update(
-        User_data,
-        (User_data.name == name),
-        {User_data.password: password})
-    return 1
+def user_data_password(name, old_password, new_password):
+    temp_password = postgresql_handle(vls_back_url).filterone(
+        User_data, User_data.name == name)
+    # todo encode password
+    print(old_password,new_password,temp_password.password)
+    if temp_password == old_password:
+        postgresql_handle(vls_back_url).update(
+            User_data,
+            (User_data.name == name),
+            {User_data.password: new_password})
+        return 1
+    else:
+        return 0
 
 
 def user_data_status(name, status):
@@ -548,6 +555,6 @@ def status_coin_data(id, status):
     }
     print(id, status, '======================')
     postgresql_handle(vls_back_url).update(
-        Coin_management, (Coin_management.id == id), {Coin_management.status:status})
+        Coin_management, (Coin_management.id == id), {Coin_management.status: status})
     result['status'] = 'ok'
     return result

@@ -13,7 +13,8 @@ parser.add_argument('role')
 parser.add_argument('id')
 parser.add_argument('email')
 parser.add_argument('status')
-parser.add_argument('password')
+parser.add_argument('old_password')
+parser.add_argument('new_password')
 
 
 class User(Resource):
@@ -43,11 +44,13 @@ class User(Resource):
             else:
                 result['message'] = 'edit data failed'
         elif __args__.type == 'password':
-            __temp__ = user_data_password(__args__.name, __args__.password)
+            __temp__ = user_data_password(
+                __args__.name, __args__.old_password, __args__.new_password)
             if(__temp__ > 0):
                 result['message'] = 'change password successfully'
-                operation_log_addone(web_token['name'], web_token['role'],
-                                     'password_user', 'Change '+__args__.name+' password', now)
+                operation_log_addone(
+                    web_token['name'], web_token['role'],
+                    'password_user', 'Change '+__args__.name+' password', now)
             else:
                 result['message'] = 'change password failed'
         elif __args__.type == "status":
@@ -55,8 +58,9 @@ class User(Resource):
                 __args__.name, str2bool(__args__.status))
             if(__temp__ > 0):
                 result['message'] = 'change status successfully'
-                operation_log_addone(web_token['name'], web_token['role'], 'status_user',
-                                     'Change '+__args__.name+' status to '+__args__.status, now)
+                operation_log_addone(
+                    web_token['name'], web_token['role'], 'status_user',
+                    'Change '+__args__.name+' status to '+__args__.status, now)
             else:
                 result['message'] = 'change status failed'
         elif __args__.type == 'add':
@@ -65,8 +69,9 @@ class User(Resource):
                 __args__.name, __args__.role, __args__.email, '6e8168918225cd7efd3ea6e26e9a0ba8', now)
             if(__temp__ > 0):
                 result['message'] = 'add user successfully'
-                operation_log_addone(web_token['name'], web_token['role'], 'add_user',
-                                     'name: '+__args__.name+', role: '+__args__.role+', email: '+__args__.email, now)
+                operation_log_addone(
+                    web_token['name'], web_token['role'], 'add_user',
+                    'name: '+__args__.name+', role: '+__args__.role+', email: '+__args__.email, now)
             else:
                 result['message'] = 'add user failed'
 
