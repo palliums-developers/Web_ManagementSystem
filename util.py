@@ -277,3 +277,4 @@ def jwt_operation(operation, payload):
 #             expire_in_seconds = current_app.config['REDIS_EXPIRE']
 #         r = cls._get_r()
 #         r.expire(name, expire_in_seconds)
+

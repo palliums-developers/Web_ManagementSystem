@@ -121,9 +121,7 @@ def user_data_edit(id, name, email, role):
 def user_data_password(name, old_password, new_password):
     temp_password = postgresql_handle(vls_back_url).filterone(
         User_data, User_data.name == name)
-    # todo encode password
-    print(old_password,new_password,temp_password.password)
-    if temp_password == old_password:
+    if temp_password.password == old_password:
         postgresql_handle(vls_back_url).update(
             User_data,
             (User_data.name == name),
