@@ -212,6 +212,13 @@ export default defineConfig({
         '^/localhost': '',
       },
     },
+    '/api/captcha': {
+      target: vls_back_management_url,
+      changeOrigin: true,
+      pathRewrite: {
+        '^/localhost': '',
+      },
+    },
     '/1.0/violas/currency': {
       target: vls_webserver,
       changeOrigin: true,

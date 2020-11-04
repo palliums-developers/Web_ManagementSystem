@@ -3,24 +3,42 @@ import React, { useState, useEffect } from 'react';
 import { Card, Input, Select, Table, Button, Switch, Modal } from 'antd';
 import styles from './index.less';
 import { useIntl } from 'umi';
-import { getBankProduct, postBankProduct, bank_product, show_data, raw_bank_product, modal, local_data } from '@/services/bank';
+import {
+  getBankProduct,
+  postBankProduct,
+  bank_product,
+  show_data,
+  raw_bank_product,
+  modal,
+  local_data,
+} from '@/services/bank';
 import { lowerCase } from 'lodash';
 import { raw } from 'express';
 import { ReconciliationFilled } from '@ant-design/icons';
 
 const intl = (_temp: string) => {
   return useIntl().formatMessage({ id: _temp });
-}
+};
 
 const { Option } = Select;
 
 export default () => {
   const [loading, setLoading] = useState<boolean>(true);
   const [rawData, setRawData] = useState<bank_product[]>();
-  const [showData, setShowData] = useState<show_data[]>([{ id: 999, name: 'Loading', description: 'Loading', min: 0, max: 0, increase: 0, status: false }]);
+  const [showData, setShowData] = useState<show_data[]>([
+    {
+      id: 999,
+      name: 'Loading',
+      description: 'Loading',
+      min: 0,
+      max: 0,
+      increase: 0,
+      status: false,
+    },
+  ]);
   const [search, setSearch] = useState({ keyword: '', status: undefined });
   const [modal, setModal] = useState<modal>({ status: false, view: false, data: {} });
-  const [postData, setPostData] = useState();
+  const [viewData, setViewData] = useState();
   const filter_onClick_search = () => {
     let temp: any = [];
     if (search.status !== undefined) {
@@ -36,8 +54,14 @@ export default () => {
       let keyword_filter_list: any[] = [];
       for (let item1 in temp) {
         for (let item2 in temp[item1]) {
-          if (item2 === 'product_name' || item2 === 'description' || item2 === 'minimum_amount' || item2 === 'max_limit' || item2 === 'pledge_rate') {
-            if (lowerCase(('' + temp[item1][item2])).search(lowerCase(search.keyword)) > -1) {
+          if (
+            item2 === 'product_name' ||
+            item2 === 'description' ||
+            item2 === 'minimum_amount' ||
+            item2 === 'max_limit' ||
+            item2 === 'pledge_rate'
+          ) {
+            if (lowerCase('' + temp[item1][item2]).search(lowerCase(search.keyword)) > -1) {
               keyword_filter_list.push(temp[item1]);
               break;
             }
@@ -47,46 +71,52 @@ export default () => {
       temp = keyword_filter_list;
     }
     setShowData(getShowDataFromRawData(temp));
-  }
-  const showModal = (type: string, data?: any) => {
+  };
+  const showModal = async (type: string, data?: any) => {
     let localEdit: local_data = {
       operation: '',
       database: 'deposit',
-      data: {}
-    }
+      data: {},
+    };
     switch (type) {
       case 'status':
         setModal({ status: true, view: false, data: data });
         break;
       case 'add':
-        localEdit.operation = 'add',
-          localStorage.setItem('edit', JSON.stringify(localEdit));
+        (localEdit.operation = 'add'), localStorage.setItem('edit', JSON.stringify(localEdit));
         break;
       case 'edit':
         for (let i in rawData) {
           if (rawData[i].id === data.id) {
-            localEdit.data = (rawData[i]);
+            localEdit.data = rawData[i];
             break;
           }
         }
         localEdit.operation = 'edit';
-        localStorage.setItem('edit', JSON.stringify(localEdit))
+        localStorage.setItem('edit', JSON.stringify(localEdit));
         break;
       case 'view':
+        for (let i in rawData) {
+          if (rawData[i].id === data.id) {
+            await setViewData(rawData[i]);
+            console.log(rawData[i]);
+            break;
+          }
+        }
         setModal({ status: false, view: true, data: data });
         break;
     }
-  }
+  };
   const handleModalOk = async (type: string) => {
     let result;
     switch (type) {
       case 'status':
         let postData = {
-          "id": modal.data.id,
-          "status": !modal.data.status,
-          "product_name": modal.data.product_name
-        }
-        result = await postBankProduct(type, 'deposit', postData)
+          id: modal.data.id,
+          status: !modal.data.status,
+          product_name: modal.data.product_name,
+        };
+        result = await postBankProduct(type, 'deposit', postData);
         break;
       case 'add':
         break;
@@ -99,40 +129,38 @@ export default () => {
       initial();
       handleModalCancel();
     }
-  }
+  };
   const handleModalCancel = () => {
     setModal({ status: false, view: false, data: {} });
-  }
+  };
   const initial = async () => {
-    const temp = await getBankProduct('data','deposit');
+    const temp = await getBankProduct('data', 'deposit');
     setRawData(temp);
     setShowData(getShowDataFromRawData(temp));
-  }
+  };
   const getShowDataFromRawData = (temp: raw_bank_product[]) => {
     let result = [];
     for (let i in temp) {
-      result.push(
-        {
-          id: temp[i].id,
-          name: temp[i].product_name,
-          description: temp[i].description,
-          min: temp[i].minimum_amount,
-          max: temp[i].max_limit,
-          increase: temp[i].pledge_rate,
-          status: temp[i].status
-        }
-      )
+      result.push({
+        id: temp[i].id,
+        name: temp[i].product_name,
+        description: temp[i].description,
+        min: temp[i].minimum_amount,
+        max: temp[i].max_limit,
+        increase: temp[i].pledge_rate,
+        status: temp[i].status,
+      });
     }
     return result;
-  }
+  };
   const keyword_input = async (e: any) => {
-    setSearch({ keyword: e.target.value, status: search.status })
-  }
+    setSearch({ keyword: e.target.value, status: search.status });
+  };
   const filter_onChange_status = async (e: any) => {
-    setSearch({ keyword: search.keyword, status: e })
-  }
+    setSearch({ keyword: search.keyword, status: e });
+  };
   useEffect(() => {
-    initial()
+    initial();
     setTimeout(() => {
       setLoading(false);
     }, 3000);
@@ -141,43 +169,55 @@ export default () => {
     {
       title: intl('bank.name'),
       dataIndex: 'name',
-      key: 'name'
+      key: 'name',
     },
     {
       title: intl('bank.description'),
       dataIndex: 'description',
-      key: 'description'
+      key: 'description',
     },
     {
       title: intl('bank.min_deposit'),
       dataIndex: 'min',
-      key: 'min_deposit'
+      key: 'min_deposit',
     },
     {
       title: intl('bank.daily_deposit'),
       dataIndex: 'max',
-      key: 'daily_deposit'
+      key: 'daily_deposit',
     },
     {
       title: intl('bank.step_deposit'),
       dataIndex: 'increase',
-      key: 'step_deposit'
+      key: 'step_deposit',
     },
     {
       title: intl('bank.status'),
       dataIndex: 'status',
       key: 'status',
-      render: (status: boolean, record: bank_product) => <Switch checked={status} onChange={() => {
-        showModal('status', { status: status, id: record.id, product_name: record.name });
-      }} />
+      render: (status: boolean, record: bank_product) => (
+        <Switch
+          checked={status}
+          onChange={() => {
+            showModal('status', { status: status, id: record.id, product_name: record.name });
+          }}
+        />
+      ),
     },
     {
       title: intl('operation'),
       // dataIndex: 'operation',
       // key: 'operation'
-      render: (index: number, record: show_data) => <div className={styles.raw_operation}><a onClick={() => showModal('edit', record)} href='/coin/modify'>{intl('operation.edit')}</a>|<p onClick={() => showModal('view', record)}>{intl('operation.view')}</p></div>
+      render: (index: number, record: show_data) => (
+        <div className={styles.raw_operation}>
+          <a onClick={() => showModal('edit', record)} href="/coin/modify">
+            {intl('operation.edit')}
+          </a>
+          |<p onClick={() => showModal('view', record)}>{intl('operation.view')}</p>
+        </div>
+      ),
     },
-  ]
+  ];
 
   return (
     <PageContainer className={styles.main}>
@@ -188,7 +228,11 @@ export default () => {
           onOk={() => handleModalOk('status')}
           onCancel={() => handleModalCancel()}
         >
-          <h1>{modal.data && modal.data.status ? intl('bank.disable_status') : intl('bank.able_status') + ' ?'} </h1>
+          <h1>
+            {modal.data && modal.data.status
+              ? intl('bank.disable_status')
+              : intl('bank.able_status') + ' ?'}{' '}
+          </h1>
         </Modal>
         {/* <Modal
           title={intl('bank.add_deposit')}
@@ -213,16 +257,54 @@ export default () => {
           onOk={() => handleModalOk('view')}
           onCancel={() => handleModalCancel()}
         >
-          <h1>view</h1>
+          <div className={styles.raw_operation}>
+            <h4>{intl('bank.currency')}</h4>
+            <p>{viewData?.currency}</p>
+            <h4>{intl('bank.product_logo')}</h4>
+            <p>{viewData?.product_logo}</p>
+          </div>
+          <div className={styles.raw_operation}>
+            <h4>{intl('bank.product_id')}</h4>
+            <p>{viewData?.product_id}</p>
+            <h4>{intl('bank.product_name')}</h4>
+            <p>{viewData?.product_name}</p>
+          </div>
+          <div className={styles.raw_operation}>
+            <h4>{intl('bank.min_deposit')}</h4>
+            <p>{viewData?.minimum_amount}</p>
+            <h4>{intl('bank.step_deposit')}</h4>
+            <p>{viewData?.pledge_rate}</p>
+          </div>
+          <div className={styles.raw_operation}>
+            <h4>{intl('bank.daily_deposit')}</h4>
+            <p>{viewData?.max_limit}</p>
+            <h4>{viewData?.rate_desc}</h4>
+            <p>{viewData?.rate}</p>
+          </div>
         </Modal>
         <div>
-          <Input allowClear={true} placeholder={intl('operation.keyword')} style={{ width: 200 }} onChange={keyword_input} />
-          <Select onChange={filter_onChange_status} placeholder={intl('user.status')} style={{ width: 200 }} allowClear onClear={() => setSearch({ keyword: search.keyword, status: undefined })}>
+          <Input
+            allowClear={true}
+            placeholder={intl('operation.keyword')}
+            style={{ width: 200 }}
+            onChange={keyword_input}
+          />
+          <Select
+            onChange={filter_onChange_status}
+            placeholder={intl('user.status')}
+            style={{ width: 200 }}
+            allowClear
+            onClear={() => setSearch({ keyword: search.keyword, status: undefined })}
+          >
             <Option value="true">{intl('user.status_t')}</Option>
             <Option value="false">{intl('user.status_f')}</Option>
           </Select>
-          <Button type='primary' onClick={filter_onClick_search}>{intl('operation.search')}</Button>
-          <Button onClick={() => showModal('add')} href='/coin/modify'>{intl('operation.new')}</Button>
+          <Button type="primary" onClick={filter_onClick_search}>
+            {intl('operation.search')}
+          </Button>
+          <Button onClick={() => showModal('add')} href="/coin/modify">
+            {intl('operation.new')}
+          </Button>
         </div>
         <Table dataSource={showData} columns={columns} />
       </Card>

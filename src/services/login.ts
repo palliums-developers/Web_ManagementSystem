@@ -86,7 +86,9 @@ export async function changePassword(name:string,old_password:string,new_passwor
 export async function getFakeCaptcha(mobile: string) {
   return request(`/api/login/captcha?mobile=${mobile}`);
 }
-
+export async function getImgCaptcha(){
+  return request(`/api/captcha`)
+}
 export async function outLogin() {
   return request('/api/login/outLogin');
 }

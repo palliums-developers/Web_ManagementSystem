@@ -1,6 +1,6 @@
 import { PageContainer } from '@ant-design/pro-layout';
 import React, { useState, useEffect } from 'react';
-import { Card, Input, Table, Button, Select, DatePicker,Modal } from 'antd';
+import { Card, Input, Table, Button, Select, DatePicker, Modal } from 'antd';
 import styles from './index.less';
 import { useIntl } from 'umi'
 import { values } from 'lodash';
@@ -16,7 +16,7 @@ export default () => {
   const [loading, setLoading] = useState<boolean>(true);
   const [platform, setPlatform] = useState<string>();
   const [notification, setNotification] = useState();
-  const [modal,setModal]=useState({status:false,data:{}})
+  const [modal, setModal] = useState({ status: false, data: {} })
   useEffect(() => {
     setTimeout(() => {
       setLoading(false);
@@ -28,16 +28,16 @@ export default () => {
   const handleDateOk = (values: any[]) => {
     console.log(values[0].format('X'), values[1].format('X'))
   }
-  const handleModalCancel=()=>{
-    setModal({status:false,data:{}})
+  const handleModalCancel = () => {
+    setModal({ status: false, data: {} })
   }
   const clickEdit = (record: notification) => {
     console.log(record)
-    localStorage.setItem('notification',JSON.stringify(record))
+    localStorage.setItem('notification', JSON.stringify(record))
   }
-  const showModal=(type:string,data:any)=>{
-    if(type==='view'){
-      setModal({status:true,data:data})
+  const showModal = (type: string, data: any) => {
+    if (type === 'view') {
+      setModal({ status: true, data: data })
     }
   }
   const dataSource = [
@@ -46,14 +46,32 @@ export default () => {
       platform: 'android',
       time: { time: '1603818800', type: 'immediately' },
       title: 'hahaha',
-      detail:'aaaaa'
+      detail: {
+        en: {
+          title: 'aaa1',
+          description: 'aaa2'
+        },
+        cn: {
+          title: 'bbb1',
+          description: 'bbb2'
+        }
+      },
     },
     {
       id: '2',
       platform: 'ios',
       time: { time: '1603820800', type: 'delay' },
       title: 'xixixi',
-      detail:'bbbbb'
+      detail: {
+        en: {
+          title: 'ccc1',
+          description: 'ccc2'
+        },
+        cn: {
+          title: 'ddd1',
+          description: 'ddd2'
+        }
+      },
     },
   ];
   const columns = [
@@ -78,7 +96,7 @@ export default () => {
       key: 'time',
       render: (time: notification_time) => {
         return <div>
-          <p>{intl('config.'+time.type)}</p>
+          <p>{intl('config.' + time.type)}</p>
           <p>{moment(parseInt(time.time) * 1000).format('YYYY-MM-DD HH:mm:ss')}</p>
         </div>
       }
@@ -86,7 +104,7 @@ export default () => {
     {
       title: intl('user.operation'),
       dataIndex: 'operation',
-    render: (index: number, record: notification) => <div className={styles.row}><a style={{ color: 'Blue', cursor: 'pointer', marginBottom: 0 }} onClick={() => { clickEdit(record) }} href='/config/modify'>{intl('operation.edit')}</a>|<p style={{ color: 'Blue', cursor: 'pointer', marginBottom: 0 }} onClick={()=>showModal('view',record)}>{intl('operation.view')}</p></div>
+      render: (index: number, record: notification) => <div className={styles.row}><a style={{ color: 'Blue', cursor: 'pointer', marginBottom: 0 }} onClick={() => { clickEdit(record) }} href='/config/modify'>{intl('operation.edit')}</a>|<p style={{ color: 'Blue', cursor: 'pointer', marginBottom: 0 }} onClick={() => showModal('view', record)}>{intl('operation.view')}</p></div>
     }
   ];
   return (
@@ -97,7 +115,23 @@ export default () => {
         onCancel={handleModalCancel}
         footer={null}
       >
-        <p>{modal.data?.detail}</p>
+        {
+          modal.data.detail?.en &&
+          <div>
+            <p>EN</p>
+            <p>{modal.data.detail.en.title}</p>
+            <p>{modal.data.detail.en.description}</p>
+          </div>
+        }
+        {
+          modal.data.detail?.cn &&
+          <div>
+            <p>CN</p>
+            <p>{modal.data.detail.cn.title}</p>
+            <p>{modal.data.detail.cn.description}</p>
+          </div>
+        }
+        {/* <p>{modal.data?.detail}</p> */}
       </Modal>
       <Card>
         <div className={styles.row}>

@@ -1,10 +1,10 @@
 // import { AlipayCircleOutlined, TaobaoCircleOutlined, WeiboCircleOutlined } from '@ant-design/icons';
-import { Alert, message } from 'antd';
-import React, { useState } from 'react';
+import { Alert, message, Input } from 'antd';
+import React, { useState, useEffect } from 'react';
 import { Link, SelectLang, useModel, useIntl } from 'umi';
 import { getPageQuery } from '@/utils/utils';
 import logo from '@/assets/logo.svg';
-import { LoginParamsType, accountLogin } from '@/services/login';
+import { LoginParamsType, accountLogin, getImgCaptcha } from '@/services/login';
 import Footer from '@/components/Footer';
 import LoginFrom from './components/Login';
 import styles from './style.less';
@@ -32,7 +32,7 @@ const replaceGoto = () => {
   const urlParams = new URL(window.location.href);
   const params = getPageQuery();
   let { redirect } = params as { redirect: string };
-  console.log(redirect)
+  console.log(redirect);
   if (redirect) {
     const redirectUrlParams = new URL(redirect);
     if (redirectUrlParams.origin === urlParams.origin) {
@@ -55,7 +55,36 @@ const Login: React.FC<{}> = () => {
   const { refresh } = useModel('@@initialState');
   const [autoLogin, setAutoLogin] = useState(true);
   const [type, setType] = useState<string>('account');
+  const [captcha, setCaptcha] = useState({ img: '', code: '' });
+  const [warning, setWarning] = useState({ name: '', password: '', captcha: '' });
 
+  const handleCaptcha = async (e: any) => {
+    if (e.length === 4) {
+      if (e === captcha.code) {
+        await setWarning({
+          name: warning.name,
+          password: warning.password,
+          captcha: 'Same CAPTCHA',
+        });
+      } else {
+        await setWarning({
+          name: warning.name,
+          password: warning.password,
+          captcha: 'Error CAPTCHA',
+        });
+      }
+    }else{
+      await setWarning({
+        name: warning.name,
+        password: warning.password,
+        captcha: '',
+      });
+    }
+  };
+  const getCaptcha = async () => {
+    const temp = await getImgCaptcha();
+    setCaptcha(temp);
+  };
   const handleSubmit = async (values: LoginParamsType) => {
     setSubmitting(true);
     try {
@@ -79,11 +108,13 @@ const Login: React.FC<{}> = () => {
     }
     setSubmitting(false);
   };
-
+  useEffect(() => {
+    getCaptcha();
+  }, []);
   const { status, type: loginType } = userLoginState;
   const intl = (_temp: string) => {
     return useIntl().formatMessage({ id: _temp });
-  }
+  };
   return (
     <div className={styles.container}>
       <div className={styles.lang}>
@@ -118,7 +149,7 @@ const Login: React.FC<{}> = () => {
               />
               <Password
                 name="password"
-                placeholder={intl('login.password') + ": ant.design"}
+                placeholder={intl('login.password') + ': ant.design'}
                 rules={[
                   {
                     required: true,
@@ -126,6 +157,21 @@ const Login: React.FC<{}> = () => {
                   },
                 ]}
               />
+              <div className={''}>
+                <Input
+                  width="200"
+                  onChange={(e) => handleCaptcha(e.target.value)}
+                  maxLength={4}
+                ></Input>
+                <img
+                  src={captcha.img}
+                  onClick={() => {
+                    // todo Input clear
+                    getCaptcha();
+                  }}
+                />
+                <p>{warning.captcha}</p>
+              </div>
             </Tab>
             <Submit loading={submitting}>{intl('login.login')}</Submit>
           </LoginFrom>
