@@ -3,19 +3,62 @@
 .main {
   width: 100%;
   background: @component-background;
-}
 
-.raw_operation {
-  display: flex;
-  flex-direction: row;
 
-  p {
-    color: blue;
-    margin: 0px 10px;
-    cursor: pointer;
+  .raw_operation {
+    display: flex;
+    flex-direction: row;
+
+    p {
+      color: blue;
+      margin: 0px 10px;
+      cursor: pointer;
+    }
   }
-}
 
-.inputArea {
-  width: 80%;
+  // .inputArea {
+  //   width: 80%;
+  // }
+
+  .product_desc {
+    width: 600px;
+
+    .title {
+      display: flex;
+      // flex-direction: row;
+      align-items: center;
+      height: 80px;
+
+      span {
+        width: 45%;
+        height: 1px;
+        background-color: black;
+      }
+    }
+
+    .row {
+      display: flex;
+      flex-direction: row;
+      // height:50px;
+      margin-bottom: 30px;
+
+      h2 {
+        margin: 0 auto;
+      }
+
+      p {
+        margin: 10px;
+        width: 100px;
+      }
+
+      Input {
+        width: 100%;
+      }
+
+      TextArea {
+        width: 100%;
+      }
+    }
+
+  }
 }

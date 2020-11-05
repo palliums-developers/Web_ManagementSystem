@@ -32,7 +32,6 @@ const replaceGoto = () => {
   const urlParams = new URL(window.location.href);
   const params = getPageQuery();
   let { redirect } = params as { redirect: string };
-  console.log(redirect);
   if (redirect) {
     const redirectUrlParams = new URL(redirect);
     if (redirectUrlParams.origin === urlParams.origin) {
@@ -41,11 +40,13 @@ const replaceGoto = () => {
         redirect = redirect.substr(redirect.indexOf('#'));
       }
     } else {
-      window.location.href = '/';
+      window.location.href = '/welcome';
       return;
     }
   }
-  window.location.href = urlParams.href.split(urlParams.pathname)[0] + (redirect || '/');
+  //todo here is the login and redirect
+  // console.log(urlParams.href.split(urlParams.pathname)[0] + (redirect || '/'))
+  window.location.href = urlParams.href.split(urlParams.pathname)[0] + (redirect || '/welcome');
 };
 
 const Login: React.FC<{}> = () => {
@@ -73,7 +74,7 @@ const Login: React.FC<{}> = () => {
           captcha: 'Error CAPTCHA',
         });
       }
-    }else{
+    } else {
       await setWarning({
         name: warning.name,
         password: warning.password,
@@ -157,27 +158,40 @@ const Login: React.FC<{}> = () => {
                   },
                 ]}
               />
-              <div className={''}>
+              <div
+                style={{
+                  width: '100%',
+                  height: '40px',
+                }}
+              >
                 <Input
-                  width="200"
+                  style={{
+                    height: '100%',
+                  }}
                   onChange={(e) => handleCaptcha(e.target.value)}
                   maxLength={4}
+                  allowClear
+                  placeholder="CAPTCHA"
+                  suffix={
+                    <img
+                      src={captcha.img}
+                      onClick={() => {
+                        // todo Input clear
+                        getCaptcha();
+                      }}
+                    />
+                  }
                 ></Input>
-                <img
-                  src={captcha.img}
-                  onClick={() => {
-                    // todo Input clear
-                    getCaptcha();
-                  }}
-                />
-                <p>{warning.captcha}</p>
+                <p style={{ color: '#ff4d4f', fontSize: 14, lineHeight: 1.5715 }}>
+                  {warning.captcha}
+                </p>
               </div>
             </Tab>
             <Submit loading={submitting}>{intl('login.login')}</Submit>
           </LoginFrom>
         </div>
       </div>
-      <Footer />
+      {/* <Footer /> */}
     </div>
   );
 };

@@ -83,7 +83,8 @@ export default () => {
         setModal({ status: true, view: false, data: data });
         break;
       case 'add':
-        (localEdit.operation = 'add'), localStorage.setItem('edit', JSON.stringify(localEdit));
+        localEdit.operation = 'add';
+        localStorage.setItem('edit', JSON.stringify(localEdit));
         break;
       case 'edit':
         for (let i in rawData) {
@@ -108,7 +109,7 @@ export default () => {
     }
   };
   const handleModalOk = async (type: string) => {
-    let result;
+    let result = { status: 'ok' };
     switch (type) {
       case 'status':
         let postData = {
@@ -256,6 +257,7 @@ export default () => {
           visible={modal.view}
           onOk={() => handleModalOk('view')}
           onCancel={() => handleModalCancel()}
+          footer={[]}
         >
           <div className={styles.raw_operation}>
             <h4>{intl('bank.currency')}</h4>
@@ -280,6 +282,12 @@ export default () => {
             <p>{viewData?.max_limit}</p>
             <h4>{viewData?.rate_desc}</h4>
             <p>{viewData?.rate}</p>
+          </div>
+          <div>
+            <h4>EN</h4>
+            <p>{viewData?.description}</p>
+            <p>{viewData?.intor}</p>
+            <p>{viewData?.question}</p>
           </div>
         </Modal>
         <div>

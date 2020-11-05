@@ -49,4 +49,15 @@ export default {
   'menu.editor.flow': '流程编辑器',
   'menu.editor.mind': '脑图编辑器',
   'menu.editor.koni': '拓扑编辑器',
+  'menu.system':'系统管理',
+  'menu.config':'配置管理',
+  'menu.config.system_notification':'系统通知',
+  'menu.coin':'币种管理',
+  'menu.coin.coin_management':'币种管理',
+  'menu.coin.deposit':'存款市场',
+  'menu.coin.borrow':'借款市场',
+  'menu.system.user':'用户管理 ',
+  'menu.system.role':'角色管理',
+  'menu.system.login_log':'登录日志',
+  'menu.system.operation_log':'操作日志'
 };

@@ -15,4 +15,5 @@ export default {
     'operation.operator':'Operator',
     'operation.time':'Operation Time',
     'operation.log':'Operation Log',
+    'operation.type':'Operation Type',
 }

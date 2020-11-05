@@ -3,17 +3,22 @@ import React, { useState, useEffect } from 'react';
 import { Card, DatePicker, Table, Button, Input } from 'antd';
 import styles from './index.less';
 import { useIntl } from 'umi';
-import { getOperationList } from '@/services/operationLog'
+import { getOperationList } from '@/services/operationLog';
 import moment from 'moment';
 
 let pageSize = 10;
 
 const intl = (_temp: string) => {
   return useIntl().formatMessage({ id: _temp });
-}
+};
 export default () => {
   const [loading, setLoading] = useState<boolean>(true);
-  const [operationList, setOperationList] = useState({ total: 0, pages: 0, pageSize: pageSize, items: [] });
+  const [operationList, setOperationList] = useState({
+    total: 0,
+    pages: 0,
+    pageSize: pageSize,
+    items: [],
+  });
   const [start_date, setStart_date] = useState(0);
   const [end_date, setEnd_date] = useState(0);
   const [userName, setUserName] = useState('');
@@ -21,7 +26,7 @@ export default () => {
   useEffect(() => {
     (async () => {
       const temp = await getOperationList(1, pageSize, 'all');
-      setOperationList(temp)
+      setOperationList(temp);
     })();
     setTimeout(() => {
       setLoading(false);
@@ -29,14 +34,21 @@ export default () => {
   }, []);
   const getPage = (page: object): void => {
     (async () => {
-      const temp = await getOperationList(page.current, pageSize, 'all', userName, start_date, end_date);
-      setOperationList(temp)
+      const temp = await getOperationList(
+        page.current,
+        pageSize,
+        'all',
+        userName,
+        start_date,
+        end_date,
+      );
+      setOperationList(temp);
     })();
-  }
+  };
 
   const getName = (e: any) => {
-    setUserName(e.target.value)
-  }
+    setUserName(e.target.value);
+  };
 
   const changeDate = (value: Array<any>, dateString: Array<String>) => {
     // console.log('Selected Time: ', value);
@@ -45,33 +57,34 @@ export default () => {
       setStart_date(value[0].format('X'));
       setEnd_date(value[1].format('X'));
     }
-  }
+  };
 
   const dateOk = (value: Array<any>) => {
     // console.log('onOk: ', value[0].format('X'), value[1]);
     setStart_date(value[0].format('X'));
     setEnd_date(value[1].format('X'));
-  }
+  };
 
   const searchOperationinLog = async () => {
     const temp = await getOperationList(1, pageSize, 'all', userName, start_date, end_date);
-    setOperationList(temp)
-  }
+    setOperationList(temp);
+  };
   const columns: any = [
     {
       title: intl('systemLog.name'),
       dataIndex: 'name',
-      key: 'name'
+      key: 'name',
     },
     {
       title: intl('systemLog.role'),
       dataIndex: 'role',
-      key: 'role'
+      key: 'role',
     },
+    { title: intl('operation.type'), dataIndex: 'operation_type' },
     {
       title: intl('systemLog.operation'),
       dataIndex: 'operation',
-      key: 'operation'
+      key: 'operation',
     },
     {
       title: intl('systemLog.time'),
@@ -79,29 +92,34 @@ export default () => {
       key: 'time',
       render: (time: any) => {
         return moment(time * 1000).format('YYYY-MM-DD HH:mm:ss');
-      }
+      },
     },
   ];
   return (
     <PageContainer>
       <Card>
-        <Input placeholder={intl('systemLog.name')} onChange={getName} allowClear={true} />
+        <Input
+          style={{ width: 200 }}
+          placeholder={intl('systemLog.name')}
+          onChange={getName}
+          allowClear={true}
+        />
         <RangePicker
           showTime={{ format: 'HH:mm' }}
           format="YYYY-MM-DD HH:mm"
           onChange={changeDate}
           onOk={dateOk}
         />
-        <Button type="primary" onClick={searchOperationinLog}>{intl('operation.search')}</Button>
+        <Button type="primary" onClick={searchOperationinLog}>
+          {intl('operation.search')}
+        </Button>
         <Table
           dataSource={operationList.items}
           columns={columns}
-          pagination={
-            {
-              pageSize: operationList.pageSize,
-              total: operationList.total,
-            }
-          }
+          pagination={{
+            pageSize: operationList.pageSize,
+            total: operationList.total,
+          }}
           onChange={getPage}
         />
       </Card>

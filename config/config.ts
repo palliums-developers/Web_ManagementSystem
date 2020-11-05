@@ -27,7 +27,7 @@ export default defineConfig({
     default: 'en-US',
     // default true, when it is true, will use `navigator.language` overwrite default
     antd: true,
-    baseNavigator: true,
+    // baseNavigator: true,
   },
   dynamicImport: {
     loading: '@/components/PageLoading/index',
@@ -154,7 +154,7 @@ export default defineConfig({
     // },
     {
       path: '/',
-      redirect: '/welcome',
+      redirect: '/login',
     },
     {
       component: './404',
