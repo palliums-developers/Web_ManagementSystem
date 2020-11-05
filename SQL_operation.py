@@ -482,10 +482,10 @@ def get_coin_data():
 
 def get_coin_log():
     data = postgresql_handle(vls_back_url).filterall(
-        Coin_management,
-        (Coin_management.type == 'add_coin_management') |
-        (Coin_management.type == 'edit_coin_management') |
-        (Coin_management.type == 'status_coin_management')
+        Operation,
+        (Operation.operation_type == 'add_coin_management') |
+        (Operation.operation_type == 'edit_coin_management') |
+        (Operation.operation_type == 'status_coin_management')
     )
     result = []
     for i in data:
