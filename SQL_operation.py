@@ -84,6 +84,24 @@ def user_data_get(__status__):
     return result
 
 
+def user_data_phone(username, phone):
+    postgresql_handle(vls_back_url).update(
+        User_data, (User_data.name == username), {User_data.phone: phone})
+    return 1
+
+
+def user_data_google_authenticator(username, google_authenticator):
+    postgresql_handle(vls_back_url).update(
+        User_data, (User_data.name == username), {User_data.google_authenticator: google_authenticator})
+    return 1
+
+
+def user_data_google_authenticator_get(username):
+    data = postgresql_handle(vls_back_url).filterone(
+        User_data, User_data.name == username)
+    return data.google_authenticator
+
+
 def user_data_exist(name):
     data = postgresql_handle(vls_back_url).list(User_data)
     user_exist = False
