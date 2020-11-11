@@ -4,6 +4,7 @@ import { Spin, Card, Modal, Input, Button } from 'antd';
 import { Link, SelectLang, useModel, useIntl } from 'umi';
 import styles from './index.less';
 import { accountInformation, userInformation, changePassword } from '@/services/login';
+import { changePhone, getPhoneCaptcha } from '@/services/account';
 import { useInterval } from '@/utils/utils';
 const intl = (_temp: string) => {
   return useIntl().formatMessage({ id: _temp });
@@ -18,6 +19,7 @@ export default () => {
     new_password: '',
     confirm_password: '',
   });
+  const [modifyPhone, setModifyPhone] = useState({ phone: '', captcha: '' });
   const getInformation = async () => {
     let temp = await accountInformation();
     await setUserInformation(temp);
@@ -56,6 +58,18 @@ export default () => {
         });
         sameString(password.new_password, data);
         break;
+      case 'phone':
+        setModifyPhone({
+          phone: data,
+          captcha: modifyPhone.captcha,
+        });
+        break;
+      case 'captcha':
+        setModifyPhone({
+          phone: modifyPhone.phone,
+          captcha: data,
+        });
+        break;
     }
   };
   const sameString = (string1: string, string2: string) => {
@@ -74,6 +88,7 @@ export default () => {
       );
       console.log(result);
     } else if (target === 'phone') {
+      await changePhone(modifyPhone.captcha, modifyPhone.phone);
     } else if (target === 'google') {
     }
     handleModalCancel();
@@ -89,7 +104,7 @@ export default () => {
   };
   const getCAPTCHA = () => {
     if (captchaTime === 0) {
-      // todo get captcha code
+      getPhoneCaptcha(modifyPhone.phone);
       setCaptchaTime(60);
     }
   };
@@ -147,11 +162,15 @@ export default () => {
           >
             <p>
               {intl('account.phone')}
-              <Input placeholder={userInformation.phone} />
+              <Input
+                defaultValue={userInformation.phone}
+                onChange={(e) => handleChange('phone', e.target.value)}
+              />
             </p>
             <p className={styles.captcha}>
               {intl('account.CAPTCHA')}
               <Input
+                onChange={(e) => handleChange('captcha', e.target.value)}
                 placeholder={intl('account.enterCAPTCHA')}
                 addonAfter={
                   <span onClick={getCAPTCHA} style={{ cursor: 'pointer' }}>
@@ -180,6 +199,12 @@ export default () => {
               <p>{intl('account.email')}</p>
               <p>{userInformation.email}</p>
             </div>
+            {userInformation.phone !== '' && (
+              <div className={styles.information}>
+                <p>{intl('account.phone')}</p>
+                <p>{userInformation.phone}</p>
+              </div>
+            )}
           </Card>
           <br />
           <Card>

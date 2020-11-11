@@ -6,10 +6,10 @@ export interface LoginParamsType {
   browser?: string;
   CAPTCHA: string;
   type: string;
-  token?:string
+  token?: string
 }
 
-export interface userInformation{
+export interface userInformation {
   id: number,
   name: string,
   role: string,
@@ -49,36 +49,36 @@ export async function accountLogin(params: LoginParamsType) {
   });
 }
 
-export async function accountInformation(){
+export async function accountInformation() {
   let url = '/api/login';
   let token: string = 'token';
   if (sessionStorage.getItem('JWT')) {
-      token = sessionStorage.getItem('JWT')
+    token = sessionStorage.getItem('JWT')
   }
-  return request(url,{
+  return request(url, {
     method: 'GET',
     headers: {
-        token: token
+      token: token
     }
   })
 }
 
-export async function changePassword(name:string,old_password:string,new_password:string){
+export async function changePassword(name: string, old_password: string, new_password: string) {
   let url = '/api/user';
   let token: string = 'token';
   if (sessionStorage.getItem('JWT')) {
-      token = sessionStorage.getItem('JWT')
+    token = sessionStorage.getItem('JWT')
   }
-  return request(url,{
+  return request(url, {
     method: 'POST',
-    data:{
-      type:'password',
-      name:name,
-      old_password:old_password,
-      new_password:new_password
+    data: {
+      type: 'password',
+      name: name,
+      old_password: old_password,
+      new_password: new_password
     },
     headers: {
-        token: token
+      token: token
     }
   })
 }
@@ -86,9 +86,13 @@ export async function changePassword(name:string,old_password:string,new_passwor
 export async function getFakeCaptcha(mobile: string) {
   return request(`/api/login/captcha?mobile=${mobile}`);
 }
-export async function getImgCaptcha(){
-  return request(`/api/captcha`)
+export async function getImgCaptcha() {
+  return request(`/api/captcha?type=captcha`)
 }
 export async function outLogin() {
   return request('/api/login/outLogin');
+}
+
+export async function generateGoogleImg(name: string, key: string) {
+  return `otpauth://totp/IAM%20MFA%20Code:${name}?secret=${key}&issuer=IAM%20MFA%20Code`
 }
