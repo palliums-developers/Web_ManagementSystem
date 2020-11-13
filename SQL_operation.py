@@ -60,6 +60,7 @@ def getUserWithoutPasswd(user):
         'email': user.email,
         'status': user.status,
         'add_time': user.add_time,
+        'google': user.google_authenticator
     }
 
 

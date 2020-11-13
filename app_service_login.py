@@ -1,9 +1,10 @@
 from flask_restful import reqparse, abort, Resource, request
-from SQL_operation import login_function, login_log_addone, get_user_information
+from SQL_operation import login_function, login_log_addone, get_user_information, user_data_google_authenticator_get
 import requests
 import time
 import hashlib
 from util import redis_operation, jwt_operation
+from util_google_authentication import verify_auth
 # from SQL_table import Login as Login_table, User_data, Operation
 
 parser = reqparse.RequestParser()
@@ -14,6 +15,7 @@ parser.add_argument('password', required=False,
 parser.add_argument('CAPTCHA', required=False, help='CAPTCHA cannot be blank')
 parser.add_argument('browser')
 parser.add_argument('token', required=False, location='headers')
+parser.add_argument('google')
 
 
 class Login(Resource):
@@ -37,6 +39,11 @@ class Login(Resource):
         location = self.getLocation(ip)
         # print(__args__.browser, ip, location_url, location, now)
         if __temp__['state'] > 0:
+            __google__ = user_data_google_authenticator_get(__args__.username)
+            if __google__:
+                __temp__['google'] = __google__
+            else:
+                __temp__['google'] = 'none'
             login_log_addone(__args__.username, ip, now,
                              location, __args__.browser)
             token = jwt_operation('encode', {
@@ -57,11 +64,11 @@ class Login(Resource):
                 'status': 'error',
                 'message': 'Unauthenticated'
             }, 501
-        result=get_user_information(web_token['name'])
+        result = get_user_information(web_token['name'])
         if result['name']:
-            return result,201
+            return result, 201
         else:
-            return {'status':'error'}
+            return {'status': 'error'}
 #   1 | huangw   | admin  |       |       | qweqwe
 #   2 | violas   | admin  |       |       | palliums
 #   4 | xingezhe | editor |       |       | gezhexinlian

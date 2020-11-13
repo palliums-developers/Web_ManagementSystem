@@ -50,7 +50,8 @@ class CAPTCHA(Resource):
             if __temp__ > 0:
                 result = {
                     'status': 'ok',
-                    'message': 'change your secret key'
+                    'message': 'change your secret key',
+                    'data': key
                 }
                 operation_log_addone(
                     web_token['name'], web_token['role'], 'edit_google_authenticator', key['secret_key'], now)
@@ -87,6 +88,8 @@ class CAPTCHA(Resource):
                     'status': 'error',
                     'message': 'Unauthenticated'
                 }, 501
+            # self.checkToken()
+
             if(type == 'phone'):
                 phone_captcha = sendsms(
                     'smsVer', '+86'+request.args.get('target'))
@@ -98,3 +101,20 @@ class CAPTCHA(Resource):
                     'status': 'ok',
                     'message': 'check your phone'
                 }
+            if(type == 'google'):
+                secret_key = user_data_google_authenticator_get(
+                    web_token['name'])
+                return{
+                    'status': 'ok',
+                    'data': secret_key
+                }
+
+    def checkToken(self):
+        __args__ = parser.parse_args()
+        web_token = jwt_operation('decode', __args__.token)
+        redis_token = redis_operation('get', web_token['name'])
+        if not __args__.token == redis_token:
+            return {
+                'status': 'error',
+                'message': 'Unauthenticated'
+            }, 501
