@@ -6,6 +6,8 @@ import styles from './index.less';
 import { accountInformation, userInformation, changePassword } from '@/services/login';
 import { changePhone, getPhoneCaptcha } from '@/services/account';
 import { useInterval } from '@/utils/utils';
+import QRCode from 'qrcode.react';
+import { generateGoogleImg } from '@/services/login';
 const intl = (_temp: string) => {
   return useIntl().formatMessage({ id: _temp });
 };
@@ -187,7 +189,8 @@ export default () => {
             onCancel={() => handleModalCancel()}
             title={intl('account.modifyGoogle')}
           >
-            <p>this is google</p>
+            <QRCode value={generateGoogleImg(userInformation.name, userInformation.google)} />
+            {/* {console.log(generateGoogleImg(userInformation.name, userInformation.google))} */}
           </Modal>
           <Card>
             <h2>{intl('account.information')}</h2>

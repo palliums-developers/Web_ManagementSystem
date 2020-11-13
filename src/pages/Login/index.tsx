@@ -1,14 +1,21 @@
 // import { AlipayCircleOutlined, TaobaoCircleOutlined, WeiboCircleOutlined } from '@ant-design/icons';
-import { Alert, message, Input } from 'antd';
+import { Alert, message, Input, Modal, Button } from 'antd';
 import React, { useState, useEffect } from 'react';
 import { Link, SelectLang, useModel, useIntl } from 'umi';
 import { getPageQuery } from '@/utils/utils';
 import logo from '@/assets/logo.svg';
-import { LoginParamsType, accountLogin, getImgCaptcha } from '@/services/login';
+import {
+  LoginParamsType,
+  accountLogin,
+  getImgCaptcha,
+  verifyGoogle,
+  setGoogle,
+} from '@/services/login';
 import Footer from '@/components/Footer';
 import LoginFrom from './components/Login';
 import styles from './style.less';
 import login from '@/locales/zh-CN/login';
+import QRCode from 'qrcode.react';
 
 const { Tab, Username, Password, Submit } = LoginFrom;
 
@@ -58,6 +65,9 @@ const Login: React.FC<{}> = () => {
   const [type, setType] = useState<string>('account');
   const [captcha, setCaptcha] = useState({ img: '', code: '' });
   const [warning, setWarning] = useState({ name: '', password: '', captcha: '' });
+  const [modal, setModal] = useState({ google_verify: false, google_new: false });
+  const [google, setGoogle] = useState('');
+  const [verify_code, setVerify_code] = useState('');
 
   const handleCaptcha = async (e: any) => {
     if (e.length === 4) {
@@ -82,6 +92,9 @@ const Login: React.FC<{}> = () => {
       });
     }
   };
+  const handleVerify = async (e: any) => {
+    await setVerify_code(e.target.value);
+  };
   const getCaptcha = async () => {
     const temp = await getImgCaptcha();
     setCaptcha(temp);
@@ -95,10 +108,16 @@ const Login: React.FC<{}> = () => {
         // let temp = intl('login.success')
         message.success('Login Success!');
         sessionStorage.setItem('JWT', msg.token);
-        replaceGoto();
-        setTimeout(() => {
-          refresh();
-        }, 0);
+        await setGoogle(msg.google);
+        if (msg.google == 'none') {
+          setModal({ google_verify: false, google_new: true });
+        } else {
+          setModal({ google_verify: true, google_new: false });
+        }
+        // replaceGoto();
+        // setTimeout(() => {
+        //   refresh();
+        // }, 0);
         return;
       }
       // 如果失败去设置用户错误信息
@@ -108,6 +127,23 @@ const Login: React.FC<{}> = () => {
       message.error('Login Failed, please try again!');
     }
     setSubmitting(false);
+  };
+  const handleOk = async (type: string) => {
+    if (type === 'new') {
+      // todo
+      console.log(google, verify_code);
+      let google_result = await setGoogle();
+      await setGoogle(google_result.data);
+      // verifyGoogle(verify_code);
+    } else if (type === 'verify') {
+      console.log(google, verify_code);
+      let google_result = await verifyGoogle(verify_code);
+      console.log(google_result);
+    }
+    // handleCancel();
+  };
+  const handleCancel = () => {
+    setModal({ google_verify: false, google_new: false });
   };
   useEffect(() => {
     getCaptcha();
@@ -133,6 +169,31 @@ const Login: React.FC<{}> = () => {
         </div>
         <div className={styles.main}>
           <LoginFrom activeKey={type} onTabChange={setType} onSubmit={handleSubmit}>
+            <Modal
+              title="verify"
+              visible={modal.google_verify}
+              // onOk={() => handleOk('verify')}
+              // onCancel={handleCancel}
+              closable={false}
+              footer={[
+                <Button onClick={() => handleOk('verify')}>{intl('Operation.confirm')}</Button>,
+              ]}
+            >
+              <Input onChange={handleVerify}></Input>
+            </Modal>
+            <Modal
+              title="set"
+              visible={modal.google_new}
+              // onOk={() => handleOk('new')}
+              // onCancel={handleCancel}
+              closable={false}
+              footer={[
+                <Button onClick={() => handleOk('new')}>{intl('Operation.confirm')}</Button>,
+              ]}
+            >
+              <QRCode value={google} />
+              <Input onChange={handleVerify}></Input>
+            </Modal>
             <Tab key="account" tab="">
               {status === 'error' && loginType === 'account' && !submitting && (
                 <LoginMessage content={intl('login.error')} />

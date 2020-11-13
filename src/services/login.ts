@@ -16,7 +16,8 @@ export interface userInformation {
   phone?: string,
   email: string,
   status: boolean,
-  add_time: number
+  add_time: number,
+  google?: string
 }
 
 let userAgent = navigator.userAgent;
@@ -92,7 +93,40 @@ export async function getImgCaptcha() {
 export async function outLogin() {
   return request('/api/login/outLogin');
 }
-
-export async function generateGoogleImg(name: string, key: string) {
+export async function verifyGoogle(code: string) {
+  let url = '/api/captcha';
+  let token: string = 'token';
+  if (sessionStorage.getItem('JWT')) {
+    token = sessionStorage.getItem('JWT')
+  }
+  return request(url, {
+    method: 'POST',
+    data: {
+      type: 'verify_auth',
+      code: code
+    },
+    headers: {
+      token: token
+    }
+  })
+}
+export async function setGoogle() {
+  let url = '/api/captcha';
+  let token: string = 'token';
+  if (sessionStorage.getItem('JWT')) {
+    token = sessionStorage.getItem('JWT')
+  }
+  return request(url, {
+    method: 'POST',
+    data: {
+      type: 'get_auth',
+      // code: code
+    },
+    headers: {
+      token: token
+    }
+  })
+}
+export function generateGoogleImg(name: string, key: string) {
   return `otpauth://totp/IAM%20MFA%20Code:${name}?secret=${key}&issuer=IAM%20MFA%20Code`
 }
