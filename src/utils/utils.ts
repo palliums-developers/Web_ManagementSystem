@@ -1,5 +1,5 @@
 import { parse } from 'querystring';
-import { useEffect, useRef } from "react";
+import { useEffect, useRef } from 'react';
 // import { useIntl } from 'umi';
 
 /* eslint no-useless-escape:0 import/prefer-default-export:0 */
@@ -64,36 +64,36 @@ const user_data_auth = {
   operation: 4,
   servicer: 8,
   designer: 16,
-}
+};
 // const intl = (_temp: string) => {
 //   return useIntl().formatMessage({ id: _temp });
 // }
 const checkRole = (temp: number, role: number) => {
   return (temp & role) === role;
-}
+};
 const addRole = (temp: number, role: number) => {
-  return (temp | role);
-}
+  return temp | role;
+};
 const removeRole = (temp: number, role: number) => {
-  return (temp ^ role);
-}
+  return temp ^ role;
+};
 export const str2auth = (data: string): string[] => {
   let result: string[] = [];
   if (data === 'admin') {
     // result.push(intl(`role.admin`))
-    result.push('admin')
+    result.push('admin');
   } else {
     // let num = Number.parseInt(parseInt(data).toString(2),2)
     let num = parseInt(data);
     for (let item in user_data_auth) {
       if (checkRole(num, user_data_auth[item])) {
         // result.push(intl(`role.${item}`))
-        result.push(item)
+        result.push(item);
       }
     }
   }
-  return result
-}
+  return result;
+};
 export const auth2str = (data: string[]): string => {
   let result = 0;
   data.forEach(function (item, value) {
@@ -102,50 +102,13 @@ export const auth2str = (data: string[]): string => {
     } else {
       for (let role in user_data_auth) {
         if (item === role) {
-          result += user_data_auth[role]
+          result += user_data_auth[role];
         }
       }
     }
-  })
-  return '' + result
-}
-
-// export const useSetInterval = (callback, delay) => {
-//   if (!(callback instanceof Function)) {
-//     throw new Error("callback 参数必须是函数！");
-//   }
-//   if (!(delay === null || typeof delay === "number")) {
-//     throw new Error("delay 必须是 null 或者数字！");
-//   }
-//   const savedCallback = useRef();
-
-//   useEffect(() => {
-//     savedCallback.current = callback;
-//   }, [callback]);
-
-//   useEffect(() => {
-//     if (delay === null) {
-//       return;
-//     }
-//     let id = null;
-//     const tick = () => {
-//       const returnValue = savedCallback.current();
-//       if (returnValue) {
-//         console.log("come in");
-//         if (returnValue instanceof Function) {
-//           returnValue();
-//         } else {
-//           throw new Error("返回值必须是函数！");
-//         }
-//         clearTimeout(id);
-//         return;
-//       }
-//       id = setTimeout(tick, delay);
-//     };
-//     id = setTimeout(tick, delay);
-//     return () => clearInterval(id);
-//   }, [delay]);
-// }
+  });
+  return '' + result;
+};
 
 export const useInterval = (callback: any, delay: number) => {
   const savedCallback = useRef();
@@ -165,4 +128,4 @@ export const useInterval = (callback: any, delay: number) => {
       return () => clearInterval(id);
     }
   }, [delay]);
-}
+};

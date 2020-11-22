@@ -1,30 +1,61 @@
-/**
- * 在生产环境 代理是无法生效的，所以这里没有生产环境的配置
- * The agent cannot take effect in the production environment
- * so there is no configuration of the production environment
- * For details, please see
- * https://pro.ant.design/docs/deploy
- */
+let vls_back_management_url = 'http://localhost:5000/';
+let vls_webserver = 'https://api4.violas.io';
+
 export default {
-  dev: {
-    '/api/': {
-      target: 'https://preview.pro.ant.design',
-      changeOrigin: true,
-      pathRewrite: { '^': '' },
+    '/api/login': {
+        target: vls_back_management_url,
+        changeOrigin: true,
+        pathRewrite: {
+            '^/localhost': '',
+        },
     },
-  },
-  test: {
-    '/api/': {
-      target: 'https://preview.pro.ant.design',
-      changeOrigin: true,
-      pathRewrite: { '^': '' },
+    '/api/loginLog': {
+        target: vls_back_management_url,
+        changeOrigin: true,
+        pathRewrite: {
+            '^/localhost': '',
+        },
     },
-  },
-  pre: {
-    '/api/': {
-      target: 'your pre url',
-      changeOrigin: true,
-      pathRewrite: { '^': '' },
+    '/api/operationLog': {
+        target: vls_back_management_url,
+        changeOrigin: true,
+        pathRewrite: {
+            '^/localhost': '',
+        },
     },
-  },
+    '/api/user': {
+        target: vls_back_management_url,
+        changeOrigin: true,
+        pathRewrite: {
+            '^/localhost': '',
+        },
+    },
+    '/api/bank': {
+        target: vls_back_management_url,
+        changeOrigin: true,
+        pathRewrite: {
+            '^/localhost': '',
+        },
+    },
+    '/api/coin': {
+        target: vls_back_management_url,
+        changeOrigin: true,
+        pathRewrite: {
+            '^/localhost': '',
+        },
+    },
+    '/api/captcha': {
+        target: vls_back_management_url,
+        changeOrigin: true,
+        pathRewrite: {
+            '^/localhost': '',
+        },
+    },
+    '/1.0/violas/currency': {
+        target: vls_webserver,
+        changeOrigin: true,
+        pathRewrite: {
+            '^/localhost': '',
+        }
+    }
 };
