@@ -76,7 +76,6 @@ class CAPTCHA(Resource):
         if(type == 'captcha'):
             new_captcha = CaptchaTool()
             img, code = new_captcha.get_verify_code()
-            # # 存入session
             # session["code"] = code
             return {'img': str(img, encoding='utf-8'), 'code': code}, 201
         else:
