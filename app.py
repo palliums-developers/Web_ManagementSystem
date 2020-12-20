@@ -29,6 +29,13 @@ api.add_resource(OperationLog, '/api/operationLog')
 api.add_resource(Bank, '/api/bank')
 api.add_resource(CoinManagement, '/api/coin')
 api.add_resource(CAPTCHA, '/api/captcha')
+api.add_resource(CAPTCHA, '/api/getCategoryName')
+api.add_resource(CAPTCHA, '/api/getGroupName')
+api.add_resource(CAPTCHA, '/api/getArticleName')
+api.add_resource(CAPTCHA, '/api/allArticle')
+api.add_resource(CAPTCHA, '/api/help')
+api.add_resource(CAPTCHA, '/api/help/category')
+api.add_resource(CAPTCHA, '/api/help/article')
 
 
 if __name__ == '__main__':
