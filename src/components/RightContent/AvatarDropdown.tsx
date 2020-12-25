@@ -61,7 +61,7 @@ const AvatarDropdown: React.FC<GlobalHeaderRightProps> = ({ menu }) => {
     // setInitialState({ ...initialState, currentUser: undefined });
   };
   const handleOK = async () => {
-    await outLogin();
+    // await outLogin();
     const { redirect } = getPageQuery();
     // Note: There may be security issues, please note
     if (window.location.pathname !== '/login' && !redirect) {

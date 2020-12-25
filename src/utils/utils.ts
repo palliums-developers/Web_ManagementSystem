@@ -110,6 +110,16 @@ export const auth2str = (data: string[]): string => {
   return '' + result;
 };
 
+export const rightAtPage = () => {
+  let allRight = {
+    view: 0b0001,
+    edit: 0b0010,
+    add: 0b0100,
+    dele: 0b1000,
+  };
+  return allRight
+};
+
 export const useInterval = (callback: any, delay: number) => {
   const savedCallback = useRef();
 

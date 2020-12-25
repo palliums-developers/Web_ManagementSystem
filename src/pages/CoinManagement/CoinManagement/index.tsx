@@ -2,9 +2,8 @@ import { PageContainer } from '@ant-design/pro-layout';
 import React, { useState, useEffect } from 'react';
 import { Card, Input, Table, Button, Select, Modal, Switch } from 'antd';
 import styles from './index.less';
-import { useIntl } from 'umi';
+import { useIntl, history } from 'umi';
 import { coin_data, getViolasCurrency, getCoinData, postCoinData } from '@/services/bank';
-import moment from 'moment';
 
 const intl = (_temp: string) => {
   return useIntl().formatMessage({ id: _temp });
@@ -15,7 +14,7 @@ export default () => {
   const [loading, setLoading] = useState<boolean>(true);
   const [coinTable, setCoinTable] = useState<coin_data[]>();
   const [status, setStatus] = useState(undefined);
-  const [operationStatus, setOperationStatus] = useState({ status: false, coinId: 0 });
+  const [operationStatus, setOperationStatus] = useState({ name: '', status: false, coinId: 0 });
   const [modal, setModal] = useState({ new: false, edit: false, status: false });
   const [selectCoin, setSelectCoin] = useState({ search: '', add: '' });
   const [currency, setCurrency] = useState({ all: ['Coin Name'], managed: [''], other: [''] });
@@ -64,7 +63,7 @@ export default () => {
     }
     for (let j in temp) {
       if (selectCoin.search) {
-        if (selectCoin.search === temp[j].name.trim()) {
+        if (selectCoin.search === temp[j].coin_name.trim()) {
           result.push(temp[j]);
         }
       } else {
@@ -101,10 +100,11 @@ export default () => {
     }
   };
   const onOkEdit = async () => {
-    let result = {};
+    let result = { status: 'error' };
     if (modal.status) {
       result = await postCoinData('status', {
         id: operationStatus.coinId,
+        status_name: operationStatus.name,
         status: !operationStatus.status,
       });
     } else if (modal.new) {
@@ -176,8 +176,8 @@ export default () => {
         break;
     }
   };
-  const statusOperation = (status: boolean, id: number) => {
-    setOperationStatus({ status: status, coinId: id });
+  const statusOperation = (name: string, status: boolean, id: number) => {
+    setOperationStatus({ name: name, status: status, coinId: id });
     showModal('status');
   };
   const clickEdit = (data: coin_data) => {
@@ -194,13 +194,13 @@ export default () => {
     }
     let temp3 = await getCoinData('data');
     let temp4: string[] = [];
-    for (let j in temp3) {
-      temp4.push(temp3[j].name.trim());
+    for (let j in temp3.data) {
+      temp4.push(temp3.data[j].coin_name.trim());
     }
     let temp5 = temp2.filter((item) => !temp4.includes(item));
     setCurrency({ all: temp2, managed: temp4, other: temp5 });
-    setCoinTable(temp3);
-    setShowData(temp3);
+    setCoinTable(temp3.data);
+    setShowData(temp3.data);
   };
   useEffect(() => {
     initial();
@@ -211,8 +211,8 @@ export default () => {
   const columns1 = [
     {
       title: intl('bank.coin_name'),
-      dataIndex: 'name',
-      key: 'name',
+      dataIndex: 'coin_name',
+      key: 'coin_name',
     },
     {
       title: intl('bank.coin_precision'),
@@ -220,14 +220,60 @@ export default () => {
       key: 'precision',
     },
     {
-      title: intl('bank.coin_min_quantity'),
-      dataIndex: 'min_quantity',
-      key: 'min_quantity',
+      title: intl('bank.min_num_precision'),
+      dataIndex: 'min_num_precision',
+      key: 'min_num_precision',
     },
     {
-      title: intl('bank.coin_max_quantity'),
-      dataIndex: 'max_quantity',
-      key: 'max_quantity',
+      title: intl('bank.min_num_trade'),
+      dataIndex: 'min_num_trade',
+      key: 'min_num_trade',
+    },
+    {
+      title: intl('bank.max_num_trade'),
+      dataIndex: 'max_num_trade',
+      key: 'max_num_trade',
+    },
+    {
+      title: intl('bank.price_precision'),
+      dataIndex: 'price_precision',
+      key: 'price_precision',
+    },
+    {
+      title: intl('bank.withdraw_fee'),
+      dataIndex: 'withdraw_fee',
+      key: 'withdraw_fee',
+    },
+    {
+      title: intl('bank.min_num_withdraw'),
+      dataIndex: 'min_num_withdraw',
+      key: 'min_num_withdraw',
+    },
+    {
+      title: intl('bank.status_withdraw'),
+      dataIndex: 'status_withdraw',
+      key: 'status_withdraw',
+      render: (status: boolean, record: coin_data) => (
+        <Switch
+          checked={status}
+          onClick={() => {
+            statusOperation('status_withdraw', status, record.id);
+          }}
+        />
+      ),
+    },
+    {
+      title: intl('bank.status_recharge'),
+      dataIndex: 'status_recharge',
+      key: 'status_recharge',
+      render: (status: boolean, record: coin_data) => (
+        <Switch
+          checked={status}
+          onClick={() => {
+            statusOperation('status_recharge', status, record.id);
+          }}
+        />
+      ),
     },
     {
       title: intl('bank.status'),
@@ -237,7 +283,7 @@ export default () => {
         <Switch
           checked={status}
           onClick={() => {
-            statusOperation(status, record.id);
+            statusOperation('status', status, record.id);
           }}
         />
       ),
@@ -248,7 +294,9 @@ export default () => {
         <p
           style={{ color: 'Blue', cursor: 'pointer', marginBottom: 0 }}
           onClick={() => {
-            clickEdit(record);
+            // clickEdit(record);
+            localStorage.setItem('edit', JSON.stringify(record));
+            history.push('/coin/coin_edit');
           }}
         >
           {intl('operation.edit')}
@@ -256,35 +304,35 @@ export default () => {
       ),
     },
   ];
-  const columns2 = [
-    {
-      title: intl('bank.operator'),
-      dataIndex: 'name',
-      key: 'name',
-    },
-    {
-      title: intl('operation.time'),
-      dataIndex: 'time',
-      key: 'time',
-      render: (time: any) => {
-        return moment(time * 1000).format('YYYY-MM-DD HH:mm:ss');
-      },
-    },
-    {
-      title: intl('operation.type'),
-      dataIndex: 'operation_type',
-      render: (value: string) => {
-        return value.split('_')[0];
-      },
-    },
-    {
-      title: intl('operation.log'),
-      dataIndex: 'operation',
-    },
-  ];
+  // const columns2 = [
+  //   {
+  //     title: intl('bank.operator'),
+  //     dataIndex: 'name',
+  //     key: 'name',
+  //   },
+  //   {
+  //     title: intl('operation.time'),
+  //     dataIndex: 'time',
+  //     key: 'time',
+  //     render: (time: any) => {
+  //       return moment(time * 1000).format('YYYY-MM-DD HH:mm:ss');
+  //     },
+  //   },
+  //   {
+  //     title: intl('operation.type'),
+  //     dataIndex: 'operation_type',
+  //     render: (value: string) => {
+  //       return value.split('_')[0];
+  //     },
+  //   },
+  //   {
+  //     title: intl('operation.log'),
+  //     dataIndex: 'operation',
+  //   },
+  // ];
   return (
     <PageContainer className={styles.main}>
-      <Modal
+      {/* <Modal
         title={modal.edit ? intl('bank.edit_coin') : intl('bank.new_coin')}
         visible={modal.edit || modal.new}
         // onOk={onOkEdit}
@@ -340,7 +388,6 @@ export default () => {
             onChange={(e) => modalInput(e, 'max')}
           />
         </div>
-        {/* <Button onClick={onCancelEdit}>{intl('operation.cancel')}</Button> */}
         <Button type="primary" onClick={onOkEdit}>
           {intl('operation.confirm')}
         </Button>
@@ -350,7 +397,7 @@ export default () => {
           size="small"
           pagination={{ pageSize: 5 }}
         ></Table>
-      </Modal>
+      </Modal> */}
       <Modal
         title={intl('bank.edit_coin')}
         visible={modal.status}
@@ -396,7 +443,7 @@ export default () => {
           <Button type="primary" onClick={() => handleSearch()}>
             {intl('operation.search')}
           </Button>
-          <Button onClick={() => showModal('new')}>{intl('operation.new')}</Button>
+          {/* <Button onClick={() => showModal('new')}>{intl('operation.new')}</Button> */}
         </div>
       </Card>
       <Table dataSource={showData} columns={columns1}></Table>

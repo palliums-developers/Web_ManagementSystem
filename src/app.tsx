@@ -1,9 +1,9 @@
 import React from 'react';
-import { BasicLayoutProps, Settings as LayoutSettings } from '@ant-design/pro-layout';
+import { BasicLayoutProps, Settings as LayoutSettings, PageLoading } from '@ant-design/pro-layout';
 import { notification } from 'antd';
 import { history, RequestConfig } from 'umi';
 import RightContent from '@/components/RightContent';
-import Footer from '@/components/Footer';
+// import Footer from '@/components/Footer';
 import { ResponseError } from 'umi-request';
 import { queryCurrent } from './services/user';
 import defaultSettings from '../config/defaultSettings';
@@ -13,9 +13,11 @@ export async function getInitialState(): Promise<{
   settings?: LayoutSettings;
 }> {
   // 如果是登录页面，不执行
-  if (history.location.pathname !== '/login') {
+  // 非登录页面 执行 确认access
+  if (sessionStorage.getItem('JWT') && history.location.pathname !== '/login') {
     try {
       const currentUser = await queryCurrent();
+      // console.log('try', currentUser);
       return {
         currentUser,
         settings: defaultSettings,
@@ -37,17 +39,77 @@ export const layout = ({
   return {
     rightContentRender: () => <RightContent />,
     disableContentMargin: false,
-    footerRender: () => <Footer />,
+    // footerRender: () => <Footer />,
     onPageChange: () => {
       // 如果没有登录，重定向到 login
-      if (!initialState?.currentUser?.userid && history.location.pathname !== '/login') {
+      // console.log('before check currentUser', initialState.currentUser);
+      if (!initialState?.currentUser?.status && history.location.pathname !== '/login') {
         history.push('/login');
       }
+      // console.log('after check currentUser', initialState.currentUser);
     },
     menuHeaderRender: undefined,
     ...initialState?.settings,
   };
 };
+
+/**
+ * 获取用户信息比较慢的时候会展示一个 loading
+ */
+// export const initialStateConfig = {
+//   loading: <PageLoading />,
+// };
+
+// export async function getInitialState(): Promise<{
+//   settings?: LayoutSettings;
+//   currentUser?: API.CurrentUser;
+//   fetchUserInfo?: () => Promise<API.CurrentUser | undefined>;
+// }> {
+//   const fetchUserInfo = async () => {
+//     try {
+//       const currentUser = await queryCurrent();
+//       return currentUser;
+//     } catch (error) {
+//       history.push('/user/login');
+//     }
+//     return undefined;
+//   };
+//   // 如果是登录页面，不执行
+//   if (history.location.pathname !== '/user/login') {
+//     const currentUser = await fetchUserInfo();
+//     return {
+//       fetchUserInfo,
+//       currentUser,
+//       settings: defaultSettings,
+//     };
+//   }
+//   return {
+//     fetchUserInfo,
+//     settings: defaultSettings,
+//   };
+// }
+
+// export const layout = ({
+//   initialState,
+// }: {
+//   initialState: { settings?: LayoutSettings; currentUser?: API.CurrentUser };
+// }): BasicLayoutProps => {
+//   return {
+//     rightContentRender: () => <RightContent />,
+//     disableContentMargin: false,
+//     footerRender: () => <Footer />,
+//     onPageChange: () => {
+//       const { currentUser } = initialState;
+//       const { location } = history;
+//       // 如果没有登录，重定向到 login
+//       if (!currentUser && location.pathname !== '/user/login') {
+//         history.push('/user/login');
+//       }
+//     },
+//     menuHeaderRender: undefined,
+//     ...initialState?.settings,
+//   };
+// };
 
 const codeMessage = {
   200: '服务器成功返回请求的数据。',

@@ -1,9 +1,10 @@
 // import { AlipayCircleOutlined, TaobaoCircleOutlined, WeiboCircleOutlined } from '@ant-design/icons';
 import { Alert, message, Input, Modal, Button } from 'antd';
 import React, { useState, useEffect } from 'react';
-import { Link, SelectLang, useModel, useIntl } from 'umi';
+import { Link, SelectLang, useModel, useIntl, history } from 'umi';
 import { getPageQuery } from '@/utils/utils';
 import logo from '@/assets/logo.svg';
+import { getInitialState } from '../../app';
 import {
   LoginParamsType,
   accountLogin,
@@ -11,10 +12,10 @@ import {
   verifyGoogle,
   setGoogle,
 } from '@/services/login';
-import Footer from '@/components/Footer';
+// import Footer from '@/components/Footer';
 import LoginFrom from './components/Login';
 import styles from './style.less';
-import login from '@/locales/zh-CN/login';
+// import login from '@/locales/zh-CN/login';
 import QRCode from 'qrcode.react';
 
 const { Tab, Username, Password, Submit } = LoginFrom;
@@ -47,7 +48,7 @@ const replaceGoto = () => {
         redirect = redirect.substr(redirect.indexOf('#'));
       }
     } else {
-      window.location.href = '/welcome';
+      window.location.href = '/';
       return;
     }
   }
@@ -99,6 +100,10 @@ const Login: React.FC<{}> = () => {
     const temp = await getImgCaptcha();
     setCaptcha(temp);
   };
+  /**
+   * click submit to post username and password
+   * @param values
+   */
   const handleSubmit = async (values: LoginParamsType) => {
     setSubmitting(true);
     try {
@@ -107,9 +112,9 @@ const Login: React.FC<{}> = () => {
       if (msg.status === 'ok') {
         // let temp = intl('login.success')
         message.success('Login Success!');
-        sessionStorage.setItem('JWT', msg.token);
-        await setGoogle(msg.google);
-        if (msg.google == 'none') {
+        sessionStorage.setItem('JWT', msg?.token);
+        await setGoogle(msg?.google);
+        if (msg?.google == 'none') {
           setModal({ google_verify: false, google_new: true });
         } else {
           setModal({ google_verify: true, google_new: false });
@@ -128,17 +133,28 @@ const Login: React.FC<{}> = () => {
     }
     setSubmitting(false);
   };
+  /**
+   * google authentication
+   * @param type
+   */
   const handleOk = async (type: string) => {
     if (type === 'new') {
       // todo
-      console.log(google, verify_code);
-      let google_result = await setGoogle();
-      await setGoogle(google_result.data);
+      console.log('google ', google, verify_code);
+      console.log('go to welcome');
+      // let google_result = await setGoogle();
+      // await setGoogle(google_result.data);
       // verifyGoogle(verify_code);
+      // await getInitialState();
+      replaceGoto();
     } else if (type === 'verify') {
-      console.log(google, verify_code);
+      console.log(google, '11', verify_code);
       let google_result = await verifyGoogle(verify_code);
       console.log(google_result);
+      if (google_result.status === 'ok') {
+        history.push('/');
+      } else {
+      }
     }
     // handleCancel();
   };
@@ -176,7 +192,7 @@ const Login: React.FC<{}> = () => {
               // onCancel={handleCancel}
               closable={false}
               footer={[
-                <Button onClick={() => handleOk('verify')}>{intl('Operation.confirm')}</Button>,
+                <Button onClick={() => handleOk('verify')}>{intl('operation.confirm')}</Button>,
               ]}
             >
               <Input onChange={handleVerify}></Input>
@@ -188,7 +204,7 @@ const Login: React.FC<{}> = () => {
               // onCancel={handleCancel}
               closable={false}
               footer={[
-                <Button onClick={() => handleOk('new')}>{intl('Operation.confirm')}</Button>,
+                <Button onClick={() => handleOk('new')}>{intl('operation.confirm')}</Button>,
               ]}
             >
               <QRCode value={google} />

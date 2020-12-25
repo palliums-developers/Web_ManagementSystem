@@ -133,6 +133,7 @@ export async function getCoinData(type: string) {
     })
 }
 
+// todo
 export async function postCoinData(type: string, data: any) {
     let url = '/api/coin';
     let token: string = 'token';

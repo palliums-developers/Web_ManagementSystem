@@ -10,9 +10,18 @@ declare namespace API {
       label: string;
     }[];
     userid?: string;
-    access?: 'product' | 'technology' | 'admin' | 'operation' | 'design' | 'customer';
+    // access?: 'product' | 'technology' | 'admin' | 'operation' | 'design' | 'customer';
     // access?: 'user' | 'guest' | 'admin';
     unreadCount?: number;
+    id?:number;
+    role?:string;
+    phone?:string;
+    email?:string;
+    status?:boolean;
+    add_time?:number;
+    google?:string|null;
+    role_name?:[];
+    access?:{};
   }
 
   export interface LoginStateType {
