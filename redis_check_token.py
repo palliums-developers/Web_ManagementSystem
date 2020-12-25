@@ -1,4 +1,4 @@
-from util import redis_operation, jwt_operation
+from util_redis_jwt import redis_operation, jwt_operation
 
 
 def check_token(encode_token):

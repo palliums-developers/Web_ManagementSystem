@@ -3,7 +3,7 @@ from sqlalchemy import create_engine, or_
 from sqlalchemy.orm import sessionmaker, Query
 from sqlalchemy.exc import OperationalError
 import datetime
-from util import paginate
+from util_pagination import paginate
 
 
 class postgresql_handle:

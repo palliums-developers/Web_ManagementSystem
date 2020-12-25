@@ -1,6 +1,6 @@
 from flask_restful import Resource, request, reqparse
 from util_captcha import CaptchaTool
-from util import redis_operation, jwt_operation
+from util_redis_jwt import redis_operation, jwt_operation
 from util_captcha_socket import sendsms
 from util_google_authentication import get_auth, verify_auth
 import time

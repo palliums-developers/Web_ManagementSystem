@@ -1,8 +1,9 @@
 import configparser
 from sqlalchemy import create_engine
 from SQL_service import postgresql_handle
-from SQL_table import Login, User_data, Operation, ViolasBankBorrowProduct, ViolasBankDepositProduct, Coin_management
+from SQL_table import Login, User_data, Operation, ViolasBankBorrowProduct, ViolasBankDepositProduct, Coin_management, RolePageDatabase
 from util import alchemy2json_many
+from util_role import add_auth, del_auth, verify_auth, number2role, onlyPage, role2page
 
 config_path = './config.ini'
 config = configparser.ConfigParser()
@@ -10,6 +11,7 @@ config.read(config_path)
 
 vls_back = config['violas_backend_management']
 vls_back_url = f"{vls_back['dbtype']}+{vls_back['driver']}://{vls_back['user']}:{vls_back['password']}@{vls_back['host']}:{vls_back['port']}/{vls_back['database']}"
+# postgres+psycopg2://postgres:qazokm@localhost:5432/violas_data
 
 vls_bank = config['digital_bank']
 vls_bank_url = f"{vls_bank['dbtype']}+{vls_bank['driver']}://{vls_bank['user']}:{vls_bank['PASSWORD']}@{vls_bank['host']}:{vls_bank['PORT']}/{vls_bank['DATABASE']}"
@@ -485,17 +487,19 @@ def edit_bank_data(type, database, data):
 
 def get_coin_data():
     data = postgresql_handle(vls_back_url).list(Coin_management)
-    result = []
-    for i in data:
-        temp = {
-            'id': i.id,
-            'name': i.name,
-            'precision': float(i.precision),
-            'min_quantity': float(i.min_quantity),
-            'max_quantity': float(i.max_quantity),
-            'status': i.status
-        }
-        result.append(temp)
+    # result = []
+    # for i in data:
+    #     temp = {
+    #         'id': i.id,
+    #         'coin_name': i.name,
+    #         'min_num_precision': float(i.precision),
+    #         'min_quantity': float(i.min_quantity),
+    #         'max_quantity': float(i.max_quantity),
+    #         'status': i.status
+    #     }
+    #     result.append(temp)
+    result = alchemy2json_many(data)
+    # print(str(type(result[0]['price_precision'])))
     return result
 
 
@@ -565,13 +569,22 @@ def edit_coin_data(data):
     return result
 
 
-def status_coin_data(id, status):
+def status_coin_data(id, status_name, status):
     result = {
         'status': 'error',
         'message': 'Change Update'
     }
-    print(id, status, '======================')
+    print(id, status_name, status)
+    temp_status_name = Coin_management.status
+    if status_name == 'status_withdraw':
+        temp_status_name = Coin_management.status_withdraw
+    elif status_name == 'status_recharge':
+        temp_status_name = Coin_management.status_recharge
     postgresql_handle(vls_back_url).update(
-        Coin_management, (Coin_management.id == id), {Coin_management.status: status})
+        Coin_management, (Coin_management.id == id), {temp_status_name: status})
     result['status'] = 'ok'
     return result
+
+
+def get_all_role_page():
+    return alchemy2json_many(postgresql_handle(vls_back_url).list(RolePageDatabase))

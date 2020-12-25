@@ -1,6 +1,6 @@
 from flask_restful import reqparse, abort, Resource, request
 from SQL_operation import operation_log_addone, operation_log_list2, operation_log_list
-from util import redis_operation, jwt_operation
+from util_redis_jwt import redis_operation, jwt_operation
 # from SQL_table import Login as Login_table, User_data, Operation
 
 parser = reqparse.RequestParser()
