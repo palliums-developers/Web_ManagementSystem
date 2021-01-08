@@ -31,6 +31,14 @@ class postgresql_handle:
         temp = self.session()
         return temp.query(object).order_by(object.id.desc()).filter(filter).all()
 
+    def filterall_order(self, object, filter):
+        temp = self.session()
+        return temp.query(object).order_by(object.order.desc()).filter(filter).all()
+
+    def filter_limit_order(self,object,filter,limit):
+        temp=self.session()
+        return temp.query(object).order_by(object.order.desc()).filter(filter).limit(limit).all()
+
     def update(self, object, filter, updic):
         temp = self.session()
         temp.query(object).filter(filter).update(updic)
@@ -38,6 +46,11 @@ class postgresql_handle:
 
     def list(self, object):
         temp = self.session().query(object).order_by(object.id).all()
+        self.session().close()
+        return temp
+
+    def list_order(self, object):
+        temp = self.session().query(object).order_by(object.order).all()
         self.session().close()
         return temp
 

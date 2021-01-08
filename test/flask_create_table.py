@@ -14,6 +14,7 @@ app.config['SQLALCHEMY_ECHO'] = True
 # 数据库对象
 db = SQLAlchemy(app)
 
+now = int(time.time())
 
 # 创建 b_data 表 实体类
 # class b_data(db.Model):
@@ -45,26 +46,26 @@ db = SQLAlchemy(app)
 #     category = db.Column(db.Integer, nullable=False)
 
 
-# class HelpCenterArticle(db.Model):
-#     __tablename__ = 'help_center_article'
-#     id = db.Column(db.Integer, primary_key=True,
-#                    autoincrement=True, nullable=False)
-#     author = db.Column(db.String(50), nullable=False)
-#     group = db.Column(db.Integer, nullable=False)
-#     published = db.Column(db.Boolean, nullable=False)
-#     publish_time = db.Column(db.String(20), nullable=False)
-#     last_edit_time = db.Column(db.String(20), nullable=False)
-#     last_edit_author = db.Column(db.String(20), nullable=False)
-#     language = db.Column(db.String(64), nullable=False)
-#     recommend = db.Column(db.Boolean, nullable=False)
-#     title_en = db.Column(db.Text, nullable=False)
-#     content_en = db.Column(db.Text, nullable=False)
-#     title_cn = db.Column(db.Text, nullable=True)
-#     content_cn = db.Column(db.Text, nullable=True)
-#     title_ja = db.Column(db.Text, nullable=True)
-#     content_ja = db.Column(db.Text, nullable=True)
-#     title_ko = db.Column(db.Text, nullable=True)
-#     content_ko = db.Column(db.Text, nullable=True)
+class HelpCenterArticle(db.Model):
+    __tablename__ = 'help_center_article'
+    id = db.Column(db.Integer, primary_key=True,
+                   autoincrement=True, nullable=False)
+    author = db.Column(db.String(50), nullable=False)
+    group = db.Column(db.Integer, nullable=False)
+    published = db.Column(db.Boolean, nullable=False)
+    publish_time = db.Column(db.String(20), nullable=False)
+    last_edit_time = db.Column(db.String(20), nullable=False)
+    last_edit_author = db.Column(db.String(20), nullable=False)
+    language = db.Column(db.String(64), nullable=False)
+    recommend = db.Column(db.Boolean, nullable=False)
+    title_en = db.Column(db.Text, nullable=False)
+    content_en = db.Column(db.Text, nullable=False)
+    title_cn = db.Column(db.Text, nullable=True)
+    content_cn = db.Column(db.Text, nullable=True)
+    title_ja = db.Column(db.Text, nullable=True)
+    content_ja = db.Column(db.Text, nullable=True)
+    title_ko = db.Column(db.Text, nullable=True)
+    content_ko = db.Column(db.Text, nullable=True)
 
 
 # class RolePageDatabase(db.Model):
@@ -85,19 +86,19 @@ db = SQLAlchemy(app)
 #     group = db.Column(db.Integer, nullable=True)
 #     article = db.Column(db.Integer, nullable=True)
 
-class Coin_management(db.Model):
-    __tablename__ = "coin_management"
-    id = db.Column(db.Integer,autoincrement=True, primary_key=True, nullable=False)
-    coin_name = db.Column(db.String(20), nullable=False)
-    min_num_precision = db.Column(db.Numeric, nullable=False)
-    min_num_trade = db.Column(db.Numeric, nullable=False)
-    max_num_trade = db.Column(db.Numeric, nullable=False)
-    price_precision = db.Column(db.Numeric, nullable=False)
-    withdraw_fee = db.Column(db.Numeric, nullable=False)
-    min_num_withdraw = db.Column(db.Numeric, nullable=False)
-    status_withdraw = db.Column(db.Boolean, nullable=False)
-    status_recharge = db.Column(db.Boolean, nullable=False)
-    status = db.Column(db.Boolean, nullable=False)
+# class Coin_management(db.Model):
+#     __tablename__ = "coin_management"
+#     id = db.Column(db.Integer,autoincrement=True, primary_key=True, nullable=False)
+#     coin_name = db.Column(db.String(20), nullable=False)
+#     min_num_precision = db.Column(db.Numeric, nullable=False)
+#     min_num_trade = db.Column(db.Numeric, nullable=False)
+#     max_num_trade = db.Column(db.Numeric, nullable=False)
+#     price_precision = db.Column(db.Numeric, nullable=False)
+#     withdraw_fee = db.Column(db.Numeric, nullable=False)
+#     min_num_withdraw = db.Column(db.Numeric, nullable=False)
+#     status_withdraw = db.Column(db.Boolean, nullable=False)
+#     status_recharge = db.Column(db.Boolean, nullable=False)
+#     status = db.Column(db.Boolean, nullable=False)
 
 
 if __name__ == '__main__':
@@ -128,17 +129,37 @@ if __name__ == '__main__':
     # dd.group=1
     # dd.article=1
 
-    dd = Coin_management()
-    dd.coin_name = 'LBR'
-    dd.min_num_precision = 0.01
-    dd.min_num_trade = 10
-    dd.max_num_trade = 1000
-    dd.price_precision = 10000
-    dd.withdraw_fee=1000
-    dd.min_num_withdraw=1000
-    dd.status_withdraw=True
-    dd.status_recharge=True
-    dd.status=True
+    # dd = Coin_management()
+    # dd.coin_name = 'LBR'
+    # dd.min_num_precision = 0.01
+    # dd.min_num_trade = 10
+    # dd.max_num_trade = 1000
+    # dd.price_precision = 10000
+    # dd.withdraw_fee=1000
+    # dd.min_num_withdraw=1000
+    # dd.status_withdraw=True
+    # dd.status_recharge=True
+    # dd.status=True
+
+    dd=HelpCenterArticle()
+    # dd.id=4
+    dd.author='huangw'
+    dd.group=1
+    dd.published=True
+    dd.publish_time=now
+    dd.last_edit_time=''
+    dd.last_edit_author=''
+    dd.language='EN'
+    dd.recommend=True
+    dd.title_en='eleven'
+    dd.content_en='<a>link</a>'
+    dd.title_cn=''
+    dd.content_cn=''
+    dd.title_ja=''
+    dd.content_ja=''
+    dd.title_ko=''
+    dd.content_ko=''
+    dd.order=2
 
     db.session.add(dd)
     db.session.commit()

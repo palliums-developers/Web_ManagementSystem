@@ -1,9 +1,10 @@
 import configparser
 from sqlalchemy import create_engine
 from SQL_service import postgresql_handle
-from SQL_table import Login, User_data, Operation, ViolasBankBorrowProduct, ViolasBankDepositProduct, Coin_management, RolePageDatabase
-from util import alchemy2json_many
+from SQL_table import Login, User_data, Operation, ViolasBankBorrowProduct, ViolasBankDepositProduct, Coin_management, RolePageDatabase, HelpCenterArticle, HelpCenterCategory, HelpCenterGroup
+from util import alchemy2json_many, get_temp_filter
 from util_role import add_auth, del_auth, verify_auth, number2role, onlyPage, role2page
+from util_filter_language import filter_language_list, filter_language_one
 
 config_path = './config.ini'
 config = configparser.ConfigParser()
@@ -551,14 +552,24 @@ def edit_coin_data(data):
         'status': 'error',
         'message': 'This coin name does not exist'
     }
-    if exist_coin_data(data['name']) == 0:
+    if exist_coin_data(data['coin_name']) == 0:
         return result
     edit_data = {
-        Coin_management.name: data['name'],
-        Coin_management.precision: data['precision'],
-        Coin_management.min_quantity: data['min_quantity'],
-        Coin_management.max_quantity: data['max_quantity'],
-        Coin_management.status: data['status']
+        # Coin_management.name: data['name'],
+        # Coin_management.precision: data['precision'],
+        # Coin_management.min_quantity: data['min_quantity'],
+        # Coin_management.max_quantity: data['max_quantity'],
+        # Coin_management.status: data['status']
+        Coin_management.coin_name: data['coin_name'],
+        Coin_management.min_num_precision: data['min_num_precision'],
+        Coin_management.min_num_trade: data['min_num_trade'],
+        Coin_management.max_num_trade: data['max_num_trade'],
+        Coin_management.price_precision: data['price_precision'],
+        Coin_management.withdraw_fee: data['withdraw_fee'],
+        Coin_management.min_num_withdraw: data['min_num_withdraw'],
+        Coin_management.status_withdraw: data['status_withdraw'],
+        Coin_management.status_recharge: data['status_recharge'],
+        Coin_management.status: data['status'],
     }
     postgresql_handle(vls_back_url).update(
         Coin_management, Coin_management.id == data['id'], edit_data)
@@ -588,3 +599,265 @@ def status_coin_data(id, status_name, status):
 
 def get_all_role_page():
     return alchemy2json_many(postgresql_handle(vls_back_url).list(RolePageDatabase))
+
+
+def update_role_page(id, role_name_num):
+    rolePage = {
+        'welcome': RolePageDatabase.welcome,
+        'account': RolePageDatabase.account,
+        'user_management': RolePageDatabase.user_management,
+        'login_log': RolePageDatabase.login_log,
+        'operation_log': RolePageDatabase.operation_log,
+        'system_notification': RolePageDatabase.system_notification,
+        'coin_management': RolePageDatabase.coin_management,
+        'deposit': RolePageDatabase.deposit,
+        'borrow': RolePageDatabase.borrow,
+        'category': RolePageDatabase.category,
+        'group': RolePageDatabase.group,
+        'article': RolePageDatabase.article,
+    }
+    temp_filter = get_temp_filter(role_name_num, rolePage)
+    if temp_filter == 'input error':
+        return temp_filter
+    return postgresql_handle(vls_back_url).update(RolePageDatabase, (RolePageDatabase.id == id), temp_filter)
+
+
+def get_help_category():
+    return alchemy2json_many(postgresql_handle(vls_back_url).list_order(HelpCenterCategory))
+
+
+def set_help_category(operation, json_name_data):
+    if operation == 'edit':
+        category = {
+            'language': HelpCenterCategory.language,
+            'name_en': HelpCenterCategory.name_en,
+            'description_en': HelpCenterCategory.description_en,
+            'name_cn': HelpCenterCategory.name_cn,
+            'description_cn': HelpCenterCategory.description_cn,
+            'name_ja': HelpCenterCategory.name_ja,
+            'description_ja': HelpCenterCategory.description_ja,
+            'name_ko': HelpCenterCategory.name_ko,
+            'description_ko': HelpCenterCategory.description_ko,
+            'order': HelpCenterCategory.order,
+        }
+        temp_filter = get_temp_filter(json_name_data, category)
+        if temp_filter == 'input error':
+            return temp_filter
+        postgresql_handle(vls_back_url).update(
+            HelpCenterCategory, (HelpCenterCategory.id == json_name_data['id']), temp_filter)
+    elif operation == 'add':
+        add_category = HelpCenterCategory(
+            language=json_name_data['language'],
+            name_en=json_name_data['name_en'],
+            description_en=json_name_data['description_en'],
+            name_cn=json_name_data['name_cn'],
+            description_cn=json_name_data['description_cn'],
+            name_ja=json_name_data['name_ja'],
+            description_ja=json_name_data['description_ja'],
+            name_ko=json_name_data['name_ko'],
+            description_ko=json_name_data['description_ko'],
+            order=json_name_data['order'],
+        )
+        postgresql_handle(vls_back_url).add(add_category)
+    else:
+        return 'wrong operation type'
+    return 'operation category database successfully'
+
+
+def get_help_group(type, id):
+    if type == 'category':
+        return alchemy2json_many(postgresql_handle(vls_back_url).filterall_order(HelpCenterGroup, HelpCenterGroup.category == id))
+    elif type == 'group':
+        return alchemy2json_many(postgresql_handle(vls_back_url).filterall(HelpCenterGroup, HelpCenterGroup.id == id))
+    else:
+        return 'wrong type'
+
+
+def set_help_group(operation, json_name_data):
+    if operation == 'edit':
+        group = {
+            'language': HelpCenterGroup.language,
+            'name_en': HelpCenterGroup.name_en,
+            'description_en': HelpCenterGroup.description_en,
+            'name_cn': HelpCenterGroup.name_cn,
+            'description_cn': HelpCenterGroup.description_cn,
+            'name_ja': HelpCenterGroup.name_ja,
+            'description_ja': HelpCenterGroup.description_ja,
+            'name_ko': HelpCenterGroup.name_ko,
+            'description_ko': HelpCenterGroup.description_ko,
+            'order': HelpCenterGroup.order,
+            'category': HelpCenterGroup.category,
+        }
+        temp_filter = get_temp_filter(json_name_data, group)
+        if temp_filter == 'input error':
+            return temp_filter
+        postgresql_handle(vls_back_url).update(
+            HelpCenterGroup, (HelpCenterGroup.id == json_name_data['id']), temp_filter)
+    elif operation == 'add':
+        add_group = HelpCenterGroup(
+            language=json_name_data['language'],
+            name_en=json_name_data['name_en'],
+            description_en=json_name_data['description_en'],
+            name_cn=json_name_data['name_cn'],
+            description_cn=json_name_data['description_cn'],
+            name_ja=json_name_data['name_ja'],
+            description_ja=json_name_data['description_ja'],
+            name_ko=json_name_data['name_ko'],
+            description_ko=json_name_data['description_ko'],
+            order=json_name_data['order'],
+            category=json_name_data['category'],
+        )
+        postgresql_handle(vls_back_url).add(add_group)
+    else:
+        return 'wrong operation type'
+    return 'operation group database successfully'
+
+
+def get_help_article(type, id):
+    if type == 'all':
+        return alchemy2json_many(postgresql_handle(vls_back_url).list_order(HelpCenterArticle))
+    elif type == 'group':
+        return alchemy2json_many(postgresql_handle(vls_back_url).filterall_order(HelpCenterArticle, HelpCenterArticle.group == id))
+    elif type == 'article':
+        return alchemy2json_many(postgresql_handle(vls_back_url).filterall_order(HelpCenterArticle, HelpCenterArticle.id == id))[0]
+
+
+def set_help_article(operation, json_name_data):
+    if operation == 'edit':
+        article = {
+            'author': HelpCenterArticle.author,
+            'group': HelpCenterArticle.group,
+            'published': HelpCenterArticle.published,
+            'publish_time': HelpCenterArticle.publish_time,
+            'last_edit_time': HelpCenterArticle.last_edit_time,
+            'last_edit_author': HelpCenterArticle.last_edit_author,
+            'language': HelpCenterArticle.language,
+            'recommend': HelpCenterArticle.recommend,
+            'title_en': HelpCenterArticle.title_en,
+            'content_en': HelpCenterArticle.content_en,
+            'title_cn': HelpCenterArticle.title_cn,
+            'content_cn': HelpCenterArticle.content_cn,
+            'title_ja': HelpCenterArticle.title_ja,
+            'content_ja': HelpCenterArticle.content_ja,
+            'title_ko': HelpCenterArticle.title_ko,
+            'content_ko': HelpCenterArticle.content_ko,
+            'order': HelpCenterArticle.order,
+        }
+        temp_filter = get_temp_filter(json_name_data, article)
+        if temp_filter == 'input error':
+            return temp_filter
+        postgresql_handle(vls_back_url).update(
+            HelpCenterArticle, (HelpCenterArticle.id == json_name_data['id']), temp_filter)
+    elif operation == 'add':
+        add_article = HelpCenterArticle(
+            author=json_name_data['author'],
+            group=json_name_data['group'],
+            published=json_name_data['published'],
+            publish_time=json_name_data['publish_time'],
+            last_edit_time=json_name_data['last_edit_time'],
+            last_edit_author=json_name_data['last_edit_author'],
+            language=json_name_data['language'],
+            recommend=json_name_data['recommend'],
+            title_en=json_name_data['title_en'],
+            content_en=json_name_data['content_en'],
+            title_cn=json_name_data['title_cn'],
+            content_cn=json_name_data['content_cn'],
+            title_ja=json_name_data['title_ja'],
+            content_ja=json_name_data['content_ja'],
+            title_ko=json_name_data['title_ko'],
+            content_ko=json_name_data['content_ko'],
+            order=json_name_data['order'],
+        )
+        postgresql_handle(vls_back_url).add(add_article)
+    else:
+        return 'wrong operation type'
+    return 'operation article database successfully'
+
+
+def get_help_center(page, key, language):
+    result = {}
+    if page == 'homepage':
+        homepage_category = alchemy2json_many(postgresql_handle(
+            vls_back_url).list_order(HelpCenterCategory))
+        homepage_category = filter_language_list(homepage_category, language)
+        homepage_recommend = alchemy2json_many(postgresql_handle(vls_back_url).filterall_order(
+            HelpCenterArticle, (HelpCenterArticle.recommend == True) & (HelpCenterArticle.published == True)))
+        homepage_recommend = filter_language_list(homepage_recommend, language)
+        result['category'] = homepage_category
+        result['recommend'] = homepage_recommend
+    elif page == 'category':
+        category_data = alchemy2json_many(postgresql_handle(vls_back_url).filterall_order(
+            HelpCenterCategory, HelpCenterCategory.id == key))[0]
+        category_data = filter_language_one(category_data, language)
+        group_data = alchemy2json_many(postgresql_handle(vls_back_url).filterall_order(
+            HelpCenterGroup, HelpCenterGroup.category == category_data['id']))
+        group_data = filter_language_list(group_data, language)
+        article_data = {}
+        for i in group_data:
+            article_data = alchemy2json_many(postgresql_handle(vls_back_url).filterall_order(
+                HelpCenterArticle, (HelpCenterArticle.group == i['id']) & (HelpCenterArticle.published == True)))
+            article_data = filter_language_list(article_data, language)
+            i['article'] = article_data
+        result['category'] = category_data
+        result['group'] = group_data
+    elif page == 'group':
+        group_data = alchemy2json_many(postgresql_handle(vls_back_url).filterall_order(
+            HelpCenterGroup, HelpCenterGroup.id == key))[0]
+        group_data = filter_language_one(group_data, language)
+        category_data = alchemy2json_many(postgresql_handle(vls_back_url).filterall(
+            HelpCenterCategory, HelpCenterCategory.id == group_data['category']))[0]
+        category_data = filter_language_one(category_data, language)
+        article_data = alchemy2json_many(postgresql_handle(vls_back_url).filterall_order(
+            HelpCenterArticle, (HelpCenterArticle.group == key) & (HelpCenterArticle.published == True)))
+        article_data = filter_language_list(article_data, language)
+        group_data['category'] = category_data
+        result['group'] = group_data
+        result['article'] = article_data
+    elif page == 'article':
+        article_data = alchemy2json_many(postgresql_handle(vls_back_url).filterall_order(
+            HelpCenterArticle, (HelpCenterArticle.id == key) & (HelpCenterArticle.published == True)))
+        if len(article_data) > 0:
+            article_data = filter_language_one(article_data[0], language)
+            group_data = alchemy2json_many(postgresql_handle(vls_back_url).filterall(
+                HelpCenterGroup, HelpCenterGroup.id == article_data['id']))[0]
+            group_data = filter_language_one(group_data, language)
+            category_data = alchemy2json_many(postgresql_handle(vls_back_url).filterall(
+                HelpCenterCategory, HelpCenterCategory.id == group_data['category']))[0]
+            category_data = filter_language_one(category_data, language)
+            article_data['groupName'] = group_data['name']
+            article_data['groupId'] = group_data['id']
+            article_data['categoryName'] = category_data['name']
+            article_data['categoryId'] = category_data['id']
+            other_article = alchemy2json_many(postgresql_handle(vls_back_url).filterall_order(
+                HelpCenterArticle, (HelpCenterArticle.group == article_data['group']) & (HelpCenterArticle.id != article_data['id']) & (HelpCenterArticle.published == True)))
+            other_article = filter_language_list(other_article, language)
+            result['other'] = other_article
+        result['article'] = article_data
+    elif page == 'search':
+        article_data = alchemy2json_many(postgresql_handle(vls_back_url).filterall_order(
+            HelpCenterArticle, (HelpCenterArticle.published == True) & (
+                (HelpCenterArticle.author.like("%"+key+"%")) |
+                (HelpCenterArticle.title_en.like("%"+key+"%")) |
+                (HelpCenterArticle.title_cn.like("%"+key+"%")) |
+                (HelpCenterArticle.title_ja.like("%"+key+"%")) |
+                (HelpCenterArticle.title_ko.like("%"+key+"%"))
+            )
+            # (HelpCenterArticle.content_en.like("%"+key+"%")) |
+            # (HelpCenterArticle.content_cn.like("%"+key+"%")) |
+            # (HelpCenterArticle.content_ja.like("%"+key+"%")) |
+            # (HelpCenterArticle.content_ko.like("%"+key+"%"))
+        ))
+        article_data = filter_language_list(article_data, language)
+        for i in article_data:
+            group_data = alchemy2json_many(postgresql_handle(vls_back_url).filterall(
+                HelpCenterGroup, HelpCenterGroup.id == i['group']))[0]
+            category_data = alchemy2json_many(postgresql_handle(vls_back_url).filterall(
+                HelpCenterCategory, HelpCenterCategory.id == group_data['category']))[0]
+            i['groupName'] = filter_language_one(group_data, language)['name']
+            i['categoryId'] = category_data['id']
+            i['categoryName'] = filter_language_one(
+                category_data, language)['name']
+        result['article'] = article_data
+    else:
+        result['message'] = 'wrong page'
+    return result

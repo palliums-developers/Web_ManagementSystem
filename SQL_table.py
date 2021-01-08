@@ -155,6 +155,8 @@ class HelpCenterArticle(Base):
     content_ja = Column(Text, nullable=True)
     title_ko = Column(Text, nullable=True)
     content_ko = Column(Text, nullable=True)
+    order = Column(Integer, nullable=False)
+
 
 
 class RolePageDatabase(Base):

@@ -52,6 +52,17 @@ def getMd5(passwd):
     return (m.hexdigest())
 
 
+def get_temp_filter(json_name_data, json_table):
+    temp_filter = {}
+    for i in json_name_data:
+        for j in json_table:
+            if i == j and not i == 'id' and not j == 'id':
+                temp_filter.update({json_table[j]: json_name_data[i]})
+                break
+    # todo: some database do not match every things, so it cannot be check
+    # if not len(temp_filter) == len(json_name_data)-1:
+    #     return 'input error'
+    return temp_filter
 # class Pagination(object):
 #     """
 #     分页对象

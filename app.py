@@ -9,6 +9,10 @@ from app_service_bank import Bank
 from app_service_coin_management import CoinManagement
 from app_service_captcha import CAPTCHA
 from app_service_category import Category
+from app_service_group import Group
+from app_service_article import Article
+from app_service_role import Role
+from app_service_help_center_web import HelpCenter
 from flask_cors import CORS
 
 
@@ -25,14 +29,18 @@ cors = CORS(app, resources={r"/api/*": {"origins": "*"}})
 
 # api.add_resource(index, '/')
 api.add_resource(Login, '/api/login')
-api.add_resource(CurrentUser,'/api/currentUser')
+api.add_resource(CurrentUser, '/api/currentUser')
 api.add_resource(User, '/api/user')
 api.add_resource(LoginLog, '/api/loginLog')
 api.add_resource(OperationLog, '/api/operationLog')
 api.add_resource(Bank, '/api/bank')
 api.add_resource(CoinManagement, '/api/coin')
 api.add_resource(CAPTCHA, '/api/captcha')
-# api.add_resource(Category, '/api/getCategoryName')
+api.add_resource(Role, '/api/role')
+api.add_resource(Category, '/api/category')
+api.add_resource(Group, '/api/group')
+api.add_resource(Article, '/api/article')
+api.add_resource(HelpCenter, '/api/help_center')
 # api.add_resource(CAPTCHA, '/api/getGroupName')
 # api.add_resource(CAPTCHA, '/api/getArticleName')
 # api.add_resource(CAPTCHA, '/api/allArticle')
@@ -44,4 +52,3 @@ api.add_resource(CAPTCHA, '/api/captcha')
 if __name__ == '__main__':
     # app.run(debug=True)
     app.run(host='0.0.0.0', port=5000, debug=True)
-
