@@ -1,5 +1,7 @@
+import { operation } from './../services/userList';
 import { parse } from 'querystring';
 import { useEffect, useRef } from 'react';
+import EditArticle from '@/pages/HelpCenter/EditArticle';
 // import { useIntl } from 'umi';
 
 /* eslint no-useless-escape:0 import/prefer-default-export:0 */
@@ -117,7 +119,7 @@ export const rightAtPage = () => {
     add: 0b0100,
     dele: 0b1000,
   };
-  return allRight
+  return allRight;
 };
 
 export const useInterval = (callback: any, delay: number) => {
@@ -138,4 +140,23 @@ export const useInterval = (callback: any, delay: number) => {
       return () => clearInterval(id);
     }
   }, [delay]);
+};
+
+/**
+ * add_xxx(edit_xxx)?id=1
+ * @param pathname 
+ * @param search 
+ */
+export const decode_search_url = (pathname: string, search: string) => {
+  let result = {
+    operation: 'edit',
+    object_type: '',
+    object_id: 0,
+  };
+  let temp_pathname1 = pathname.split('/')[2];
+  let temp_pathname2 = temp_pathname1.split('_');
+  result.operation = temp_pathname2[0];
+  result.object_type = temp_pathname2[1];
+  result.object_id = parseInt(search.split('=')[1]);
+  return result;
 };

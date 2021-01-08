@@ -407,8 +407,8 @@ export default () => {
         {operationStatus.status ? (
           <h2>{intl('bank.disable_status')}</h2>
         ) : (
-          <h2>{intl('bank.able_status')}</h2>
-        )}
+            <h2>{intl('bank.able_status')}</h2>
+          )}
       </Modal>
       <Card>
         <div className={styles.row}>

@@ -59,5 +59,9 @@ export default {
   'menu.system.user':'User Management',
   'menu.system.role':'Role members Management',
   'menu.system.login_log':'Login Log',
-  'menu.system.operation_log':'Operation Log'
+  'menu.system.operation_log':'Operation Log',
+  'menu.help':'Help Center',
+  'menu.help.all_category':'All Category',
+  'menu.help.all_article':'All Article',
+  'menu.help.work_order':'Work Order',
 }

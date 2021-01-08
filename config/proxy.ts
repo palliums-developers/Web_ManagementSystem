@@ -16,6 +16,34 @@ export default {
       '^/localhost': '',
     },
   },
+  '/api/category': {
+    target: vls_back_management_url,
+    changeOrigin: true,
+    pathRewrite: {
+      '^/localhost': '',
+    },
+  },
+  '/api/group': {
+    target: vls_back_management_url,
+    changeOrigin: true,
+    pathRewrite: {
+      '^/localhost': '',
+    },
+  },
+  '/api/article': {
+    target: vls_back_management_url,
+    changeOrigin: true,
+    pathRewrite: {
+      '^/localhost': '',
+    },
+  },
+  '/api/role': {
+    target: vls_back_management_url,
+    changeOrigin: true,
+    pathRewrite: {
+      '^/localhost': '',
+    },
+  },
   '/api/loginLog': {
     target: vls_back_management_url,
     changeOrigin: true,

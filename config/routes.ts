@@ -12,7 +12,6 @@ export default [
   },
   {
     path: '/welcome',
-    // name: currentUser.name,
     icon: 'smile',
     component: './Welcome',
   },
@@ -97,7 +96,50 @@ export default [
         component: './CoinManagement/CoinEdit',
       },
     ],
-  }, // {
+  },
+  {
+    path: 'helpCenter',
+    name: 'help',
+    icon: 'Profile',
+    routes: [
+      {
+        path: 'all_category',
+        name: 'all_category',
+        component: './HelpCenter/AllCategory',
+      },
+      {
+        path: 'all_group',
+        component: './HelpCenter/AllGroup',
+      },
+      {
+        path: 'group2article',
+        component: './HelpCenter/AllGroup2Article',
+      },
+      {
+        path: 'edit_group',
+        component: './HelpCenter/EditGroup',
+      },
+      {
+        path: 'edit_category',
+        component: './HelpCenter/EditCategory',
+      },
+      {
+        path: 'all_article',
+        name: 'all_article',
+        component: './HelpCenter/AllArticle',
+      },
+      {
+        path: 'edit_article',
+        component: './HelpCenter/EditArticle',
+      },
+      {
+        path: 'work_order',
+        name: 'work_order',
+        component: './HelpCenter/WorkOrder',
+      },
+    ],
+  },
+  // {
   //   path: '/admin',
   //   name: 'admin',
   //   icon: 'crown',

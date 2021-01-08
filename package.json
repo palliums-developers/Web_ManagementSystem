@@ -49,6 +49,7 @@
     "@ant-design/pro-table": "^2.4.0",
     "antd": "^4.4.0",
     "classnames": "^2.2.6",
+    "immutability-helper": "^3.1.1",
     "lodash": "^4.17.11",
     "moment": "^2.25.3",
     "omit.js": "^2.0.2",
@@ -60,7 +61,8 @@
     "react-helmet-async": "^1.0.4",
     "umi": "^3.2.0",
     "umi-request": "^1.0.8",
-    "use-merge-value": "^1.0.1"
+    "use-merge-value": "^1.0.1",
+    "wangeditor": "^4.6.1"
   },
   "devDependencies": {
     "@ant-design/pro-cli": "^2.0.2",

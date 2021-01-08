@@ -4,6 +4,7 @@ import { Card, Input, Table, Button, Select, Modal, Switch } from 'antd';
 import moment from 'moment';
 import { useIntl, history } from 'umi';
 import styles from './index.less';
+import { getCoinData } from '@/services/bank';
 
 const intl = (_temp: string) => {
   return useIntl().formatMessage({ id: _temp });
@@ -13,12 +14,13 @@ const { Option } = Select;
 export default () => {
   const [loading, setLoading] = useState<boolean>(true);
   const [operationData, setOperationData] = useState();
-  const onOkEdit = () => {};
-  useEffect(() => {
-    setTimeout(() => {
-      setLoading(false);
-    }, 3000);
-  }, []);
+  const onOkEdit = () => { };
+  const getOperationData = async () => {
+    let temp = await getCoinData('operation');
+    if (temp.status === 'ok') {
+      await setOperationData(temp.data);
+    }
+  };
   const columns2 = [
     {
       title: intl('bank.operator'),
@@ -45,24 +47,30 @@ export default () => {
       dataIndex: 'operation',
     },
   ];
+  useEffect(() => {
+    getOperationData();
+    setTimeout(() => {
+      setLoading(false);
+    }, 3000);
+  }, []);
   return (
-    <PageContainer content="这是一个新页面，从这里进行开发！" className={styles.main}>
-      <div style={{ paddingTop: 100, textAlign: 'center' }}>
+    <PageContainer className={styles.main}>
+      <div style={{ paddingTop: 10, textAlign: 'center' }}>
         <Input value={'111'} />
         <div className={styles.row}>
           <p>{intl('bank.coin_precision')}</p>
           <Input
             placeholder={'bank.coin_precision_please'}
-            // defaultValue={editData?.precision}
-            // onChange={(e) => modalInput(e, 'precision')}
+          // defaultValue={editData?.precision}
+          // onChange={(e) => modalInput(e, 'precision')}
           />
         </div>
         <div className={styles.row}>
           <p>{intl('bank.coin_min_quantity')}</p>
           <Input
             placeholder={'bank.coin_min_quantity_please'}
-            // defaultValue={editData?.min_quantity}
-            // onChange={(e) => modalInput(e, 'min')}
+          // defaultValue={editData?.min_quantity}
+          // onChange={(e) => modalInput(e, 'min')}
           />
         </div>
         {/* <Button onClick={onCancelEdit}>{intl('operation.cancel')}</Button> */}
@@ -70,8 +78,8 @@ export default () => {
           <p>{intl('bank.coin_max_quantity')}</p>
           <Input
             placeholder={'bank.coin_man_quantity_please'}
-            // defaultValue={editData?.max_quantity}
-            // onChange={(e) => modalInput(e, 'max')}
+          // defaultValue={editData?.max_quantity}
+          // onChange={(e) => modalInput(e, 'max')}
           />
         </div>
         <Button type="primary" onClick={onOkEdit}>
