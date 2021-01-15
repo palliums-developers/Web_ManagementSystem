@@ -2,8 +2,9 @@ import { PageContainer } from '@ant-design/pro-layout';
 import React, { useState, useEffect } from 'react';
 import { Card, Checkbox, Input, Button } from 'antd';
 import styles from './index.less';
-import { getGroup, group, setGroup } from '@/services/helpCenter';
+import { category, getCategory, getGroup, group, setGroup } from '@/services/helpCenter';
 import { useIntl, history } from 'umi';
+import Modal from 'antd/lib/modal/Modal';
 const intl = (_temp: string) => {
   return useIntl().formatMessage({ id: _temp });
 };
@@ -11,8 +12,9 @@ const { TextArea } = Input;
 export default () => {
   const [loading, setLoading] = useState<boolean>(true);
   const [language, setLanguage] = useState([]);
-  // todo category id 
-  const [location_operation, set_location_operation] = useState({ operation: '', id: 0, category_id: 0 })
+  const [location_operation, set_location_operation] = useState({ operation: '', id: 0, category: 0 })
+  const [show_category, set_show_category] = useState({ visibility: false, name: '' });
+  const [category_list, set_category_list] = useState<category[]>([]);
   const [data, setData] = useState<group>({
     language: '',
     name_en: '',
@@ -35,9 +37,49 @@ export default () => {
     }
     setData(temp);
   }
+  const change_show_category = async (type: string, data: any) => {
+    // let temp = show_category;
+    switch (type) {
+      case 'visibility':
+        await set_show_category({
+          visibility: data,
+          name: show_category.name
+        });
+        // temp.visibility = data;
+        break;
+      case 'data':
+        await set_show_category({
+          visibility: show_category.visibility,
+          name: data
+        });
+        // temp.name = data;
+        break;
+      default:
+        break;
+    }
+    // await set_show_category(temp);
+  }
+  const confirm_category = async () => {
+    let temp = data;
+    let temp_category = (await getGroup('category', location_operation.category)).data;
+    temp.category = location_operation.category;
+    temp.order = temp_category.length + 1;
+    await change_show_category('visibility', false);
+  }
   const submitGroup = () => {
-    console.log(location_operation, data)
+    // console.log(location_operation, show_category, data)
     setGroup(location_operation.operation, data);
+  }
+  const click_category = async (value: number) => {
+    let temp_location = location_operation;
+    temp_location.category = value;
+    let name = '';
+    for (let i in category_list) {
+      if (category_list[i].id === location_operation.category) {
+        name = category_list[i].name_en;
+      }
+    }
+    await change_show_category('data', name);
   }
   const selectLanguage = (e: any) => {
     setLanguage(e);
@@ -74,6 +116,8 @@ export default () => {
           temp.operation = temp3[1];
         } else if (temp3[0] === 'id') {
           temp.id = parseInt(temp3[1]);
+        } else if (temp3[0] === 'category') {
+          temp.category = parseInt(temp3[1]);
         }
       }
     }
@@ -82,9 +126,10 @@ export default () => {
   const initial_data = async (temp_operation: any) => {
     let temp_language = language;
     let temp_data = data;
-    // let temp_category = (await getGroup('category',temp_operation.id)).data;
-    let temp_category = (await getGroup('group', temp_operation.id)).data;
+    let temp_category_list = (await getCategory()).data;
+    await set_category_list(temp_category_list);
     if (temp_operation.operation === 'edit') {
+      let temp_category = (await getGroup('group', temp_operation.id)).data;
       for (let i in temp_category) {
         if (temp_category[i].id === temp_operation.id) {
           temp_data = (temp_category[i]);
@@ -95,14 +140,16 @@ export default () => {
         }
       }
     } else if (temp_operation.operation === 'add') {
-      temp_data.order = temp_category.length + 1
+      let temp_category = (await getGroup('category', temp_operation.category)).data;
+      temp_data.order = temp_category.length + 1;
+      temp_data.category = temp_operation.category;
       setLanguage(['EN'])
     } else {
       history.push('/helpCenter/all_group');
     }
   }
   const initialPage = async () => {
-    let temp_operation = decode_location();
+    let temp_operation = await decode_location();
     initial_data(temp_operation);
   }
   useEffect(() => {
@@ -115,6 +162,21 @@ export default () => {
   return (
     <PageContainer className={styles.main}>
       <Card>
+        <Modal
+          title='Category'
+          visible={show_category.visibility}
+          onOk={() => { change_show_category('visibility', false) }}
+          onCancel={() => { change_show_category('visibility', false) }}
+          footer={<Button onClick={confirm_category}>confirm</Button>}
+        >
+          {category_list.map((item, key) => {
+            return <p onClick={() => { click_category(item.id) }}>{item.name_en}</p>
+          })}
+        </Modal>
+        {
+          category_list.length > 0 &&
+          <Input value={show_category.name} suffix={<Button onClick={() => { change_show_category('visibility', true) }}>edit</Button>}></Input>
+        }
         {(language).length > 0 &&
           <Checkbox.Group
             onChange={selectLanguage}

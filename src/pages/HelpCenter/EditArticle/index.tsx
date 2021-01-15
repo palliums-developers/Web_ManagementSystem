@@ -1,15 +1,16 @@
 import { PageContainer } from '@ant-design/pro-layout';
 import React, { useState, useEffect } from 'react';
-import { Card, Switch, Checkbox, Tabs, Input, Button } from 'antd';
+import { Card, Switch, Checkbox, Tabs, Input, Button, Collapse } from 'antd';
 import styles from './index.less';
 import E from 'wangeditor';
 import { history } from 'umi';
 import { article, category, group } from '@/services/helpCenter';
 import Modal from 'antd/lib/modal/Modal';
 import { setArticle, getArticle, getGroup, getCategory } from '@/services/helpCenter'
-import get_array_ji from '@/utils/array_ji'
-import { toLower } from 'lodash';
+// import get_array_ji from '@/utils/array_ji'
+// import { toLower } from 'lodash';
 
+const { Panel } = Collapse;
 const { TabPane } = Tabs;
 let edit_en: any = null;
 let edit_cn: any = null;
@@ -24,8 +25,10 @@ export default () => {
   })
   const [language, setLanguage] = useState(['EN']);
   const [select_tab, set_select_tab] = useState<string>('en');
-  const [all_group, set_all_group] = useState<group[]>([]);
+  const [show_group, set_show_group] = useState<string>('select a group');
+  const [groupId, setGroupId] = useState<number>(0);
   const [all_category, set_all_category] = useState<category[]>([]);
+  const [all_modal, set_all_modal] = useState({ category: false, publish: false });
   const [initial_article, set_initial_article] = useState<article>({
     // author: '',
     // last_edit_time: '',
@@ -63,6 +66,32 @@ export default () => {
     // todo order
   });
   const [post_article, set_post_article] = useState<any>({});
+  const ok_modal = (type: string) => {
+    change_modal(type, false)
+  }
+  const change_modal = async (type: string, key: boolean) => {
+    switch (type) {
+      case 'category':
+        set_all_modal({ category: key, publish: all_modal.publish });
+        break;
+      case 'published':
+        set_all_modal({ category: all_modal.category, publish: key });
+        break;
+      default:
+        set_all_modal({ category: key, publish: key });
+        break;
+    }
+  }
+  const change_group = async (group_id: number) => {
+    let temp = post_article;
+    temp.group = group_id;
+    await set_post_article(temp);
+  }
+  const select_group = async (categoty_id: number, group_id: number, category_name: string, group_name: string) => {
+    await setGroupId(group_id);
+    let temp_group = category_name + ' / ' + group_name;
+    set_show_group(temp_group)
+  }
   const create_rich_text_editor = (language: string) => {
     switch (language) {
       case 'en':
@@ -122,11 +151,21 @@ export default () => {
     temp_article.content_ja = edit_ja.txt.html();
     temp_article.content_ko = edit_ko.txt.html();
   }
-  const saveAsDraft = () => {
-    editor2article();
-    console.log(initial_article);
-    console.log(post_article);
-    setArticle(operation_json.operation, post_article)
+  const confirm_button = async (type: string) => {
+    switch (type) {
+      case 'saveAsDraft':
+        editor2article();
+        // console.log(initial_article);
+        // console.log(post_article);
+        setArticle(operation_json.operation, post_article)
+        break;
+      case 'select_group':
+        await change_group(groupId);
+        change_modal('category', false);
+        break;
+      default:
+        break;
+    }
   }
   const selectLanguage = (e: any) => {
 
@@ -138,7 +177,6 @@ export default () => {
     if (!e.includes('EN')) {
       e.push('EN')
     }
-    console.log(e)
     setLanguage(e);
     let temp = post_article;
     temp.language = (e.toString())
@@ -182,13 +220,25 @@ export default () => {
       history.push('/helpCenter/all_article');
     }
   }
+  const initialGroup = (group: number, category: any) => {
+    for (let i in category) {
+      for (let j in category[i].group) {
+        if (category[i].group[j].id === group) {
+          set_show_group(category[i].name_en + ' / ' + category[i].group[j].name_en);
+          break;
+        }
+      }
+    }
+  };
   const get_category2group_info = async () => {
-    set_all_category(await getCategory());
+    let temp_category = await getArticle('level')
+    await set_all_category(temp_category.data);
     let loading_flag = false;
     if (operation_json.operation === 'edit') {
       let temp = (await getArticle('article', operation_json.id)).data;
       await set_initial_article(temp);
       await initial_post_article(JSON.stringify(temp));
+      await initialGroup(temp.group, temp_category.data);
       loading_flag = true;
     } else if (operation_json.operation === 'add') {
       await initial_post_article(JSON.stringify(initial_article))
@@ -218,11 +268,44 @@ export default () => {
   return (
     <PageContainer className={styles.main}>
       <Card>
-        <Modal></Modal>
+        <Modal
+          title='Select a category'
+          visible={all_modal.category}
+          onOk={() => ok_modal('category')}
+          onCancel={() => change_modal('category', false)}
+          footer={<Button onClick={() => confirm_button('select_group')}>Confirm</Button>}
+        >
+          {
+            all_category.length > 0 &&
+            <Collapse accordion expandIconPosition={'right'}>{
+              all_category.map((items, index) => {
+                return <Panel header={items.name_en ? items.name_en : ''} key={items.id}>
+                  <div>{items.group.length > 0 &&
+                    items.group.map((item, index) => {
+                      return <p onClick={() => { select_group(items.id, item.id, items.name_en, item.name_en) }}>{item.name_en}</p>
+                    })
+                  }</div>
+                </Panel>
+              })
+            }
+            </Collapse>
+          }
+        </Modal>
+        <Modal
+          title='Publish time'
+          visible={all_modal.publish}
+        >
+          <p>111</p>
+        </Modal>
         {
           loading &&
           <div>
             <p>Published in group</p>
+            <Input
+              value={show_group}
+              suffix={<Button onClick={() => change_modal('category', true)}
+              >edit</Button>}
+            ></Input>
             <Switch onChange={(e) => switch_recommend(e)} defaultChecked={post_article.recommend}></Switch>
             <br></br>
             <Checkbox.Group
@@ -236,10 +319,10 @@ export default () => {
             </Checkbox.Group>
           </div>
         }
-        <Tabs defaultActiveKey="en" onChange={(e) => switch_tabs(e)}>
+        <Tabs style={{ display: (all_modal.category ? 'none' : 'flex') }} defaultActiveKey="en" onChange={(e) => switch_tabs(e)}>
           <TabPane tab="EN" key="en">
             <Input onChange={e => changeTitle('en', e.target.value)}></Input>
-            <div id='en' dangerouslySetInnerHTML={{
+            <div id='en' style={{ zIndex: 0 }} dangerouslySetInnerHTML={{
               __html: initial_article.content_en
             }}></div>
           </TabPane>
@@ -262,7 +345,7 @@ export default () => {
             }}></div>
           </TabPane>
         </Tabs>
-        <Button onClick={() => saveAsDraft()}>Save</Button>
+        <Button onClick={() => confirm_button('saveAsDraft')}>Save</Button>
         <Button type='primary'>Save and Published</Button>
       </Card>
     </PageContainer>

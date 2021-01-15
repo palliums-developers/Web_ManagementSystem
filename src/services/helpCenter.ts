@@ -13,20 +13,21 @@ export interface category {
   name_ko: string;
   description_ko: string;
   order: number;
+  group?: {};
 }
 export interface group {
   id?: number;
-  language: string;
-  name_en: string;
-  description_en: string;
-  name_cn: string;
-  description_cn: string;
-  name_ja: string;
-  description_ja: string;
-  name_ko: string;
-  description_ko: string;
-  order: number;
-  category: number;
+  language?: string;
+  name_en?: string;
+  description_en?: string;
+  name_cn?: string;
+  description_cn?: string;
+  name_ja?: string;
+  description_ja?: string;
+  name_ko?: string;
+  description_ko?: string;
+  order?: number;
+  category?: number;
 }
 export interface article {
   id?: number;
@@ -71,7 +72,7 @@ export async function getGroup(type: string, id: number) {
 export async function getArticle(type: string, id?: number) {
   let url = url_article;
   url += `?type=${type}`;
-  if (type == 'all') {
+  if (type == 'all' || type == 'level') {
     id = 0;
   }
   url += `&id=${id}`;
@@ -82,7 +83,7 @@ export async function getArticle(type: string, id?: number) {
     },
   });
 }
-export async function setGroup(operation: string, data: group) {
+export async function setGroup(operation: string, data: group | {}) {
   return request(url_group, {
     method: 'POST',
     data: {
@@ -94,7 +95,7 @@ export async function setGroup(operation: string, data: group) {
     },
   });
 }
-export async function setCategory(operation: string, data: category) {
+export async function setCategory(operation: string, data: category | {}) {
   return request(url_category, {
     method: 'POST',
     data: {
@@ -106,7 +107,7 @@ export async function setCategory(operation: string, data: category) {
     },
   });
 }
-export async function setArticle(operation: string, data: article) {
+export async function setArticle(operation: string, data: article | {}) {
   return request(url_article, {
     method: 'POST',
     data: {
