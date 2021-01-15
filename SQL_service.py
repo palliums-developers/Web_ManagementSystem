@@ -33,7 +33,7 @@ class postgresql_handle:
 
     def filterall_order(self, object, filter):
         temp = self.session()
-        return temp.query(object).order_by(object.order.desc()).filter(filter).all()
+        return temp.query(object).order_by(object.order).filter(filter).all()
 
     def filter_limit_order(self,object,filter,limit):
         temp=self.session()

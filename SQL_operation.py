@@ -622,6 +622,17 @@ def update_role_page(id, role_name_num):
     return postgresql_handle(vls_back_url).update(RolePageDatabase, (RolePageDatabase.id == id), temp_filter)
 
 
+def get_help_category_group():
+    result = {}
+    result = alchemy2json_many(postgresql_handle(
+        vls_back_url).list_order(HelpCenterCategory))
+    for i in result:
+        temp_group = alchemy2json_many(postgresql_handle(vls_back_url).filterall_order(
+            HelpCenterGroup, (HelpCenterGroup.category == i['id'])))
+        i['group'] = temp_group
+    return result
+
+
 def get_help_category():
     return alchemy2json_many(postgresql_handle(vls_back_url).list_order(HelpCenterCategory))
 
@@ -659,6 +670,11 @@ def set_help_category(operation, json_name_data):
             order=json_name_data['order'],
         )
         postgresql_handle(vls_back_url).add(add_category)
+    elif operation == 'sort':
+        # print(json_name_data['order'])
+        for i in json_name_data['order']:
+            postgresql_handle(vls_back_url).update(
+                HelpCenterCategory, HelpCenterCategory.id == i['id'], {HelpCenterCategory.order: i['order']})
     else:
         return 'wrong operation type'
     return 'operation category database successfully'
@@ -668,7 +684,7 @@ def get_help_group(type, id):
     if type == 'category':
         return alchemy2json_many(postgresql_handle(vls_back_url).filterall_order(HelpCenterGroup, HelpCenterGroup.category == id))
     elif type == 'group':
-        return alchemy2json_many(postgresql_handle(vls_back_url).filterall(HelpCenterGroup, HelpCenterGroup.id == id))
+        return alchemy2json_many(postgresql_handle(vls_back_url).filterall_order(HelpCenterGroup, HelpCenterGroup.id == id))
     else:
         return 'wrong type'
 
@@ -708,6 +724,11 @@ def set_help_group(operation, json_name_data):
             category=json_name_data['category'],
         )
         postgresql_handle(vls_back_url).add(add_group)
+    elif operation == 'sort':
+        # print(json_name_data['order'])
+        for i in json_name_data['order']:
+            print(i)
+            postgresql_handle(vls_back_url).update(HelpCenterGroup, HelpCenterGroup.id == i['id'], {HelpCenterGroup.order:i['order']})
     else:
         return 'wrong operation type'
     return 'operation group database successfully'
@@ -720,6 +741,8 @@ def get_help_article(type, id):
         return alchemy2json_many(postgresql_handle(vls_back_url).filterall_order(HelpCenterArticle, HelpCenterArticle.group == id))
     elif type == 'article':
         return alchemy2json_many(postgresql_handle(vls_back_url).filterall_order(HelpCenterArticle, HelpCenterArticle.id == id))[0]
+    elif type == 'level':
+        return get_help_category_group()
 
 
 def set_help_article(operation, json_name_data):
@@ -769,6 +792,13 @@ def set_help_article(operation, json_name_data):
             order=json_name_data['order'],
         )
         postgresql_handle(vls_back_url).add(add_article)
+    elif operation == 'sort':
+        # print(json_name_data['order'])
+        for i in json_name_data['order']:
+            postgresql_handle(vls_back_url).update(HelpCenterArticle, HelpCenterArticle.id == i['id'], {HelpCenterArticle.order:i['order']})
+    elif operation=='move':
+        # print(json_name_data)
+        postgresql_handle(vls_back_url).update(HelpCenterArticle,HelpCenterArticle.id==json_name_data['article'],{HelpCenterArticle.group:json_name_data['group']})
     else:
         return 'wrong operation type'
     return 'operation article database successfully'

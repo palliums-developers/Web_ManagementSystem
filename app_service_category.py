@@ -29,10 +29,8 @@ class Category(Resource):
             return result, 401
         else:
             result['status'] = 'ok'
-
         result['data'] = set_help_category(
             __args__.operation, eval(__args__.data))
-        print(__args__.data)
         if result['data'] == 'operation category database successfully':
             # todo add log
             # now = int(time.time())
