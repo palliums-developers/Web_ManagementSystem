@@ -158,7 +158,6 @@ class HelpCenterArticle(Base):
     order = Column(Integer, nullable=False)
 
 
-
 class RolePageDatabase(Base):
     __tablename__ = 'role_page'
     id = Column(Integer, primary_key=True, autoincrement=True)
@@ -176,3 +175,21 @@ class RolePageDatabase(Base):
     category = Column(Integer, nullable=True)
     group = Column(Integer, nullable=True)
     article = Column(Integer, nullable=True)
+
+
+class ViolasNoticeRecord(Base):
+    __tablename__ = "notice_record"
+    # 排序用序号
+    id = Column(BigInteger, primary_key=True, autoincrement=True)
+    # 格式a_+md5(标题+内容)，识别消息
+    message_id = Column(Text, nullable=False)
+    # {"cn":{"title":"titletitle", "summary":"summarysummary", "body":"bodybody","author":"xxxxxx"}}
+    content = Column(Text, nullable=False)
+    # ["apple","android"，“pc”, "web"]
+    platform = Column(Text, nullable=False)
+    # 日期
+    date = Column(Integer, nullable=False)
+    # 是否立即发布
+    immediately = Column(Boolean, nullable=False)
+
+# api post {"service":"violas_00", "content":"message_id"}

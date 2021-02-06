@@ -1,7 +1,7 @@
 import configparser
 from sqlalchemy import create_engine
 from SQL_service import postgresql_handle
-from SQL_table import Login, User_data, Operation, ViolasBankBorrowProduct, ViolasBankDepositProduct, Coin_management, RolePageDatabase, HelpCenterArticle, HelpCenterCategory, HelpCenterGroup
+from SQL_table import Login, User_data, Operation, ViolasBankBorrowProduct, ViolasBankDepositProduct, Coin_management, RolePageDatabase, HelpCenterArticle, HelpCenterCategory, HelpCenterGroup, ViolasNoticeRecord
 from util import alchemy2json_many, get_temp_filter
 from util_role import add_auth, del_auth, verify_auth, number2role, onlyPage, role2page
 from util_filter_language import filter_language_list, filter_language_one
@@ -728,7 +728,8 @@ def set_help_group(operation, json_name_data):
         # print(json_name_data['order'])
         for i in json_name_data['order']:
             print(i)
-            postgresql_handle(vls_back_url).update(HelpCenterGroup, HelpCenterGroup.id == i['id'], {HelpCenterGroup.order:i['order']})
+            postgresql_handle(vls_back_url).update(
+                HelpCenterGroup, HelpCenterGroup.id == i['id'], {HelpCenterGroup.order: i['order']})
     else:
         return 'wrong operation type'
     return 'operation group database successfully'
@@ -795,10 +796,12 @@ def set_help_article(operation, json_name_data):
     elif operation == 'sort':
         # print(json_name_data['order'])
         for i in json_name_data['order']:
-            postgresql_handle(vls_back_url).update(HelpCenterArticle, HelpCenterArticle.id == i['id'], {HelpCenterArticle.order:i['order']})
-    elif operation=='move':
+            postgresql_handle(vls_back_url).update(
+                HelpCenterArticle, HelpCenterArticle.id == i['id'], {HelpCenterArticle.order: i['order']})
+    elif operation == 'move':
         # print(json_name_data)
-        postgresql_handle(vls_back_url).update(HelpCenterArticle,HelpCenterArticle.id==json_name_data['article'],{HelpCenterArticle.group:json_name_data['group']})
+        postgresql_handle(vls_back_url).update(HelpCenterArticle, HelpCenterArticle.id ==
+                                               json_name_data['article'], {HelpCenterArticle.group: json_name_data['group']})
     else:
         return 'wrong operation type'
     return 'operation article database successfully'
@@ -890,4 +893,30 @@ def get_help_center(page, key, language):
         result['article'] = article_data
     else:
         result['message'] = 'wrong page'
+    return result
+
+
+def get_notification(type, id):
+    if type == 'all':
+        return alchemy2json_many(postgresql_handle(vls_back_url).list(ViolasNoticeRecord))
+    elif type == 'one':
+        return alchemy2json_many(postgresql_handle(vls_back_url).filterone(ViolasNoticeRecord, ViolasNoticeRecord.id == id))
+
+
+def set_notification(operation, id, data):
+    result = 'failed'
+    post_data = ViolasNoticeRecord(
+        message_id=data['message_id '],
+        content=data['content '],
+        platform=data['platform '],
+        date=data['date '],
+        immediately=data['immediately '],
+    )
+    if type == 'edit':
+        postgresql_handle(vls_back_url).update(
+            ViolasNoticeRecord, (ViolasNoticeRecord.id == id), post_data)
+        result = 'success'
+    elif type == 'add':
+        postgresql_handle(vls_back_url).add(post_data)
+        result = 'success'
     return result

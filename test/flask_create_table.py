@@ -46,26 +46,26 @@ now = int(time.time())
 #     category = db.Column(db.Integer, nullable=False)
 
 
-class HelpCenterArticle(db.Model):
-    __tablename__ = 'help_center_article'
-    id = db.Column(db.Integer, primary_key=True,
-                   autoincrement=True, nullable=False)
-    author = db.Column(db.String(50), nullable=False)
-    group = db.Column(db.Integer, nullable=False)
-    published = db.Column(db.Boolean, nullable=False)
-    publish_time = db.Column(db.String(20), nullable=False)
-    last_edit_time = db.Column(db.String(20), nullable=False)
-    last_edit_author = db.Column(db.String(20), nullable=False)
-    language = db.Column(db.String(64), nullable=False)
-    recommend = db.Column(db.Boolean, nullable=False)
-    title_en = db.Column(db.Text, nullable=False)
-    content_en = db.Column(db.Text, nullable=False)
-    title_cn = db.Column(db.Text, nullable=True)
-    content_cn = db.Column(db.Text, nullable=True)
-    title_ja = db.Column(db.Text, nullable=True)
-    content_ja = db.Column(db.Text, nullable=True)
-    title_ko = db.Column(db.Text, nullable=True)
-    content_ko = db.Column(db.Text, nullable=True)
+# class HelpCenterArticle(db.Model):
+#     __tablename__ = 'help_center_article'
+#     id = db.Column(db.Integer, primary_key=True,
+#                    autoincrement=True, nullable=False)
+#     author = db.Column(db.String(50), nullable=False)
+#     group = db.Column(db.Integer, nullable=False)
+#     published = db.Column(db.Boolean, nullable=False)
+#     publish_time = db.Column(db.String(20), nullable=False)
+#     last_edit_time = db.Column(db.String(20), nullable=False)
+#     last_edit_author = db.Column(db.String(20), nullable=False)
+#     language = db.Column(db.String(64), nullable=False)
+#     recommend = db.Column(db.Boolean, nullable=False)
+#     title_en = db.Column(db.Text, nullable=False)
+#     content_en = db.Column(db.Text, nullable=False)
+#     title_cn = db.Column(db.Text, nullable=True)
+#     content_cn = db.Column(db.Text, nullable=True)
+#     title_ja = db.Column(db.Text, nullable=True)
+#     content_ja = db.Column(db.Text, nullable=True)
+#     title_ko = db.Column(db.Text, nullable=True)
+#     content_ko = db.Column(db.Text, nullable=True)
 
 
 # class RolePageDatabase(db.Model):
@@ -101,10 +101,21 @@ class HelpCenterArticle(db.Model):
 #     status = db.Column(db.Boolean, nullable=False)
 
 
+class ViolasNoticeRecord(db.Model):
+    __tablename__ = "notice_record"
+
+    id = db.Column(db.BigInteger, primary_key=True, autoincrement=True)
+    message_id = db.Column(db.Text, nullable=False)
+    content = db.Column(db.Text, nullable=False)
+    platform = db.Column(db.Text, nullable=False)
+    date = db.Column(db.Integer, nullable=False)
+    immediately = db.Column(db.Boolean, nullable=False)
+
+
 if __name__ == '__main__':
     # db.drop_all()
 
-    # db.create_all()
+    db.create_all()
 
     # d1 = b_data()
     # d1.Position = 'asdasdas'
@@ -141,25 +152,25 @@ if __name__ == '__main__':
     # dd.status_recharge=True
     # dd.status=True
 
-    dd=HelpCenterArticle()
-    # dd.id=4
-    dd.author='huangw'
-    dd.group=1
-    dd.published=True
-    dd.publish_time=now
-    dd.last_edit_time=''
-    dd.last_edit_author=''
-    dd.language='EN'
-    dd.recommend=True
-    dd.title_en='eleven'
-    dd.content_en='<a>link</a>'
-    dd.title_cn=''
-    dd.content_cn=''
-    dd.title_ja=''
-    dd.content_ja=''
-    dd.title_ko=''
-    dd.content_ko=''
-    dd.order=2
+    # dd=HelpCenterArticle()
+    # # dd.id=4
+    # dd.author='huangw'
+    # dd.group=1
+    # dd.published=True
+    # dd.publish_time=now
+    # dd.last_edit_time=''
+    # dd.last_edit_author=''
+    # dd.language='EN'
+    # dd.recommend=True
+    # dd.title_en='eleven'
+    # dd.content_en='<a>link</a>'
+    # dd.title_cn=''
+    # dd.content_cn=''
+    # dd.title_ja=''
+    # dd.content_ja=''
+    # dd.title_ko=''
+    # dd.content_ko=''
+    # dd.order=2
 
-    db.session.add(dd)
-    db.session.commit()
+    # db.session.add(dd)
+    # db.session.commit()

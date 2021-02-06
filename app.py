@@ -13,6 +13,7 @@ from app_service_group import Group
 from app_service_article import Article
 from app_service_role import Role
 from app_service_help_center_web import HelpCenter
+from app_service_notification import Notification
 from flask_cors import CORS
 
 
@@ -41,12 +42,7 @@ api.add_resource(Category, '/api/category')
 api.add_resource(Group, '/api/group')
 api.add_resource(Article, '/api/article')
 api.add_resource(HelpCenter, '/api/help_center')
-# api.add_resource(CAPTCHA, '/api/getGroupName')
-# api.add_resource(CAPTCHA, '/api/getArticleName')
-# api.add_resource(CAPTCHA, '/api/allArticle')
-# api.add_resource(CAPTCHA, '/api/help')
-# api.add_resource(CAPTCHA, '/api/help/category')
-# api.add_resource(CAPTCHA, '/api/help/article')
+api.add_resource(Notification, '/api/notification')
 
 
 if __name__ == '__main__':

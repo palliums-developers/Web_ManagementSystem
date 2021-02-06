@@ -31,6 +31,6 @@ def check_token2(encode_token):
     web_token = jwt_operation('decode', encode_token)
     redis_token = redis_operation('get', web_token['name'])
     if encode_token == redis_token:
-        result['message'] = 'Authenticated',
+        result['message'] = 'Authenticated'
         result['username']=web_token['name']
     return result
