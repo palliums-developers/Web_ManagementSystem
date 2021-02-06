@@ -134,7 +134,7 @@ export default [
       },
       {
         path: 'work_order',
-        name: 'work_order',
+        // name: 'work_order',
         component: './HelpCenter/WorkOrder',
       },
     ],

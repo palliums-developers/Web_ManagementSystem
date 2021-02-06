@@ -9,7 +9,7 @@ export default function access(initialState: { currentUser?: API.CurrentUser | u
   };
 }
 
-const page_right = (_page_name: string, _right: string, _access: {}) => {
+const page_right = (_page_name: string, _right: string, _access: {}): any => {
   const all_right = {
     view: 0b0001,
     edit: 0b0010,

@@ -93,4 +93,11 @@ export default {
       '^/localhost': '',
     },
   },
+  '/api/notification': {
+    target: vls_back_management_url,
+    changeOrigin: true,
+    pathRewrite: {
+      '^/localhost': '',
+    },
+  },
 };

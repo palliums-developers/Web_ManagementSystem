@@ -3,7 +3,6 @@ import React, { useState, useEffect } from 'react';
 import { Card, Input, Table, Button, Select, DatePicker, Modal } from 'antd';
 import styles from './index.less';
 import { useIntl } from 'umi';
-import { values } from 'lodash';
 import moment from 'moment';
 import { notification, notification_time } from '@/services/configManagement';
 
@@ -40,36 +39,55 @@ export default () => {
     }
   };
   const dataSource = [
+    // {
+    //   id: '1',
+    //   platform: 'android',
+    //   time: { time: '1603818800', type: 'immediately' },
+    //   title: 'hahaha',
+    //   detail: {
+    //     en: {
+    //       title: 'aaa1',
+    //       description: 'aaa2',
+    //     },
+    //     cn: {
+    //       title: 'bbb1',
+    //       description: 'bbb2',
+    //     },
+    //   },
+    // },
     {
-      id: '1',
-      platform: 'android',
-      time: { time: '1603818800', type: 'immediately' },
-      title: 'hahaha',
-      detail: {
-        en: {
-          title: 'aaa1',
-          description: 'aaa2',
-        },
+      id: 0,
+      messageId: 'a_qwe',
+      content: {
         cn: {
-          title: 'bbb1',
-          description: 'bbb2',
+          title: 'title',
+          summary: 'summary',
+          body: 'body',
+          author: 'author',
+        },
+        en: {
+          title: 'title',
+          summary: 'summary',
+          body: 'body',
+          author: 'author',
+        },
+        ja: {
+          title: 'title',
+          summary: 'summary',
+          body: 'body',
+          author: 'author',
+        },
+        ko: {
+          title: 'title',
+          summary: 'summary',
+          body: 'body',
+          author: 'author',
         },
       },
-    },
-    {
-      id: '2',
-      platform: 'ios',
-      time: { time: '1603820800', type: 'delay' },
-      title: 'xixixi',
-      detail: {
-        en: {
-          title: 'ccc1',
-          description: 'ccc2',
-        },
-        cn: {
-          title: 'ddd1',
-          description: 'ddd2',
-        },
+      platform: ['web'],
+      date: {
+        time: 1603818800,
+        immediately: false
       },
     },
   ];
@@ -91,13 +109,13 @@ export default () => {
     },
     {
       title: intl('config.table_time'),
-      dataIndex: 'time',
-      key: 'time',
-      render: (time: notification_time) => {
+      dataIndex: 'date',
+      key: 'date',
+      render: (date: any) => {
         return (
           <div>
-            <p>{intl('config.' + time.type)}</p>
-            <p>{moment(parseInt(time.time) * 1000).format('YYYY-MM-DD HH:mm:ss')}</p>
+            <p>{intl('config.' + (date.immediately ? 'immediately' : 'delay'))}</p>
+            <p>{moment(date.time * 1000).format('YYYY-MM-DD HH:mm:ss')}</p>
           </div>
         );
       },
