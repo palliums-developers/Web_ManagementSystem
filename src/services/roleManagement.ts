@@ -20,7 +20,7 @@ export async function getRole() {
     },
   });
 }
-export async function updateRole(data: any) {
+export async function postRole(type: string, data: any) {
   let url = '/api/role';
   let token: string | null = 'token';
   if (sessionStorage.getItem('JWT')) {
@@ -29,6 +29,7 @@ export async function updateRole(data: any) {
   return request(url, {
     method: 'POST',
     data: {
+      type: type,
       data: data,
     },
     headers: {

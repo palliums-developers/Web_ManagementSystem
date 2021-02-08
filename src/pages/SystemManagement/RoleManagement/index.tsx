@@ -1,9 +1,10 @@
 import { PageContainer } from '@ant-design/pro-layout';
 import React, { useState, useEffect } from 'react';
-import { Card, Button, Tree } from 'antd';
+import { Card, Button, Tree, Input } from 'antd';
 import styles from './index.less';
 import { useIntl } from 'umi';
-import { getRole } from '@/services/roleManagement';
+import { getRole, postRole } from '@/services/roleManagement';
+import Modal from 'antd/lib/modal/Modal';
 
 
 // class RoleManagement extends React.Component{
@@ -22,6 +23,9 @@ export default () => {
   const [select_page, set_select_page] = useState<string[]>();
   const [check_right, set_check_right] = useState<string[]>();
   const [select_right, set_select_right] = useState<string[]>();
+  const [modal, setModal] = useState<boolean>(false);
+  const [role_name, set_role_name] = useState<string>('');
+  const [role_num, set_role_num] = useState<number>(0);
   const [post_data, set_post_data] = useState<any>(
     {
       account: 0,
@@ -43,8 +47,8 @@ export default () => {
   );
   const getRoleData = async () => {
     let temp_role_data = await getRole();
-    // console.log(temp_role_data.data);
     set_role_data(temp_role_data.data);
+    return temp_role_data.data;
   }
   const all_right = {
     view: 0b0001,
@@ -53,7 +57,8 @@ export default () => {
     del: 0b1000,
   };
   const initPage = async () => {
-    await getRoleData();
+    let temp_role_data = await getRoleData();
+    await getRoleNumber(temp_role_data);
   }
   useEffect(() => {
     initPage();
@@ -81,22 +86,25 @@ export default () => {
   }
 
   const renderRightList = (page_name: string) => {
-    // for (let i in role_data) {
-    //   if (role_data[i].name === role_name) {
-    //     for (let j in role_data[i]) {
-    //       if (j === page_name) {
-    //         set_right_list(num2right(role_data[i][j]));
-    //       }
-    //     }
-    //   }
-    // }
     for (let i in post_data) {
       if (i === page_name) {
         set_right_list(num2right(post_data[i]))
       }
     }
   }
-
+  const input_role_name = (e: string) => {
+    set_role_name(e);
+  }
+  const handleOk = () => {
+    postRole('add', { name: role_name, role: role_num });
+    setModal(false);
+  }
+  const handleCancel = () => {
+    setModal(false);
+  }
+  const updateRole = () => {
+    postRole('edit', post_data);
+  }
   const num2right = (num: number) => {
     let result = [];
     for (let i in all_right) {
@@ -106,15 +114,32 @@ export default () => {
     }
     return result;
   }
-
-  const traverseRoleData = (type: string, role_data: any) => {
-    if (type === 'name') {
-      let result = []
-      for (let i in role_data) {
-        result.push(i)
+  const right2num = (data: string[]) => {
+    let result = 0;
+    for (let i in data) {
+      for (let j in all_right) {
+        if (data[i] === j) {
+          result += all_right[j];
+        }
       }
-      return result;
     }
+    return result;
+  }
+  const getRoleNumber = (role_data: any) => {
+    let result = 1;
+    for (let i in role_data) {
+      result += role_data[i].role;
+    }
+    set_role_num(result);
+  }
+  const traverseRoleData = (type: string, role_data: any) => {
+    let result = []
+    if (type === 'name') {
+      for (let i in role_data) {
+        result.push(i);
+      }
+    }
+    return result;
   }
 
   const onSelectPage = (selectedKeys: React.Key[], info: any) => {
@@ -132,8 +157,14 @@ export default () => {
   };
 
   const onCheckRight = (checkedKeys: React.Key[], info: any) => {
+    let temp_post_data = post_data;
     console.log('onCheck', checkedKeys, info);
-    set_right_list(checkedKeys)
+    set_right_list(checkedKeys);
+    for (let i in temp_post_data) {
+      if (i === select_page) {
+        temp_post_data[i] = right2num(checkedKeys)
+      }
+    }
   };
 
   const formatDisplayData = () => {
@@ -229,7 +260,7 @@ export default () => {
         },
         {
           title: intl('operation.new'),
-          key: 'new',
+          key: 'add',
         },
         {
           title: intl('operation.del'),
@@ -241,9 +272,18 @@ export default () => {
   return (
     <PageContainer>
       <Card>
+        <Modal
+          title='Add new Role'
+          visible={modal}
+          onOk={() => { handleOk() }}
+          onCancel={() => { handleCancel() }}
+        >
+          <p>Role Name</p>
+          <Input onChange={(e) => { input_role_name(e.target.value) }}></Input>
+        </Modal>
         <div className={styles.operation}>
-          <Button type="primary">{intl('operation.new')}</Button>
-          <Button>{intl('operation.save')}</Button>
+          <Button onClick={() => { setModal(true) }} type="primary">{intl('operation.new')}</Button>
+          <Button onClick={() => { updateRole() }}>{intl('operation.save')}</Button>
         </div>
         <div className={styles.role}>
           <div className={styles.role_name_list}>
