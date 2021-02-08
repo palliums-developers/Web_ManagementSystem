@@ -1,5 +1,5 @@
 from flask_restful import reqparse, Resource, request
-from SQL_operation import get_all_role_page, update_role_page
+from SQL_operation import get_all_role_page, update_role_page, add_role_page, operation_log_addone
 from redis_check_token import check_token2
 import time
 
@@ -20,12 +20,25 @@ class Role(Resource):
         else:
             result['status'] = 'ok'
 
-        if __args__.type == 'edit_role':
+        temp_data=eval(__args__.data)
+
+        if __args__.type == 'edit':
             result['data'] = update_role_page(
-                __args__.data.id, __args__.role_name_num)
-            # result['data']=update_role_page(3,{'system_notifications':3})
-            # todo log
-        return result
+                temp_data['id'], temp_data)
+        elif __args__.type == 'add':
+            result['data'] = add_role_page(temp_data['name'],temp_data['role'])
+
+        if result['data'] == 'success':
+            now = int(time.time())
+            operation_log_addone(
+                result['username'],
+                result['role'],
+                __args__.type+'_role',
+                str(eval(__args__.data)),
+                now)
+            return {'status': 'ok', 'message': result['data']}, 201
+        else:
+            return {'status': 'error', 'message': result['data']}, 501
 
     def get(self):
         __args__ = parser.parse_args()

@@ -619,7 +619,30 @@ def update_role_page(id, role_name_num):
     temp_filter = get_temp_filter(role_name_num, rolePage)
     if temp_filter == 'input error':
         return temp_filter
-    return postgresql_handle(vls_back_url).update(RolePageDatabase, (RolePageDatabase.id == id), temp_filter)
+    postgresql_handle(vls_back_url).update(RolePageDatabase,
+                                           (RolePageDatabase.id == id), temp_filter)
+    return 'success'
+
+
+def add_role_page(role_name, role):
+    add_data = RolePageDatabase(
+        name=role_name,
+        role=role,
+        welcome=1,
+        account=7,
+        user_management=0,
+        login_log=0,
+        operation_log=0,
+        system_notification=0,
+        coin_management=0,
+        deposit=0,
+        borrow=0,
+        category=0,
+        group=0,
+        article=0,
+    )
+    postgresql_handle(vls_back_url).add(add_data)
+    return 'success'
 
 
 def get_help_category_group():
@@ -930,12 +953,12 @@ def set_notification(operation, data):
         result = 'success'
     return result
 
-def sort_help(database,data):
-    result='failed'
-    if database=='category':
-        Database=HelpCenterCategory
-    elif database=='group':
-        Database=HelpCenterGroup
+
+def sort_help(database, data):
+    result = 'failed'
+    if database == 'category':
+        Database = HelpCenterCategory
+    elif database == 'group':
+        Database = HelpCenterGroup
     else:
-        Database=HelpCenterArticle
-    
+        Database = HelpCenterArticle
