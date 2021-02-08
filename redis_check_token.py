@@ -32,5 +32,6 @@ def check_token2(encode_token):
     redis_token = redis_operation('get', web_token['name'])
     if encode_token == redis_token:
         result['message'] = 'Authenticated'
-        result['username']=web_token['name']
+        result['username'] = web_token['name']
+        result['role']=web_token['role']
     return result

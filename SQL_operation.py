@@ -903,20 +903,39 @@ def get_notification(type, id):
         return alchemy2json_many(postgresql_handle(vls_back_url).filterone(ViolasNoticeRecord, ViolasNoticeRecord.id == id))
 
 
-def set_notification(operation, id, data):
+def set_notification(operation, data):
     result = 'failed'
-    post_data = ViolasNoticeRecord(
-        message_id=data['message_id '],
-        content=data['content '],
-        platform=data['platform '],
-        date=data['date '],
-        immediately=data['immediately '],
-    )
-    if type == 'edit':
+    if operation == 'edit':
+        print(data)
+        post_data = {
+            ViolasNoticeRecord.content: str(data['content']),
+            ViolasNoticeRecord.message_id: data['message_id'],
+            ViolasNoticeRecord.platform: data['platform'],
+            ViolasNoticeRecord.date: data['date'],
+            ViolasNoticeRecord.immediately: data['immediately']
+        }
+        # print(post_data)
         postgresql_handle(vls_back_url).update(
-            ViolasNoticeRecord, (ViolasNoticeRecord.id == id), post_data)
+            ViolasNoticeRecord, (ViolasNoticeRecord.id == data['id']), post_data)
         result = 'success'
-    elif type == 'add':
+    elif operation == 'add':
+        post_data = ViolasNoticeRecord(
+            message_id=data['message_id'],
+            content=str(data['content']),
+            platform=data['platform'],
+            date=data['date'],
+            immediately=data['immediately'],
+        )
         postgresql_handle(vls_back_url).add(post_data)
         result = 'success'
     return result
+
+def sort_help(database,data):
+    result='failed'
+    if database=='category':
+        Database=HelpCenterCategory
+    elif database=='group':
+        Database=HelpCenterGroup
+    else:
+        Database=HelpCenterArticle
+    
