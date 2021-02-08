@@ -5,7 +5,7 @@ import styles from './index.less';
 import { useIntl } from 'umi';
 import moment from 'moment';
 import E from 'wangeditor'
-import MD5 from 'crypto-js/md5';
+import { Md5 } from 'ts-md5/dist/md5';
 import { notification_data, postNotification } from '@/services/configManagement';
 let edit_en: any = null;
 let edit_cn: any = null;
@@ -16,20 +16,23 @@ const intl = (_temp: string) => {
   return useIntl().formatMessage({ id: _temp });
 }
 const { Option } = Select;
-const { TextArea } = Input;
+
 export default () => {
   const [loading, setLoading] = useState<boolean>(true);
   const [releaseTime, setReleaseTime] = useState({ delay: false, time: '' });
   const [language, setLanguage] = useState(['en']);
-  const [platform, setPlatform] = useState([]);
+  const [platform, setPlatform] = useState<string[]>([]);
   const [operation, setOperation] = useState('');
-  const [inputEN, setInputEN] = useState({ title: '', detail: '' });
-  const [inputCN, setInputCN] = useState({ title: '', detail: '' });
-  const [inputJA, setInputJA] = useState({ title: '', detail: '' });
-  const [inputKO, setInputKO] = useState({ title: '', detail: '' });
+  const [inputEN, setInputEN] = useState<string>('');
+  const [inputCN, setInputCN] = useState<string>('');
+  const [inputJA, setInputJA] = useState<string>('');
+  const [inputKO, setInputKO] = useState<string>('');
+  const [inputEN_body, setInputEN_body] = useState<string>('');
+  const [inputCN_body, setInputCN_body] = useState<string>('');
+  const [inputJA_body, setInputJA_body] = useState<string>('');
+  const [inputKO_body, setInputKO_body] = useState<string>('');
   const [postData, setPostData] = useState<notification_data>({
-    id: 0,
-    messageId: '',
+    message_id: '',
     content: {
       cn: {
         title: '',
@@ -100,28 +103,18 @@ export default () => {
   const handleInput = (type: string, e: string) => {
     switch (type) {
       case 'en-title':
-        setInputEN({ title: e, detail: inputEN.detail });
-        break;
-      case 'en-detail':
-        setInputEN({ title: inputEN.title, detail: e });
+        setInputEN(e);
         break;
       case 'cn-title':
-        setInputCN({ title: e, detail: inputCN.detail });
-        break;
-      case 'cn-detail':
-        setInputCN({ title: inputCN.title, detail: e });
+        setInputCN(e);
         break;
       case 'ja-title':
-        setInputJA({ title: e, detail: inputJA.detail });
-        break;
-      case 'ja-detail':
-        setInputJA({ title: inputJA.title, detail: e });
+        setInputJA(e);
         break;
       case 'ko-title':
-        setInputKO({ title: e, detail: inputKO.detail });
+        setInputKO(e);
         break;
-      case 'ko-detail':
-        setInputKO({ title: inputKO.title, detail: e });
+      default:
         break;
     }
   }
@@ -136,7 +129,12 @@ export default () => {
   }
   const initData = () => {
     let data = window.localStorage.getItem('notification');
+    let temp_inputEN = inputEN;
+    let temp_inputCN = inputCN;
+    let temp_inputJA = inputJA;
+    let temp_inputKO = inputKO;
     let temp_post_data = postData;
+    let temp_language = language;
     if (data) {
       setOperation('edit');
       let temp_data = JSON.parse(data);
@@ -144,33 +142,71 @@ export default () => {
       temp_post_data.content = temp_data.content;
       temp_post_data.date = temp_data.date.time;
       temp_post_data.immediately = temp_data.date.immediately;
-      temp_post_data.messageId = temp_data.messageId;
+      temp_post_data.message_id = temp_data.message_id;
       temp_post_data.platform = temp_data.platform;
-      console.log(temp_post_data);
+      setPlatform(temp_data.platform.split(','));
+      temp_inputEN = temp_data.content.en.title;
+      temp_inputCN = temp_data.content.cn.title;
+      temp_inputJA = temp_data.content.ja.title;
+      temp_inputKO = temp_data.content.ko.title;
+      setInputEN_body(temp_data.content.en.body);
+      setInputCN_body(temp_data.content.cn.body);
+      setInputJA_body(temp_data.content.ja.body);
+      setInputKO_body(temp_data.content.ko.body);
+
+      if (temp_inputEN) {
+        // create_rich_text_editor('en')
+      }
+      if (temp_inputCN) {
+        temp_language.push('cn');
+        // create_rich_text_editor('cn');
+      }
+      if (temp_inputJA) {
+        temp_language.push('ja');
+        // create_rich_text_editor('ja');
+      }
+      if (temp_inputKO) {
+        temp_language.push('ko');
+        // create_rich_text_editor('ko');
+      }
+
     } else {
       setOperation('add');
     }
   }
-  const getMessageId=()=>{
-
+  const getMessageId = (title: string, body: string) => {
+    return 'a_' + Md5.hashStr(title + body);
   }
-  const getSummary=(body:string,number:number)=>{
-    return body.substring(0,number);
+  const getSummary = (body: string, number: number) => {
+    return body.substring(0, number);
   }
   const modifyPostData = () => {
-    let temp_post_data=postData;
-    temp_post_data.content.en.body=edit_en.txt.html();
-    temp_post_data.content.cn.body=edit_cn.txt.html();
-    temp_post_data.content.ja.body=edit_ja.txt.html();
-    temp_post_data.content.ko.body=edit_ko.txt.html();
-    temp_post_data.content.en.summary=getSummary(edit_en.txt.text(),20);
-    temp_post_data.content.cn.summary=getSummary(edit_cn.txt.text(),20);
-    temp_post_data.content.ja.summary=getSummary(edit_ja.txt.text(),20);
-    temp_post_data.content.ko.summary=getSummary(edit_ko.txt.text(),20);
+    let temp_post_data = postData;
+    temp_post_data.content.en.body = edit_en.txt.html();
+    temp_post_data.content.cn.body = edit_cn.txt.html();
+    temp_post_data.content.ja.body = edit_ja.txt.html();
+    temp_post_data.content.ko.body = edit_ko.txt.html();
+    temp_post_data.content.en.summary = getSummary(edit_en.txt.text(), 20);
+    temp_post_data.content.cn.summary = getSummary(edit_cn.txt.text(), 20);
+    temp_post_data.content.ja.summary = getSummary(edit_ja.txt.text(), 20);
+    temp_post_data.content.ko.summary = getSummary(edit_ko.txt.text(), 20);
+    temp_post_data.message_id = getMessageId(edit_en.txt.text(), edit_en.txt.text());
+    temp_post_data.content.en.title = inputEN;
+    temp_post_data.content.cn.title = inputCN;
+    temp_post_data.content.ja.title = inputJA;
+    temp_post_data.content.ko.title = inputKO;
+    temp_post_data.platform = platform;
+    temp_post_data.immediately = !releaseTime.delay;
+    if (!releaseTime.delay) {
+      temp_post_data.date = Math.floor(Date.now() / 1000);
+    } else {
+      temp_post_data.date = parseInt(releaseTime.time);
+    }
+    console.log(temp_post_data)
   }
   const clickConfirm = async () => {
     await modifyPostData();
-    // await postNotification(operation,postData);
+    await postNotification(operation, postData);
   }
   const initPage = () => {
     initData();
@@ -229,12 +265,13 @@ export default () => {
             allowClear
             placeholder={intl('config.platform')}
             onChange={e => handleSelect('platform', e)}
+            value={platform}
             style={{ width: 330 }}
           >
             <Option value='pc'>{intl('config.pc')}</Option>
             <Option value='web'>{intl('config.web')}</Option>
             <Option value='android'>{intl('config.android')}</Option>
-            <Option value='ios'>{intl('config.ios')}</Option>
+            <Option value='apple'>{intl('config.ios')}</Option>
           </Select>
         </div>
         {/* 选择发布时间*/}
@@ -261,91 +298,87 @@ export default () => {
           <p>{intl('config.language')}</p>
           <Checkbox.Group options={options} onChange={e => handleSelect('language', e)} defaultValue={['en']} />
         </div>
-        {/* 默认英文输入 */}
-        <div className={styles.inputNotification}>
-          <div className={styles.title}>
-            <span></span>
-            <h2>English</h2>
-            <span></span>
-          </div>
-          <div className={styles.row}>
-            <p>{intl('config.title')}:</p>
-            <Input onChange={e => handleInput('en-title', e.target.value)} maxLength={30} />
-          </div>
-          <div className={styles.row}>
-            <p>{intl('config.detail')}:</p>
-            {/* <TextArea onChange={e => handleInput('en-detail', e.target.value)} maxLength={1000} /> */}
-            <div id='en' dangerouslySetInnerHTML={{ __html: postData.content.en.body }}></div>
-          </div>
-        </div>
         {
-          // language.includes('cn') &&
-          <div className={styles.inputNotification}
-            style={{ display: (language.includes('cn') ? 'block' : 'none') }}
-          >
-            <div className={styles.title}>
-              <span></span>
-              <h2>中文</h2>
-              <span></span>
-            </div>
-            <div className={styles.row}>
-              <p>{intl('config.title')}:</p>
-              <Input onChange={e => handleInput('cn-title', e.target.value)} maxLength={30} />
-            </div>
-            <div className={styles.row}>
-              <p>{intl('config.detail')}:</p>
-              <div id='cn' dangerouslySetInnerHTML={{ __html: postData.content.cn.body }}>
+          <>
+            <div className={styles.inputNotification}>
+              <div className={styles.title}>
+                <span></span>
+                <h2>English</h2>
+                <span></span>
               </div>
-              {/* <TextArea onChange={e => handleInput('cn-detail', e.target.value)} maxLength={1000} /> */}
+              <div className={styles.row}>
+                <p>{intl('config.title')}:</p>
+                <Input value={inputEN} onChange={e => handleInput('en-title', e.target.value)} maxLength={30} />
+              </div>
+              <div className={styles.row}>
+                <p>{intl('config.detail')}:</p>
+                <div id='en'
+                  dangerouslySetInnerHTML={{ __html: inputEN_body }}
+                >
+                </div>
+              </div>
             </div>
-          </div>
-        }
-        {
-          // language.includes('ja') &&
-          <div className={styles.inputNotification}
-            style={{ display: (language.includes('ja') ? 'block' : 'none') }}
-
-          >
-            <div className={styles.title}>
-              <span></span>
-              <h2>日本語</h2>
-              <span></span>
+            <div className={styles.inputNotification}
+              style={{ display: (language.includes('cn') ? 'block' : 'none') }}
+            >
+              <div className={styles.title}>
+                <span></span>
+                <h2>中文</h2>
+                <span></span>
+              </div>
+              <div className={styles.row}>
+                <p>{intl('config.title')}:</p>
+                <Input value={inputCN} onChange={e => handleInput('cn-title', e.target.value)} maxLength={30} />
+              </div>
+              <div className={styles.row}>
+                <p>{intl('config.detail')}:</p>
+                <div id='cn'
+                  dangerouslySetInnerHTML={{ __html: inputCN_body }}
+                >
+                </div>
+              </div>
             </div>
-            <div className={styles.row}>
-              <p>{intl('config.title')}:</p>
-              <Input onChange={e => handleInput('ja-title', e.target.value)} maxLength={30} />
+            <div className={styles.inputNotification}
+              style={{ display: (language.includes('ja') ? 'block' : 'none') }}>
+              <div className={styles.title}>
+                <span></span>
+                <h2>日本語</h2>
+                <span></span>
+              </div>
+              <div className={styles.row}>
+                <p>{intl('config.title')}:</p>
+                <Input value={inputJA} onChange={e => handleInput('ja-title', e.target.value)} maxLength={30} />
+              </div>
+              <div className={styles.row}>
+                <p>{intl('config.detail')}:</p>
+                <div id='ja'
+                  dangerouslySetInnerHTML={{ __html: inputJA_body }}
+                ></div>
+              </div>
             </div>
-            <div className={styles.row}>
-              <p>{intl('config.detail')}:</p>
-              <div id='ja' dangerouslySetInnerHTML={{ __html: postData.content.ja.body }}></div>
-              {/* <TextArea onChange={e => handleInput('ja-detail', e.target.value)} maxLength={1000} /> */}
+            <div className={styles.inputNotification}
+              style={{ display: (language.includes('ko') ? 'block' : 'none') }}
+            >
+              <div className={styles.title}>
+                <span></span>
+                <h2>한국어</h2>
+                <span></span>
+              </div>
+              <div className={styles.row}>
+                <p>{intl('config.title')}:</p>
+                <Input value={inputKO} onChange={e => handleInput('ko-title', e.target.value)} maxLength={30} />
+              </div>
+              <div className={styles.row}>
+                <p>{intl('config.detail')}:</p>
+                <div id='ko'
+                  dangerouslySetInnerHTML={{ __html: inputKO_body }}
+                ></div>
+              </div>
             </div>
-          </div>
-        }
-        {
-          // language.includes('ko') &&
-          <div className={styles.inputNotification}
-            style={{ display: (language.includes('ko') ? 'block' : 'none') }}
-          >
-            <div className={styles.title}>
-              <span></span>
-              <h2>한국어</h2>
-              <span></span>
-            </div>
-            <div className={styles.row}>
-              <p>{intl('config.title')}:</p>
-              <Input onChange={e => handleInput('ko-title', e.target.value)} maxLength={30} />
-            </div>
-            <div className={styles.row}>
-              <p>{intl('config.detail')}:</p>
-              <div id='ko' dangerouslySetInnerHTML={{ __html: postData.content.ko.body }}></div>
-              {/* <TextArea onChange={e => handleInput('ko-detail', e.target.value)} maxLength={1000} /> */}
-            </div>
-          </div>
-        }
+          </>}
         <Button type='primary' onClick={() => clickConfirm()}>Confirm</Button>
-        <h2>{intl('operation.log')}</h2>
-        <Table columns={column} dataSource={datasource}></Table>
+        {/* <h2>{intl('operation.log')}</h2>
+        <Table columns={column} dataSource={datasource}></Table> */}
       </Card>
     </PageContainer>
   );

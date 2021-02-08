@@ -4,7 +4,7 @@ import { Card, Input, Table, Button, Select, DatePicker, Modal } from 'antd';
 import styles from './index.less';
 import { useIntl } from 'umi';
 import moment from 'moment';
-import { notification, notification_time } from '@/services/configManagement';
+import { notification, notification_time, getNotificationList, notification_data } from '@/services/configManagement';
 
 const intl = (_temp: string) => {
   return useIntl().formatMessage({ id: _temp });
@@ -16,11 +16,24 @@ export default () => {
   const [platform, setPlatform] = useState<string>();
   const [notification, setNotification] = useState();
   const [modal, setModal] = useState({ status: false, data: {} });
+  const [dataSource, setDataSource] = useState([]);
   useEffect(() => {
+    initialPage()
     setTimeout(() => {
       setLoading(false);
     }, 3000);
   }, []);
+  const initialPage = async () => {
+    let temp_data = await getNotificationList();
+    for (let i in temp_data.data) {
+      temp_data.data[i].date_type = {
+        time: temp_data.data[i].date,
+        immediately: temp_data.data[i].immediately
+      }
+      temp_data.data[i].title = temp_data.data[i].content.en.title;
+    }
+    setDataSource(temp_data.data);
+  }
   const handleSelect = (value: string) => {
     console.log(value);
   };
@@ -34,63 +47,48 @@ export default () => {
     localStorage.setItem('notification', JSON.stringify(record));
   };
   const showModal = (type: string, data: any) => {
+    console.log(data)
     if (type === 'view') {
       setModal({ status: true, data: data });
     }
   };
-  const dataSource = [
-    // {
-    //   id: '1',
-    //   platform: 'android',
-    //   time: { time: '1603818800', type: 'immediately' },
-    //   title: 'hahaha',
-    //   detail: {
-    //     en: {
-    //       title: 'aaa1',
-    //       description: 'aaa2',
-    //     },
-    //     cn: {
-    //       title: 'bbb1',
-    //       description: 'bbb2',
-    //     },
-    //   },
-    // },
-    {
-      id: 0,
-      messageId: 'a_qwe',
-      content: {
-        cn: {
-          title: 'title',
-          summary: 'summary',
-          body: 'body',
-          author: 'author',
-        },
-        en: {
-          title: 'title',
-          summary: 'summary',
-          body: 'body',
-          author: 'author',
-        },
-        ja: {
-          title: 'title',
-          summary: 'summary',
-          body: 'body',
-          author: 'author',
-        },
-        ko: {
-          title: 'title',
-          summary: 'summary',
-          body: 'body',
-          author: 'author',
-        },
-      },
-      platform: ['web'],
-      date: {
-        time: 1603818800,
-        immediately: false
-      },
-    },
-  ];
+  // const dataSource = [
+  //   {
+  //     id: 0,
+  //     message_id: 'a_qwe',
+  //     content: {
+  //       cn: {
+  //         title: 'title',
+  //         summary: 'summary',
+  //         body: 'body',
+  //         author: 'author',
+  //       },
+  //       en: {
+  //         title: 'title',
+  //         summary: 'summary',
+  //         body: 'body',
+  //         author: 'author',
+  //       },
+  //       ja: {
+  //         title: 'title',
+  //         summary: 'summary',
+  //         body: 'body',
+  //         author: 'author',
+  //       },
+  //       ko: {
+  //         title: 'title',
+  //         summary: 'summary',
+  //         body: 'body',
+  //         author: 'author',
+  //       },
+  //     },
+  //     platform: ['web'],
+  //     date: {
+  //       time: 1603818800,
+  //       immediately: false
+  //     },
+  //   },
+  // ];
   const columns = [
     {
       title: intl('config.table_id'),
@@ -109,8 +107,8 @@ export default () => {
     },
     {
       title: intl('config.table_time'),
-      dataIndex: 'date',
-      key: 'date',
+      dataIndex: 'date_type',
+      key: 'date_type',
       render: (date: any) => {
         return (
           <div>
@@ -153,21 +151,34 @@ export default () => {
         onCancel={handleModalCancel}
         footer={null}
       >
-        {modal.data.detail?.en && (
+        {modal.data.content?.en.title && (
           <div>
             <p>EN</p>
-            <p>{modal.data.detail.en.title}</p>
-            <p>{modal.data.detail.en.description}</p>
+            <p>{modal.data.content.en.title}</p>
+            <div dangerouslySetInnerHTML={{ __html: modal.data.content.en.body }}></div>
           </div>
         )}
-        {modal.data.detail?.cn && (
+        {modal.data.content?.cn.title && (
           <div>
             <p>CN</p>
-            <p>{modal.data.detail.cn.title}</p>
-            <p>{modal.data.detail.cn.description}</p>
+            <p>{modal.data.content.cn.title}</p>
+            <div dangerouslySetInnerHTML={{ __html: modal.data.content.cn.body }}></div>
           </div>
         )}
-        {/* <p>{modal.data?.detail}</p> */}
+        {modal.data.content?.ja.title && (
+          <div>
+            <p>JA</p>
+            <p>{modal.data.content.ja.title}</p>
+            <div dangerouslySetInnerHTML={{ __html: modal.data.content.ja.body }}></div>
+          </div>
+        )}
+        {modal.data.content?.ko.title && (
+          <div>
+            <p>KO</p>
+            <p>{modal.data.content.ko.title}</p>
+            <div dangerouslySetInnerHTML={{ __html: modal.data.content.ko.body }}></div>
+          </div>
+        )}
       </Modal>
       <Card>
         <div className={styles.row}>

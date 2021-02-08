@@ -7,4 +7,5 @@ export default {
     'role.operation': 'Operations Manager',
     'role.servicer': 'Customer Servicer',
     'role.designer': 'Designer',
+    'role.right':'Right',
 };

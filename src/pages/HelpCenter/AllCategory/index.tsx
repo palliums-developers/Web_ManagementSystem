@@ -50,13 +50,13 @@ export default () => {
   const SortableItem = SortableElement((value: category) => (
     <li className={styles.sort}>
       <DragHandle />
-      <p onClick={() => history.push('/helpCenter/all_group?category=' + value.value.id)}>{(value.value.name_en)}</p>
+      <p className={styles.left} onClick={() => history.push('/helpCenter/all_group?category=' + value.value.id)}>{(value.value.name_en)}</p>
       <Popover
         content={content(value.value.id, value.value.order - 1)}
         trigger="hover"
         placement="bottom"
       >
-        <p>==</p>
+        <p className={styles.right}>==</p>
       </Popover>
     </li>
   ));

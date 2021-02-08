@@ -1,4 +1,4 @@
-import { request } from "umi";
+import { request } from 'umi';
 
 export interface notification {
   id?: number;
@@ -41,11 +41,12 @@ export interface content {
 }
 export interface notification_data {
   id?: number;
-  messageId?: string;
+  message_id?: string;
   content: content;
   platform: string[];
   date: number;
   immediately: boolean;
+  date_type?: {};
 }
 
 export interface notification_time {
@@ -93,20 +94,34 @@ export interface notification_time {
 //     })
 // }
 
-export async function postNotification(operation:string,data:notification_data){
-    let url='/api/notification';
-    let token:string|null='token';
-    if (sessionStorage.getItem('JWT')){
-        token=sessionStorage.getItem('JWT');
-    }
-    return request(url,{
-        method:'POST',
-        data:{
-            operation:operation,
-            data:data
-        },
-        headers:{
-            token:token
-        }
-    })
+export async function postNotification(operation: string, data: notification_data) {
+  let url = '/api/notification';
+  let token: string | null = 'token';
+  if (sessionStorage.getItem('JWT')) {
+    token = sessionStorage.getItem('JWT');
+  }
+  return request(url, {
+    method: 'POST',
+    data: {
+      operation: operation,
+      data: data,
+    },
+    headers: {
+      token: token,
+    },
+  });
+}
+
+export async function getNotificationList() {
+  let url = '/api/notification';
+  let token: string | null = 'token';
+  if (sessionStorage.getItem('JWT')) {
+    token = sessionStorage.getItem('JWT');
+  }
+  return request(url, {
+    method: 'get',
+    headers: {
+      token: token,
+    },
+  });
 }

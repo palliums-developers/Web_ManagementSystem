@@ -113,6 +113,7 @@ const Login: React.FC<{}> = () => {
         // let temp = intl('login.success')
         message.success('Login Success!');
         sessionStorage.setItem('JWT', msg?.token);
+        console.log(msg);
         await setGoogle(msg?.google);
         if (msg?.google == 'none') {
           setModal({ google_verify: false, google_new: true });
@@ -207,7 +208,11 @@ const Login: React.FC<{}> = () => {
                 <Button onClick={() => handleOk('new')}>{intl('operation.confirm')}</Button>,
               ]}
             >
-              <QRCode value={google} />
+              {
+              // todo new one should get now code
+              console.log(google)}
+              {/* <QRCode value={google} /> */}
+              <p>Please Verify Google Authenticator</p>
               <Input onChange={handleVerify}></Input>
             </Modal>
             <Tab key="account" tab="">

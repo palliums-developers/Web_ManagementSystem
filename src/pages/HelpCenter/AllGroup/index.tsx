@@ -125,7 +125,7 @@ export default () => {
           >
             {
               category_list.map((item, key) => {
-                return <p onClick={() => set_move_data({
+                return <p className={styles.category_list} onClick={() => set_move_data({
                   group_id: move_data.group_id,
                   category_id: item.id
                 })}>{item.name_en}</p>
