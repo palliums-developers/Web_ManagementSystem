@@ -214,11 +214,11 @@ export default () => {
       dataIndex: 'coin_name',
       key: 'coin_name',
     },
-    {
-      title: intl('bank.coin_precision'),
-      dataIndex: 'precision',
-      key: 'precision',
-    },
+    // {
+    //   title: intl('bank.coin_precision'),
+    //   dataIndex: 'precision',
+    //   key: 'precision',
+    // },
     {
       title: intl('bank.min_num_precision'),
       dataIndex: 'min_num_precision',

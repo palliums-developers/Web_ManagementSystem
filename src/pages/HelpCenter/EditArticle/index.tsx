@@ -306,7 +306,9 @@ export default () => {
               suffix={<Button onClick={() => change_modal('category', true)}
               >edit</Button>}
             ></Input>
+            <p>{'Recommend'+':  '}
             <Switch onChange={(e) => switch_recommend(e)} defaultChecked={post_article.recommend}></Switch>
+            </p>
             <br></br>
             <Checkbox.Group
               onChange={selectLanguage}

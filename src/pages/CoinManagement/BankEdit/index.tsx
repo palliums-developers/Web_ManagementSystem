@@ -51,6 +51,12 @@ export default () => {
     { label: 'English', value: 'EN' },
     { label: '中文', value: 'CN' },
   ];
+  const click_confirm = () => {
+    console.log(edit_data)
+  }
+  const input_onChange = (type: string, value: string) => {
+
+  }
   const columns = [
     {
       title: intl('bank.operator'),
@@ -81,29 +87,44 @@ export default () => {
         <Card>
           <p>
             {intl('bank.currency')}:
-            <Input style={{ width: 200 }} defaultValue={edit_data.data.currency}></Input>
+            <Input style={{ width: 200 }}
+              onChange={(e) => { input_onChange('currency', e.target.value) }} defaultValue={edit_data.data.currency}></Input>
             {intl('bank.product_logo')}:
-            <Input style={{ width: 200 }} defaultValue={edit_data.data.logo}></Input>
+            <Input style={{ width: 200 }}
+              onChange={(e) => { input_onChange('logo', e.target.value) }}
+              defaultValue={edit_data.data.logo}></Input>
           </p>
           <p>
             {intl('bank.product_id')}:
-            <Input style={{ width: 200 }} defaultValue={edit_data.data.product_id}></Input>
+            <Input style={{ width: 200 }}
+              onChange={(e) => { input_onChange('product_id', e.target.value) }}
+              defaultValue={edit_data.data.product_id}></Input>
             {intl('bank.product_name')}:
-            <Input style={{ width: 200 }} defaultValue={edit_data.data.product_name}></Input>
+            <Input style={{ width: 200 }}
+              onChange={(e) => { input_onChange('product_name', e.target.value) }}
+              defaultValue={edit_data.data.product_name}></Input>
           </p>
           <p>
             {edit_data.database == 'deposit' ? intl('bank.min_deposit') : intl('bank.min_borrow')}:
-            <Input style={{ width: 200 }} defaultValue={edit_data.data.minimum_amount}></Input>
+            <Input style={{ width: 200 }}
+              onChange={(e) => { input_onChange('minimum_amount', e.target.value) }}
+              defaultValue={edit_data.data.minimum_amount}></Input>
             {edit_data.database == 'deposit' ? intl('bank.step_deposit') : intl('bank.step_borrow')}
-            :<Input style={{ width: 200 }} defaultValue={edit_data.data.pledge_rate}></Input>
+            :<Input style={{ width: 200 }}
+              onChange={(e) => { input_onChange('pledge', e.target.value) }}
+              defaultValue={edit_data.data.pledge_rate}></Input>
           </p>
           <p>
             {edit_data.database == 'deposit'
               ? intl('bank.daily_deposit')
               : intl('bank.daily_borrow')}
-            :<Input style={{ width: 200 }} defaultValue={edit_data.data.max_limit}></Input>
+            :<Input style={{ width: 200 }}
+            onChange={(e) => { input_onChange('max_limit', e.target.value) }} 
+            defaultValue={edit_data.data.max_limit}></Input>
             {edit_data.data.rate_desc}:
-            <Input style={{ width: 200 }} defaultValue={edit_data.data.rate}></Input>
+            <Input style={{ width: 200 }} 
+            onChange={(e) => { input_onChange('rate', e.target.value) }} 
+            defaultValue={edit_data.data.rate}></Input>
           </p>
           <Checkbox.Group options={options} onChange={selectLanguage} />
           {language.includes('EN') && (
@@ -182,7 +203,7 @@ export default () => {
           {
             // todo
           }
-          <Button type="primary">{intl('operation.confirm')}</Button>
+          <Button type="primary" onClick={() => { click_confirm() }}>{intl('operation.confirm')}</Button>
           <h1>{intl('bank.operation_log')}</h1>
           <Table dataSource={operationLog} columns={columns} />
         </Card>

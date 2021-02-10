@@ -59,5 +59,6 @@ export default {
   'menu.system.user':'用户管理 ',
   'menu.system.role':'角色管理',
   'menu.system.login_log':'登录日志',
-  'menu.system.operation_log':'操作日志'
+  'menu.system.operation_log':'操作日志',
+  'menu.help': '帮助中心',
 };
