@@ -520,7 +520,7 @@ def get_coin_log():
 def exist_coin_data(name):
     data = postgresql_handle(vls_back_url).list(Coin_management)
     for i in data:
-        if i.name == name:
+        if i.coin_name == name:
             return 1
     return 0
 

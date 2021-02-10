@@ -35,6 +35,7 @@ class CoinManagement(Resource):
         elif __args__.type == 'add':
             __temp__ = add_coin_data(data)
         elif __args__.type == 'edit':
+            print(data)
             __temp__ = edit_coin_data(data)
 
         if __temp__['status'] == 'ok':
