@@ -108,7 +108,7 @@ const Login: React.FC<{}> = () => {
     setSubmitting(true);
     try {
       // 登录
-      const msg = await accountLogin({ ...values, type });
+      const msg = (await accountLogin({ ...values, type }));
       if (msg.status === 'ok') {
         // let temp = intl('login.success')
         message.success('Login Success!');
@@ -209,9 +209,10 @@ const Login: React.FC<{}> = () => {
               ]}
             >
               {
-              // todo new one should get now code
-              console.log(google)}
-              {/* <QRCode value={google} /> */}
+                // todo new one should get now code
+                console.log('google: ' + google)
+              }
+              <QRCode value={google} />
               <p>Please Verify Google Authenticator</p>
               <Input onChange={handleVerify}></Input>
             </Modal>
