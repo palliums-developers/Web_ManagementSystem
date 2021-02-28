@@ -22,27 +22,39 @@ class postgresql_handle:
         temp = self.session()
         temp.add_all(objectlist)
         temp.commit()
+        temp.close()
 
     def filterone(self, object, filter):
         temp = self.session()
-        return temp.query(object).filter(filter).first()
+        result = temp.query(object).filter(filter).first()
+        temp.close()
+        return result
 
     def filterall(self, object, filter):
         temp = self.session()
-        return temp.query(object).order_by(object.id.desc()).filter(filter).all()
+        result = temp.query(object).order_by(
+            object.id.desc()).filter(filter).all()
+        temp.close()
+        return result
 
     def filterall_order(self, object, filter):
         temp = self.session()
-        return temp.query(object).order_by(object.order).filter(filter).all()
+        result = temp.query(object).order_by(object.order).filter(filter).all()
+        temp.close()
+        return result
 
-    def filter_limit_order(self,object,filter,limit):
-        temp=self.session()
-        return temp.query(object).order_by(object.order.desc()).filter(filter).limit(limit).all()
+    def filter_limit_order(self, object, filter, limit):
+        temp = self.session()
+        result = temp.query(object).order_by(
+            object.order.desc()).filter(filter).limit(limit).all()
+        temp.close()
+        return result
 
     def update(self, object, filter, updic):
         temp = self.session()
         temp.query(object).filter(filter).update(updic)
         temp.commit()
+        temp.close()
 
     def list(self, object):
         temp = self.session().query(object).order_by(object.id).all()
@@ -77,13 +89,17 @@ class postgresql_handle:
         #     temp = self.session().query(object).filter((object.time) > (more_than)
         #                                                ).order_by(object.id.desc()).paginate(limit, offset)
         # temp.close()
+        self.session().close()
         return temp
 
     def paginate2(self, object, limit, offset, filter=None):
         Query.paginate = paginate
+        result = ''
         if not filter is None:
-            return self.session().query(object).filter(filter).order_by(
+            result = self.session().query(object).filter(filter).order_by(
                 object.id.desc()).paginate(limit, offset)
         else:
-            return self.session().query(object).order_by(
+            result = self.session().query(object).order_by(
                 object.id.desc()).paginate(limit, offset)
+        self.session().close()
+        return result

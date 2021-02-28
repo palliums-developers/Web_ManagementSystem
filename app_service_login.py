@@ -76,6 +76,7 @@ class Login(Resource):
             })
             redis_operation('set', __args__.username, token)
             logging['token'] = token
+            print(logging)
             return logging, 201
         else:
             return logging, 501
